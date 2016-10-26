@@ -10,8 +10,35 @@ make run
 ## API
 __All api methods should return `{"success":true}`__
 
+### Content
 * `POST /api/content`
 * `GET /api/content`
 * `GET /api/content/:contentId`
 * `PUT /api/content/:contentId`
 * `DELETE /api/content/:contentId`
+
+### Receipt
+* `GET /api/receipt`
+* `POST /api/receipt/send`
+* `GET /api/receipt/:receiptId`
+
+### Job
+* `GET /api/job`
+* `POST /api/job`
+* `GET /api/job/:jobId`
+* `PUT /api/job/:jobId`
+* `DELETE /api/job/:jobId`
+
+### Trigger
+* `POST /api/trigger`
+* `GET /api/trigger`
+* `GET /api/trigger/:triggerKey`
+* `PUT /api/trigger/:triggerKey`
+* `DELETE /api/trigger/:triggerKey`
+* `POST /api/trigger/:triggerKey/activate`
+
+### Preference
+* `POST /api/preference`
+* `GET /api/preference/:userId`
+* `PATCH /api/preference/:userId`
+* `DELETE /api/preference/:userId`
