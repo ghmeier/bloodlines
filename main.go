@@ -12,9 +12,9 @@ func main() {
 
 	port := os.Getenv("PORT");
 	if port == "" {
-		port = ":8000"
+		port = "8000"
 	}
 
 	fmt.Printf("Bloodlines running on %s\n", port)
-	b.Start(port)
+	b.Start(":"+port)
 }
