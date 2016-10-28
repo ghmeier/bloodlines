@@ -1,10 +1,17 @@
 # bloodlines
 A go service for sending Expresso emails
 
+## Quick Start
+```bash
+$ docker run ghmeier/bloodlines:latest
+```
+
 ## Setup
-```go
-make deps
-make run
+```bash
+$ go get github.com/ghmeier/bloodlines
+$ cd $GOPATH/src/github.com/ghmeier/bloodlines
+$ make deps
+$ make run
 ```
 
 ## API
