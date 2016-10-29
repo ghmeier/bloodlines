@@ -8,7 +8,11 @@ import (
 )
 
 func main() {
-	b := router.New()
+	b, err := router.New()
+	if err != nil {
+		fmt.Printf("ERROR: %s", err)
+		return
+	}
 
 	port := os.Getenv("PORT");
 	if port == "" {

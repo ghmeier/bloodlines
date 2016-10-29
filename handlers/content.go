@@ -1,7 +1,10 @@
 package handlers
 
 import (
+	"github.com/ghmeier/bloodlines/gateways"
+
 	"gopkg.in/gin-gonic/gin.v1"
+	"github.com/pborman/uuid"
 )
 
 type ContentI interface {
@@ -12,9 +15,26 @@ type ContentI interface {
 	Deactivate(ctx *gin.Context)
 }
 
-type Content struct {}
+type Content struct {
+	sql *gateways.Sql
+}
+
+func NewContent(sql *gateways.Sql) ContentI {
+	return &Content{sql: sql}
+}
 
 func (c *Content) New(ctx *gin.Context) {
+	err := c.sql.Modify(
+		"INSERT INTO content VALUE(?, ?, ?, ?, ?)",
+		uuid.New(),
+		"EMAIL",
+		"TEST",
+		nil,
+		true)
+	if err != nil {
+		ctx.JSON(500, &gin.H{"error": err, "message": err.Error()})
+		return
+	}
 	ctx.JSON(200, empty())
 }
 

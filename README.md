@@ -18,6 +18,16 @@ $ make run
 __All api methods should return `{"success":true}`__
 
 ### Content
+Object
+```javascript
+{
+	"id": "24073c8c-119e-4d7d-836e-4fff2db98549",
+	"contentType": "EMAIL",
+	"text": "Hello!",
+	"parameters": [],
+	"active": true
+}
+```
 * `POST /api/content`
 * `GET /api/content`
 * `GET /api/content/:contentId`

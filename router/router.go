@@ -1,9 +1,12 @@
 package router
 
 import (
+	"fmt"
+
 	"gopkg.in/gin-gonic/gin.v1"
 
 	"github.com/ghmeier/bloodlines/handlers"
+	"github.com/ghmeier/bloodlines/gateways"
 )
 
 type Bloodlines struct {
@@ -15,9 +18,15 @@ type Bloodlines struct {
 	preference handlers.PreferenceI
 }
 
-func New() *Bloodlines{
+func New() (*Bloodlines, error) {
+	sql, err := gateways.NewSql()
+	if err != nil {
+		fmt.Println("ERROR: could not connect to mysql.")
+		fmt.Println(err.Error())
+		return nil, err
+	}
 	b := &Bloodlines{
-		content: 	&handlers.Content{},
+		content: 	handlers.NewContent(sql),
 		receipt: 	&handlers.Receipt{},
 		job:	 	&handlers.Job{},
 		trigger:  	&handlers.Trigger{},
@@ -64,7 +73,7 @@ func New() *Bloodlines{
 		pref.DELETE("/:userId", b.preference.Deactivate)
 	}
 
-	return b
+	return b, nil
 }
 
 func (b *Bloodlines) Start(port string) {
