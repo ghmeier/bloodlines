@@ -12,7 +12,7 @@ type Sql struct{
 }
 
 func NewSql() (*Sql, error) {
-	db, err := sql.Open("mysql", "root:bloodlines@tcp(172.17.0.1:3306)/bloodlines")
+	db, err := sql.Open("mysql", "root:bloodlines@tcp(172.17.0.2:3306)/bloodlines")
 	if err != nil {
 		return nil, err
 	}
@@ -37,6 +37,15 @@ func (s *Sql) Modify(query string, values ...interface{}) error {
 
 	//success
 	return nil
+}
+
+func (s *Sql) Select(query string, values ...interface{}) (*sql.Rows, error) {
+	rows, err := s.db.Query(query, values)
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
 }
 
 func (s *Sql) Destroy() {
