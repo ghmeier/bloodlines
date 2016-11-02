@@ -1,14 +1,15 @@
 package handlers
 
-import (
+import(
 	"fmt"
 	"strings"
 
-	"github.com/ghmeier/bloodlines/gateways"
-	"github.com/ghmeier/bloodlines/models"
-
 	"gopkg.in/gin-gonic/gin.v1"
 	"github.com/pborman/uuid"
+
+	"github.com/ghmeier/bloodlines/containers"
+	"github.com/ghmeier/bloodlines/gateways"
+
 )
 
 type ContentIfc interface {
@@ -28,11 +29,11 @@ func NewContent(sql *gateways.Sql) ContentIfc {
 }
 
 func (c *Content) New(ctx *gin.Context) {
-	var json models.Content
+	var json containers.Content
 	err := ctx.BindJSON(&json)
 
 	if err != nil {
-		ctx.JSON(400, gin.H{"error":"Invalid Content Object"})
+		ctx.JSON(400, errResponse("Invalid Content Object"))
 		fmt.Printf("%s",err.Error())
 		return
 	}
@@ -41,7 +42,7 @@ func (c *Content) New(ctx *gin.Context) {
 		"INSERT INTO content VALUE(?, ?, ?, ?, ?)",
 		uuid.New(),
 		"EMAIL",
-		json.Content,
+		json.Text,
 		strings.Join(json.Parameters,","),
 		true)
 	if err != nil {
@@ -52,13 +53,41 @@ func (c *Content) New(ctx *gin.Context) {
 }
 
 func (c *Content) ViewAll(ctx *gin.Context) {
-	ctx.JSON(200, empty())
+	rows, err := c.sql.Select("SELECT * FROM content")
+	if err != nil {
+		 ctx.JSON(500, errResponse(err.Error()))
+		 return
+	}
+	content, err := containers.FromSql(rows)
+	if err != nil {
+		ctx.JSON(500, errResponse(err.Error()))
+		return
+	}
+
+	ctx.JSON(200, gin.H{"data": content})
 }
 
 func (c *Content) View(ctx *gin.Context) {
 	//var json models.Content
+	id := ctx.Param("contentId")
+	if id == "" {
+		ctx.JSON(500, errResponse("contentId is a required parameter"))
+		return
+	}
 
-	ctx.JSON(200, empty())
+	rows, err := c.sql.Select("SELECT * FROM content WHERE id=?", id)
+	if err != nil {
+		ctx.JSON(500, errResponse(err.Error()))
+		return
+	}
+
+	content, err := containers.FromSql(rows)
+	if err != nil {
+		ctx.JSON(500, errResponse(err.Error()))
+		return
+	}
+
+	ctx.JSON(200, gin.H{"data": content})
 }
 
 func (c *Content) Update(ctx *gin.Context) {

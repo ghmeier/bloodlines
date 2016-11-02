@@ -7,3 +7,7 @@ import (
 func empty() *gin.H {
 	return &gin.H{"success": true}
 }
+
+func errResponse(message string) *gin.H {
+	return &gin.H{"error": message}
+}

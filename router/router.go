@@ -11,7 +11,7 @@ import (
 
 type Bloodlines struct {
 	router 	   *gin.Engine
-	content    handlers.ContentI
+	content    handlers.ContentIfc
 	receipt    handlers.ReceiptI
 	job 	   handlers.JobI
 	trigger    handlers.TriggerI

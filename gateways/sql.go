@@ -40,8 +40,12 @@ func (s *Sql) Modify(query string, values ...interface{}) error {
 }
 
 func (s *Sql) Select(query string, values ...interface{}) (*sql.Rows, error) {
-	rows, err := s.db.Query(query, values)
+	if values == nil {
+		values = make([]interface{}, 0)
+	}
+	rows, err := s.db.Query(query, values...)
 	if err != nil {
+		fmt.Printf("ERROR: unable to run select query %s\n", query)
 		return nil, err
 	}
 
