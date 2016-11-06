@@ -17,7 +17,6 @@ func NewSql() (*Sql, error) {
 		return nil, err
 	}
 
-
 	return &Sql{db: db}, nil
 }
 

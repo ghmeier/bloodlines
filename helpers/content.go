@@ -1,0 +1,79 @@
+package helpers
+
+import (
+	"strings"
+
+	"github.com/ghmeier/bloodlines/models"
+	"github.com/ghmeier/bloodlines/gateways"
+)
+
+type baseHelper struct {
+	sql *gateways.Sql
+}
+
+type Content struct {
+	*baseHelper
+}
+
+func NewContent(sql *gateways.Sql) *Content {
+	return &Content{baseHelper: &baseHelper{sql:sql}}
+}
+
+func (c *Content) GetById(id string) (*models.Content, error) {
+	rows, err := c.sql.Select("SELECT * FROM content WHERE id=?", id)
+	if err != nil {
+		return nil, err
+	}
+
+	content, err := models.ContentFromSql(rows)
+	if err != nil {
+		return nil, err
+	}
+	return content[0], nil
+}
+
+func (c *Content) GetAll() ([]*models.Content, error) {
+	rows, err := c.sql.Select("SELECT * FROM content")
+	if err != nil {
+		 return nil, err
+	}
+
+	content, err := models.ContentFromSql(rows)
+	if err != nil {
+		return nil, err
+	}
+
+	return content, err
+}
+
+func (c *Content) Insert(content *models.Content) error {
+	err := c.sql.Modify(
+		"INSERT INTO content (id, contentType, text, parameters, status)VALUE(?, ?, ?, ?, ?)",
+		content.Id,
+		content.Type,
+		content.Text,
+		strings.Join(content.Params,","),
+		true)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func (c *Content) Update(content *models.Content) error {
+	err := c.sql.Modify("UPDATE content SET contentType=?,text=?,parameters=?,status=? WHERE id=?",
+		content.Type,
+		content.Text,
+		strings.Join(content.Params,","),
+		content.Status,
+		content.Id,
+	)
+	return err
+}
+
+func (c* Content) SetStatus(id string, status bool) error {
+	err := c.sql.Modify("UPDATE content SET status=? WHERE id=?", status, id)
+	return err
+}
