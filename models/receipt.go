@@ -44,13 +44,3 @@ const (  // iota is reset to 0
         SUCCESS  = "SUCCESS"
         FAILURE = "FAILURE"
 )
-
-
-/*
-	uuid		recipient
-	[]string	values
-	uuid		content_id
-	uuid		id
-	timestamp	time_sent
-	send_status	status
-*/

@@ -3,6 +3,8 @@ package helpers
 import (
 	"strings"
 
+	"github.com/pborman/uuid"
+
 	"github.com/ghmeier/bloodlines/models"
 	"github.com/ghmeier/bloodlines/gateways"
 )
@@ -54,7 +56,7 @@ func (r *Receipt) GetReceiptById(id string) (*models.Receipt, error) {
 	return receipts[0], nil
 }
 
-func (r *Receipt) SetSendState(id string, state models.Status) error {
+func (r *Receipt) SetSendState(id uuid.UUID, state models.Status) error {
 	err := r.sql.Modify("UPDATE receipt SET sendState=? where id=?", state, id)
 	return err
 }
