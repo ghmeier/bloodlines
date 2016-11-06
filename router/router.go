@@ -28,9 +28,9 @@ func New() (*Bloodlines, error) {
 	b := &Bloodlines{
 		content: 	handlers.NewContent(sql),
 		receipt: 	handlers.NewReceipt(sql),
-		job:	 	&handlers.Job{},
+		job:	 	handlers.NewJob(sql),
 		trigger:  	&handlers.Trigger{},
-		preference: &handlers.Preference{},
+		preference: handlers.NewPreference(sql),
 	}
 	b.router = gin.Default()
 
