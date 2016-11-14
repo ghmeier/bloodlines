@@ -5,14 +5,19 @@ import (
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
+
+	"github.com/ghmeier/bloodlines/config"
 )
 
-type Sql struct{
+type Sql struct {
 	db *sql.DB
 }
 
-func NewSql() (*Sql, error) {
-	db, err := sql.Open("mysql", "root:bloodlines@tcp(172.17.0.2:3306)/bloodlines")
+func NewSql(config config.MySql) (*Sql, error) {
+	db, err := sql.Open(
+		"mysql",
+		config.User+":"+config.Password+"@tcp("+config.Host+":"+string(config.Port)+")/"+config.Database,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -23,7 +28,7 @@ func NewSql() (*Sql, error) {
 func (s *Sql) Modify(query string, values ...interface{}) error {
 	stmt, err := s.db.Prepare(query)
 	if err != nil {
-		fmt.Printf("ERROR: unable to prepare query %s\n",query)
+		fmt.Printf("ERROR: unable to prepare query %s\n", query)
 		return err
 	}
 	defer stmt.Close()

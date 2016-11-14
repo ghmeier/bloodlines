@@ -2,23 +2,23 @@ package main
 
 import (
 	"fmt"
-	"os"
 
+	"github.com/ghmeier/bloodlines/config"
 	"github.com/ghmeier/bloodlines/router"
 )
 
 func main() {
-	b, err := router.New()
+	config, err := config.Init()
 	if err != nil {
-		fmt.Printf("ERROR: %s", err)
+		fmt.Printf("ERROR: config initialization error. %s\n", err.Error())
+		return
+	}
+	b, err := router.New(config)
+	if err != nil {
+		fmt.Printf("ERROR: %s\n", err.Error())
 		return
 	}
 
-	port := os.Getenv("PORT");
-	if port == "" {
-		port = "8000"
-	}
-
-	fmt.Printf("Bloodlines running on %s\n", port)
-	b.Start(":"+port)
+	fmt.Printf("Bloodlines running on %s\n", config.Port)
+	b.Start(":" + config.Port)
 }
