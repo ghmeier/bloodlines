@@ -28,8 +28,8 @@ func (t *Trigger) Insert(trigger *models.Trigger) error {
 	return err
 }
 
-func (t *Trigger) GetAll() ([]*models.Trigger, error) {
-	rows, err := t.sql.Select("SELECT id, contentId, key, params FROM trigger")
+func (t *Trigger) GetAll(offset int, limit int) ([]*models.Trigger, error) {
+	rows, err := t.sql.Select("SELECT id, contentId, key, params FROM trigger ORDER BY id ASC LIMIT ?,? ", offset, limit)
 	if err != nil {
 		return nil, err
 	}

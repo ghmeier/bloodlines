@@ -45,7 +45,8 @@ func (c *Content) New(ctx *gin.Context) {
 }
 
 func (c *Content) ViewAll(ctx *gin.Context) {
-	content, err := c.helper.GetAll()
+	offset, limit := getPaging(ctx)
+	content, err := c.helper.GetAll(offset, limit)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return

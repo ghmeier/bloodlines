@@ -44,7 +44,8 @@ func (r *Receipt) Send(ctx *gin.Context) {
 }
 
 func (r *Receipt) ViewAll(ctx *gin.Context) {
-	receipts, err := r.helper.GetReceipts()
+	offset, limit := getPaging(ctx)
+	receipts, err := r.helper.GetReceipts(offset, limit)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return

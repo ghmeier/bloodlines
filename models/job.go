@@ -3,7 +3,6 @@ package models
 import (
 	"database/sql"
 	"errors"
-	"strings"
 	"time"
 
 	"github.com/pborman/uuid"
@@ -34,11 +33,7 @@ func JobFromSql(rows *sql.Rows) ([]*Job, error) {
 		var receiptList, jState string
 		rows.Scan(&j.Id, &j.SendTime, &jState, receiptList)
 
-		j.Receipts = make([]uuid.UUID, 0)
-		receipts := strings.Split(receiptList, ",")
-		for _, receipt := range receipts {
-			j.Receipts = append(j.Receipts, uuid.Parse(receipt))
-		}
+		j.Receipts = toUUIDList(receiptList)
 
 		var ok bool
 		j.SendStatus, ok = toStatus(jState)

@@ -3,7 +3,6 @@ package models
 import (
 	"database/sql"
 	"errors"
-	"strings"
 	"time"
 
 	"github.com/pborman/uuid"
@@ -35,10 +34,7 @@ func ReceiptFromSql(rows *sql.Rows) ([]*Receipt, error) {
 		var valueList, rState string
 		rows.Scan(&r.Id, &r.Created, &valueList, &rState, &r.ContentId)
 
-		r.Values = make([]string, 0)
-		if valueList != "" {
-			r.Values = strings.Split(valueList, ",")
-		}
+		r.Values = toList(valueList)
 
 		var ok bool
 		r.SendState, ok = toStatus(rState)

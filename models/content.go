@@ -3,7 +3,6 @@ package models
 import (
 	"database/sql"
 	"errors"
-	"strings"
 
 	"github.com/pborman/uuid"
 )
@@ -35,10 +34,7 @@ func ContentFromSql(rows *sql.Rows) ([]*Content, error) {
 		var paramList, cType, cStatus string
 		rows.Scan(&c.Id, &cType, &c.Text, &paramList, &cStatus)
 
-		c.Params = make([]string, 0)
-		if paramList != "" {
-			c.Params = strings.Split(paramList, ",")
-		}
+		c.Params = toList(paramList)
 
 		var ok bool
 		c.Type, ok = toContentType(cType)

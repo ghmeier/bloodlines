@@ -29,8 +29,8 @@ func (r *Receipt) Insert(receipt *models.Receipt) error {
 	return err
 }
 
-func (r *Receipt) GetReceipts() ([]*models.Receipt, error) {
-	rows, err := r.sql.Select("SELECT id, ts, vals, sendState, contentId FROM receipt")
+func (r *Receipt) GetReceipts(offset int, limit int) ([]*models.Receipt, error) {
+	rows, err := r.sql.Select("SELECT id, ts, vals, sendState, contentId FROM receipt ORDER BY id ASC LIMIT ?,? ", offset, limit)
 	if err != nil {
 		return nil, err
 	}

@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"strings"
 
 	"github.com/pborman/uuid"
 )
@@ -31,11 +30,7 @@ func TriggerFromSql(rows *sql.Rows) ([]*Trigger, error) {
 
 		var paramList string
 		rows.Scan(&t.Id, &t.ContentId, &t.Key, &paramList)
-
-		t.Params = make([]string, 0)
-		if paramList != "" {
-			t.Params = strings.Split(paramList, ",")
-		}
+		t.Params = toList(paramList)
 
 		trigger = append(trigger, t)
 	}

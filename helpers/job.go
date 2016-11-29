@@ -31,8 +31,8 @@ func (j *Job) Insert(job *models.Job) error {
 	return err
 }
 
-func (j *Job) GetAll() ([]*models.Job, error) {
-	rows, err := j.sql.Select("SELECT id, sendTime, sendStatus, receipts from job")
+func (j *Job) GetAll(offset int, limit int) ([]*models.Job, error) {
+	rows, err := j.sql.Select("SELECT id, sendTime, sendStatus, receipts from job ORDER BY id ASC LIMIT ?,?", offset, limit)
 	if err != nil {
 		return nil, err
 	}

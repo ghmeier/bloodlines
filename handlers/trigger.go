@@ -45,7 +45,8 @@ func (t *Trigger) New(ctx *gin.Context) {
 }
 
 func (t *Trigger) ViewAll(ctx *gin.Context) {
-	triggers, err := t.helper.GetAll()
+	offset, limit := getPaging(ctx)
+	triggers, err := t.helper.GetAll(offset, limit)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return

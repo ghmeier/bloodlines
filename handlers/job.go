@@ -48,7 +48,8 @@ func (j *Job) New(ctx *gin.Context) {
 }
 
 func (j *Job) ViewAll(ctx *gin.Context) {
-	jobs, err := j.helper.GetAll()
+	offset, limit := getPaging(ctx)
+	jobs, err := j.helper.GetAll(offset, limit)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return

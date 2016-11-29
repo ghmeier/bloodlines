@@ -32,8 +32,8 @@ func (c *Content) GetById(id string) (*models.Content, error) {
 	return content[0], nil
 }
 
-func (c *Content) GetAll() ([]*models.Content, error) {
-	rows, err := c.sql.Select("SELECT id, contentType, text, parameters, status FROM content WHERE status=?", models.ACTIVE)
+func (c *Content) GetAll(offset int, limit int) ([]*models.Content, error) {
+	rows, err := c.sql.Select("SELECT id, contentType, text, parameters, status FROM content WHERE status=? ORDER BY id ASC LIMIT ?,?", models.ACTIVE, offset, limit)
 	if err != nil {
 		return nil, err
 	}
