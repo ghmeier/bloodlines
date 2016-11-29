@@ -9,11 +9,17 @@ import (
 	"github.com/ghmeier/bloodlines/config"
 )
 
-type Sql struct {
+type Sql interface {
+	Modify(string, ...interface{}) error
+	Select(string, ...interface{}) (*sql.Rows, error)
+	Destroy()
+}
+
+type Mysql struct {
 	db *sql.DB
 }
 
-func NewSql(config config.MySql) (*Sql, error) {
+func NewSql(config config.MySql) (*Mysql, error) {
 	db, err := sql.Open(
 		"mysql",
 		config.User+":"+config.Password+"@tcp("+config.Host+":"+string(config.Port)+")/"+config.Database,
@@ -22,10 +28,10 @@ func NewSql(config config.MySql) (*Sql, error) {
 		return nil, err
 	}
 
-	return &Sql{db: db}, nil
+	return &Mysql{db: db}, nil
 }
 
-func (s *Sql) Modify(query string, values ...interface{}) error {
+func (s *Mysql) Modify(query string, values ...interface{}) error {
 	stmt, err := s.db.Prepare(query)
 	if err != nil {
 		fmt.Printf("ERROR: unable to prepare query %s\n", query)
@@ -43,7 +49,7 @@ func (s *Sql) Modify(query string, values ...interface{}) error {
 	return nil
 }
 
-func (s *Sql) Select(query string, values ...interface{}) (*sql.Rows, error) {
+func (s *Mysql) Select(query string, values ...interface{}) (*sql.Rows, error) {
 	if values == nil {
 		values = make([]interface{}, 0)
 	}
@@ -56,6 +62,6 @@ func (s *Sql) Select(query string, values ...interface{}) (*sql.Rows, error) {
 	return rows, nil
 }
 
-func (s *Sql) Destroy() {
+func (s *Mysql) Destroy() {
 	s.db.Close()
 }

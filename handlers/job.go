@@ -3,11 +3,11 @@ package handlers
 import (
 	"time"
 
-	"gopkg.in/gin-gonic/gin.v1"
 	"github.com/pborman/uuid"
+	"gopkg.in/gin-gonic/gin.v1"
 
-	"github.com/ghmeier/bloodlines/helpers"
 	"github.com/ghmeier/bloodlines/gateways"
+	"github.com/ghmeier/bloodlines/helpers"
 	"github.com/ghmeier/bloodlines/models"
 )
 
@@ -23,7 +23,7 @@ type Job struct {
 	helper *helpers.Job
 }
 
-func NewJob(sql *gateways.Sql) *Job {
+func NewJob(sql gateways.Sql) *Job {
 	return &Job{helper: helpers.NewJob(sql)}
 }
 
@@ -40,7 +40,7 @@ func (j *Job) New(ctx *gin.Context) {
 	}
 	job := models.NewJob(json.Receipts, json.SendTime)
 	err = j.helper.Insert(job)
-	if err  != nil {
+	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
 	}

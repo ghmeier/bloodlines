@@ -12,8 +12,8 @@ import (
 
 type Bloodlines struct {
 	router     *gin.Engine
-	content    handlers.ContentIfc
-	receipt    handlers.ReceiptIfc
+	content    handlers.ContentI
+	receipt    handlers.ReceiptI
 	job        handlers.JobI
 	trigger    handlers.TriggerI
 	preference handlers.PreferenceI
@@ -30,7 +30,7 @@ func New(config *config.Root) (*Bloodlines, error) {
 		content:    handlers.NewContent(sql),
 		receipt:    handlers.NewReceipt(sql),
 		job:        handlers.NewJob(sql),
-		trigger:    &handlers.Trigger{},
+		trigger:    handlers.NewTrigger(sql),
 		preference: handlers.NewPreference(sql),
 	}
 	b.router = gin.Default()

@@ -3,24 +3,24 @@ package helpers
 import (
 	"strings"
 
-	"github.com/ghmeier/bloodlines/models"
 	"github.com/ghmeier/bloodlines/gateways"
+	"github.com/ghmeier/bloodlines/models"
 )
 
 type baseHelper struct {
-	sql *gateways.Sql
+	sql gateways.Sql
 }
 
 type Content struct {
 	*baseHelper
 }
 
-func NewContent(sql *gateways.Sql) *Content {
-	return &Content{baseHelper: &baseHelper{sql:sql}}
+func NewContent(sql gateways.Sql) *Content {
+	return &Content{baseHelper: &baseHelper{sql: sql}}
 }
 
 func (c *Content) GetById(id string) (*models.Content, error) {
-	rows, err := c.sql.Select("SELECT * FROM content WHERE id=?", id)
+	rows, err := c.sql.Select("SELECT id, contentType, text, parameters, status FROM content WHERE id=?", id)
 	if err != nil {
 		return nil, err
 	}
@@ -33,9 +33,9 @@ func (c *Content) GetById(id string) (*models.Content, error) {
 }
 
 func (c *Content) GetAll() ([]*models.Content, error) {
-	rows, err := c.sql.Select("SELECT * FROM content")
+	rows, err := c.sql.Select("SELECT id, contentType, text, parameters, status FROM content WHERE status=?", models.ACTIVE)
 	if err != nil {
-		 return nil, err
+		return nil, err
 	}
 
 	content, err := models.ContentFromSql(rows)
@@ -52,8 +52,8 @@ func (c *Content) Insert(content *models.Content) error {
 		content.Id,
 		content.Type,
 		content.Text,
-		strings.Join(content.Params,","),
-		true)
+		strings.Join(content.Params, ","),
+		models.ACTIVE)
 	if err != nil {
 		return err
 	}
@@ -66,14 +66,14 @@ func (c *Content) Update(content *models.Content) error {
 	err := c.sql.Modify("UPDATE content SET contentType=?,text=?,parameters=?,status=? WHERE id=?",
 		content.Type,
 		content.Text,
-		strings.Join(content.Params,","),
+		strings.Join(content.Params, ","),
 		content.Status,
 		content.Id,
 	)
 	return err
 }
 
-func (c* Content) SetStatus(id string, status bool) error {
+func (c *Content) SetStatus(id string, status models.ContentStatus) error {
 	err := c.sql.Modify("UPDATE content SET status=? WHERE id=?", status, id)
 	return err
 }

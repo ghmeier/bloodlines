@@ -3,12 +3,12 @@ package handlers
 import (
 	"gopkg.in/gin-gonic/gin.v1"
 
-	"github.com/ghmeier/bloodlines/models"
 	"github.com/ghmeier/bloodlines/gateways"
 	"github.com/ghmeier/bloodlines/helpers"
+	"github.com/ghmeier/bloodlines/models"
 )
 
-type ReceiptIfc interface {
+type ReceiptI interface {
 	Send(ctx *gin.Context)
 	ViewAll(ctx *gin.Context)
 	View(ctx *gin.Context)
@@ -18,7 +18,7 @@ type Receipt struct {
 	helper *helpers.Receipt
 }
 
-func NewReceipt(sql *gateways.Sql) ReceiptIfc {
+func NewReceipt(sql gateways.Sql) *Receipt {
 	return &Receipt{helper: helpers.NewReceipt(sql)}
 }
 
@@ -65,5 +65,5 @@ func (r *Receipt) View(ctx *gin.Context) {
 		ctx.JSON(500, errResponse(err.Error()))
 	}
 
-	ctx.JSON(200, gin.H{"data":receipt})
+	ctx.JSON(200, gin.H{"data": receipt})
 }

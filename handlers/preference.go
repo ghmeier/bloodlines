@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"gopkg.in/gin-gonic/gin.v1"
 	"github.com/pborman/uuid"
+	"gopkg.in/gin-gonic/gin.v1"
 
+	"github.com/ghmeier/bloodlines/gateways"
 	"github.com/ghmeier/bloodlines/helpers"
 	"github.com/ghmeier/bloodlines/models"
-	"github.com/ghmeier/bloodlines/gateways"
 )
 
 type PreferenceI interface {
@@ -20,7 +20,7 @@ type Preference struct {
 	helper *helpers.Preference
 }
 
-func NewPreference(sql *gateways.Sql) *Preference {
+func NewPreference(sql gateways.Sql) *Preference {
 	return &Preference{helper: helpers.NewPreference(sql)}
 }
 
@@ -39,7 +39,7 @@ func (p *Preference) New(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data":preference})
+	ctx.JSON(200, gin.H{"data": preference})
 }
 
 func (p *Preference) View(ctx *gin.Context) {
@@ -90,7 +90,7 @@ func (p *Preference) Deactivate(ctx *gin.Context) {
 
 	preference := &models.Preference{
 		UserId: uuid.Parse(id),
-		Email: models.UNSUBSCRIBED,
+		Email:  models.UNSUBSCRIBED,
 	}
 	err := p.helper.Update(preference)
 	if err != nil {

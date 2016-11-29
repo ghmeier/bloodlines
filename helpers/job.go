@@ -5,20 +5,20 @@ import (
 
 	"github.com/pborman/uuid"
 
-	"github.com/ghmeier/bloodlines/models"
 	"github.com/ghmeier/bloodlines/gateways"
+	"github.com/ghmeier/bloodlines/models"
 )
 
-type Job struct{
+type Job struct {
 	*baseHelper
 }
 
-func NewJob(sql *gateways.Sql) *Job {
+func NewJob(sql gateways.Sql) *Job {
 	return &Job{baseHelper: &baseHelper{sql: sql}}
 }
 
 func (j *Job) Insert(job *models.Job) error {
-	ids := make([]string,0)
+	ids := make([]string, 0)
 	for _, id := range job.Receipts {
 		ids = append(ids, id.String())
 	}
@@ -26,7 +26,7 @@ func (j *Job) Insert(job *models.Job) error {
 		job.Id,
 		job.SendTime,
 		job.SendStatus,
-		strings.Join(ids,","),
+		strings.Join(ids, ","),
 	)
 	return err
 }
@@ -34,7 +34,7 @@ func (j *Job) Insert(job *models.Job) error {
 func (j *Job) GetAll() ([]*models.Job, error) {
 	rows, err := j.sql.Select("SELECT id, sendTime, sendStatus, receipts from job")
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	jobs, err := models.JobFromSql(rows)

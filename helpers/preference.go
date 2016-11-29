@@ -1,6 +1,6 @@
 package helpers
 
-import(
+import (
 	"github.com/ghmeier/bloodlines/gateways"
 	"github.com/ghmeier/bloodlines/models"
 )
@@ -9,7 +9,7 @@ type Preference struct {
 	*baseHelper
 }
 
-func NewPreference(sql *gateways.Sql) *Preference {
+func NewPreference(sql gateways.Sql) *Preference {
 	return &Preference{baseHelper: &baseHelper{sql: sql}}
 }
 

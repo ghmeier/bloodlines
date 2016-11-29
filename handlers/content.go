@@ -1,16 +1,15 @@
 package handlers
 
-import(
-	"gopkg.in/gin-gonic/gin.v1"
+import (
 	"github.com/pborman/uuid"
+	"gopkg.in/gin-gonic/gin.v1"
 
 	"github.com/ghmeier/bloodlines/gateways"
 	"github.com/ghmeier/bloodlines/helpers"
 	"github.com/ghmeier/bloodlines/models"
-
 )
 
-type ContentIfc interface {
+type ContentI interface {
 	New(ctx *gin.Context)
 	ViewAll(ctx *gin.Context)
 	View(ctx *gin.Context)
@@ -22,7 +21,7 @@ type Content struct {
 	helper *helpers.Content
 }
 
-func NewContent(sql *gateways.Sql) ContentIfc {
+func NewContent(sql gateways.Sql) *Content {
 	return &Content{helper: helpers.NewContent(sql)}
 }
 
@@ -36,13 +35,13 @@ func (c *Content) New(ctx *gin.Context) {
 	}
 
 	content := models.NewContent("EMAIL", json.Text, json.Params)
-	err  = c.helper.Insert(content)
+	err = c.helper.Insert(content)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data":content})
+	ctx.JSON(200, gin.H{"data": content})
 }
 
 func (c *Content) ViewAll(ctx *gin.Context) {
@@ -91,7 +90,7 @@ func (c *Content) Update(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data":json})
+	ctx.JSON(200, gin.H{"data": json})
 }
 
 func (c *Content) Deactivate(ctx *gin.Context) {
@@ -100,7 +99,7 @@ func (c *Content) Deactivate(ctx *gin.Context) {
 		ctx.JSON(400, errResponse("contentId is a required parameter"))
 	}
 
-	err := c.helper.SetStatus(id, false)
+	err := c.helper.SetStatus(id, models.INACTIVE)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
@@ -108,4 +107,3 @@ func (c *Content) Deactivate(ctx *gin.Context) {
 
 	ctx.JSON(200, empty())
 }
-
