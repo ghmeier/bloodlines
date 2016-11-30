@@ -7,17 +7,19 @@ import (
 	"github.com/pborman/uuid"
 )
 
+/*Content is the representation of content entries in bloodlines*/
 type Content struct {
-	Id     uuid.UUID     `json:"id"`
+	ID     uuid.UUID     `json:"id"`
 	Type   ContentType   `json:"contentType"`
 	Text   string        `json:"text"`
 	Params []string      `json:"parameters"`
 	Status ContentStatus `json:"status"`
 }
 
+/*NewContent constructs and returns a new content entity with a new uuid*/
 func NewContent(contentType ContentType, text string, params []string) *Content {
 	return &Content{
-		Id:     uuid.NewUUID(),
+		ID:     uuid.NewUUID(),
 		Type:   contentType,
 		Text:   text,
 		Params: params,
@@ -25,26 +27,27 @@ func NewContent(contentType ContentType, text string, params []string) *Content 
 	}
 }
 
-func ContentFromSql(rows *sql.Rows) ([]*Content, error) {
+/*ContentFromSQL returns a new content slice from a group of sql rows*/
+func ContentFromSQL(rows *sql.Rows) ([]*Content, error) {
 	content := make([]*Content, 0)
 	defer rows.Close()
 
 	for rows.Next() {
 		c := &Content{}
 		var paramList, cType, cStatus string
-		rows.Scan(&c.Id, &cType, &c.Text, &paramList, &cStatus)
+		rows.Scan(&c.ID, &cType, &c.Text, &paramList, &cStatus)
 
 		c.Params = toList(paramList)
 
 		var ok bool
 		c.Type, ok = toContentType(cType)
 		if !ok {
-			return nil, errors.New("Invalid contentType string.")
+			return nil, errors.New("invalid contentType string")
 		}
 
 		c.Status, ok = toContentStatus(cStatus)
 		if !ok {
-			return nil, errors.New("Invalid contentStatus string.")
+			return nil, errors.New("invalid contentStatus string")
 		}
 
 		content = append(content, c)
@@ -73,14 +76,18 @@ func toContentStatus(s string) (ContentStatus, bool) {
 	}
 }
 
+/*ContentType is an enum wrapper for valid content type*/
 type ContentType string
 
+/*valid ContentTypes*/
 const (
 	EMAIL = "EMAIL"
 )
 
+/*ContentStatus is an enum wrapper for valid ContentStatus strings*/
 type ContentStatus string
 
+/*valid ContentStatuses*/
 const (
 	ACTIVE   = "ACTIVE"
 	INACTIVE = "INACTIVE"

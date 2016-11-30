@@ -8,20 +8,24 @@ import (
 	"github.com/ghmeier/bloodlines/models"
 )
 
+/*ReceiptI describes the Receipt interface interactions */
 type ReceiptI interface {
 	Send(ctx *gin.Context)
 	ViewAll(ctx *gin.Context)
 	View(ctx *gin.Context)
 }
 
+/*Receipt implements ReceiptI for the receipt router*/
 type Receipt struct {
 	helper *helpers.Receipt
 }
 
-func NewReceipt(sql gateways.Sql) *Receipt {
+/*NewReceipt constructs and returns a new receipt handler*/
+func NewReceipt(sql gateways.SQL) *Receipt {
 	return &Receipt{helper: helpers.NewReceipt(sql)}
 }
 
+/*Send creates a message based on the receipt provided*/
 func (r *Receipt) Send(ctx *gin.Context) {
 	var json models.Receipt
 	err := ctx.BindJSON(&json)
@@ -30,7 +34,7 @@ func (r *Receipt) Send(ctx *gin.Context) {
 		return
 	}
 
-	receipt := models.NewReceipt(json.Values, json.ContentId)
+	receipt := models.NewReceipt(json.Values, json.ContentID)
 
 	err = r.helper.Insert(receipt)
 	if err != nil {
@@ -43,6 +47,7 @@ func (r *Receipt) Send(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"Data": receipt})
 }
 
+/*ViewAll returns a list of Receipt entities starting at offset up to limit*/
 func (r *Receipt) ViewAll(ctx *gin.Context) {
 	offset, limit := getPaging(ctx)
 	receipts, err := r.helper.GetReceipts(offset, limit)
@@ -54,6 +59,7 @@ func (r *Receipt) ViewAll(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"data": receipts})
 }
 
+/*View returns the receipt with the given id*/
 func (r *Receipt) View(ctx *gin.Context) {
 	id := ctx.Param("receiptId")
 	if id == "" {
@@ -61,7 +67,7 @@ func (r *Receipt) View(ctx *gin.Context) {
 		return
 	}
 
-	receipt, err := r.helper.GetReceiptById(id)
+	receipt, err := r.helper.GetReceiptByID(id)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 	}

@@ -5,30 +5,34 @@ import (
 	"github.com/ghmeier/bloodlines/models"
 )
 
+/*Preference is the helper for preference entities*/
 type Preference struct {
 	*baseHelper
 }
 
-func NewPreference(sql gateways.Sql) *Preference {
+/*NewPreference constructs and returns a Preference helper*/
+func NewPreference(sql gateways.SQL) *Preference {
 	return &Preference{baseHelper: &baseHelper{sql: sql}}
 }
 
+/*Insert adds a pereference entity to the database*/
 func (p *Preference) Insert(preference *models.Preference) error {
 	err := p.sql.Modify("INSERT INTO preference (id, userId, email) VALUES (?, ?, ?)",
-		preference.Id,
-		preference.UserId,
+		preference.ID,
+		preference.UserID,
 		preference.Email,
 	)
 	return err
 }
 
-func (p *Preference) GetAll() ([]*models.Preference, error) {
-	rows, err := p.sql.Select("SELECT id, userId, email FROM preference")
+/*GetAll returns a list of <limit> preferences starting from <offset>*/
+func (p *Preference) GetAll(offset int, limit int) ([]*models.Preference, error) {
+	rows, err := p.sql.Select("SELECT id, userId, email FROM preference ORDER BY id ASC LIMIT ?,?", offset, limit)
 	if err != nil {
 		return nil, err
 	}
 
-	preferences, err := models.PreferencesFromSql(rows)
+	preferences, err := models.PreferencesFromSQL(rows)
 	if err != nil {
 		return nil, err
 	}
@@ -36,13 +40,14 @@ func (p *Preference) GetAll() ([]*models.Preference, error) {
 	return preferences, nil
 }
 
-func (p *Preference) GetPreferenceByUserId(id string) (*models.Preference, error) {
+/*GetPreferenceByUserID returns a preference associated with the given user id*/
+func (p *Preference) GetPreferenceByUserID(id string) (*models.Preference, error) {
 	rows, err := p.sql.Select("SELECT id, userId, email from preference where userId=?", id)
 	if err != nil {
 		return nil, err
 	}
 
-	preferences, err := models.PreferencesFromSql(rows)
+	preferences, err := models.PreferencesFromSQL(rows)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +55,8 @@ func (p *Preference) GetPreferenceByUserId(id string) (*models.Preference, error
 	return preferences[0], nil
 }
 
+/*Update sets the preference entry to the given values*/
 func (p *Preference) Update(preference *models.Preference) error {
-	err := p.sql.Modify("UPDATE preference SET email=? WHERE userId=?", preference.Email, preference.Id)
+	err := p.sql.Modify("UPDATE preference SET email=? WHERE userId=?", preference.Email, preference.ID)
 	return err
 }

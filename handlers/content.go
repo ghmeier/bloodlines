@@ -9,6 +9,7 @@ import (
 	"github.com/ghmeier/bloodlines/models"
 )
 
+/*ContentI has the methods for a content handler*/
 type ContentI interface {
 	New(ctx *gin.Context)
 	ViewAll(ctx *gin.Context)
@@ -17,14 +18,17 @@ type ContentI interface {
 	Deactivate(ctx *gin.Context)
 }
 
+/*Content is the handler for all content api calls*/
 type Content struct {
 	helper *helpers.Content
 }
 
-func NewContent(sql gateways.Sql) *Content {
+/*NewContent returns a content handler*/
+func NewContent(sql gateways.SQL) *Content {
 	return &Content{helper: helpers.NewContent(sql)}
 }
 
+/*New adds the given content entry to the database*/
 func (c *Content) New(ctx *gin.Context) {
 	var json models.Content
 	err := ctx.BindJSON(&json)
@@ -44,6 +48,8 @@ func (c *Content) New(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"data": content})
 }
 
+/*ViewAll returns a list of content with limit and offset
+  determining the entries and amount (default 0,20)*/
 func (c *Content) ViewAll(ctx *gin.Context) {
 	offset, limit := getPaging(ctx)
 	content, err := c.helper.GetAll(offset, limit)
@@ -55,6 +61,7 @@ func (c *Content) ViewAll(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"data": content})
 }
 
+/*View returns a content described by the given id*/
 func (c *Content) View(ctx *gin.Context) {
 	id := ctx.Param("contentId")
 	if id == "" {
@@ -62,7 +69,7 @@ func (c *Content) View(ctx *gin.Context) {
 		return
 	}
 
-	content, err := c.helper.GetById(id)
+	content, err := c.helper.GetByID(id)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
@@ -71,6 +78,7 @@ func (c *Content) View(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"data": content})
 }
 
+/*Update overwrites content data for the content with the given id*/
 func (c *Content) Update(ctx *gin.Context) {
 	id := ctx.Param("contentId")
 	if id == "" {
@@ -79,7 +87,7 @@ func (c *Content) Update(ctx *gin.Context) {
 
 	var json models.Content
 	err := ctx.BindJSON(&json)
-	json.Id = uuid.Parse(id)
+	json.ID = uuid.Parse(id)
 	if err != nil {
 		ctx.JSON(400, errResponse(err.Error()))
 		return
@@ -94,6 +102,7 @@ func (c *Content) Update(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"data": json})
 }
 
+/*Deactivate sets a content's status to INACTIVE*/
 func (c *Content) Deactivate(ctx *gin.Context) {
 	id := ctx.Param("contentId")
 	if id == "" {

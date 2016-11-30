@@ -7,32 +7,35 @@ import (
 	"github.com/pborman/uuid"
 )
 
+/*Preference entity data*/
 type Preference struct {
-	Id     uuid.UUID       `json:"id"`
-	UserId uuid.UUID       `json:"userId"`
+	ID     uuid.UUID       `json:"id"`
+	UserID uuid.UUID       `json:"userId"`
 	Email  PreferenceState `json:"email"`
 }
 
-func NewPreference(userId uuid.UUID) *Preference {
+/*NewPreference contstructs and returns a new preference entity with it's id*/
+func NewPreference(userID uuid.UUID) *Preference {
 	return &Preference{
-		Id:     uuid.NewUUID(),
-		UserId: userId,
+		ID:     uuid.NewUUID(),
+		UserID: userID,
 		Email:  SUBSCRIBED,
 	}
 }
 
-func PreferencesFromSql(rows *sql.Rows) ([]*Preference, error) {
+/*PreferencesFromSQL returns a preference splice from sql rows*/
+func PreferencesFromSQL(rows *sql.Rows) ([]*Preference, error) {
 	preferences := make([]*Preference, 0)
 
 	for rows.Next() {
 		p := &Preference{}
 		var email string
-		rows.Scan(&p.Id, &p.UserId, &email)
+		rows.Scan(&p.ID, &p.UserID, &email)
 
 		var ok bool
 		p.Email, ok = toPreferenceState(email)
 		if !ok {
-			return nil, errors.New("Invalid Email Preference")
+			return nil, errors.New("invalid email preference")
 		}
 		preferences = append(preferences, p)
 	}
@@ -53,8 +56,10 @@ func toPreferenceState(s string) (PreferenceState, bool) {
 	}
 }
 
+/*PreferenceState wraps valid preference state strings*/
 type PreferenceState string
 
+/*valid preference states*/
 const (
 	SUBSCRIBED   = "SUBSCRIBED"
 	UNSUBSCRIBED = "UNSUBSCRIBED"

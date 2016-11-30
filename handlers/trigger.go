@@ -8,6 +8,7 @@ import (
 	"github.com/ghmeier/bloodlines/models"
 )
 
+/*TriggerI describes the methods for a Trigger handler*/
 type TriggerI interface {
 	New(ctx *gin.Context)
 	ViewAll(ctx *gin.Context)
@@ -17,14 +18,17 @@ type TriggerI interface {
 	Activate(ctx *gin.Context)
 }
 
+/*Trigger implements TriggerI and uses a trigger helper*/
 type Trigger struct {
 	helper *helpers.Trigger
 }
 
-func NewTrigger(sql gateways.Sql) *Trigger {
+/*NewTrigger constructs and returns reference to a Trigger handler*/
+func NewTrigger(sql gateways.SQL) *Trigger {
 	return &Trigger{helper: helpers.NewTrigger(sql)}
 }
 
+/*New creates a new trigger entity based on the given data */
 func (t *Trigger) New(ctx *gin.Context) {
 	var json models.Trigger
 	err := ctx.BindJSON(&json)
@@ -34,7 +38,7 @@ func (t *Trigger) New(ctx *gin.Context) {
 		return
 	}
 
-	trigger := models.NewTrigger(json.ContentId, json.Key, json.Params)
+	trigger := models.NewTrigger(json.ContentID, json.Key, json.Params)
 	err = t.helper.Insert(trigger)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
@@ -44,6 +48,7 @@ func (t *Trigger) New(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"data": trigger})
 }
 
+/*ViewAll returns a list of trigger entites based on the offset and limit (default 0, 20)*/
 func (t *Trigger) ViewAll(ctx *gin.Context) {
 	offset, limit := getPaging(ctx)
 	triggers, err := t.helper.GetAll(offset, limit)
@@ -55,6 +60,7 @@ func (t *Trigger) ViewAll(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"data": triggers})
 }
 
+/*View returns a trigger with id provided*/
 func (t *Trigger) View(ctx *gin.Context) {
 	key := ctx.Param("key")
 	if key == "" {
@@ -69,6 +75,7 @@ func (t *Trigger) View(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"data": trigger})
 }
 
+/*Update overwrites the trigger entity with new values provided*/
 func (t *Trigger) Update(ctx *gin.Context) {
 	key := ctx.Param("key")
 	if key == "" {
@@ -82,7 +89,7 @@ func (t *Trigger) Update(ctx *gin.Context) {
 		return
 	}
 
-	err = t.helper.Update(key, json.ContentId, json.Params)
+	err = t.helper.Update(key, json.ContentID, json.Params)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
@@ -92,6 +99,7 @@ func (t *Trigger) Update(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"data": json})
 }
 
+/*Remove sets a trigger to inactive*/
 func (t *Trigger) Remove(ctx *gin.Context) {
 	key := ctx.Param("key")
 	if key == "" {
@@ -107,6 +115,7 @@ func (t *Trigger) Remove(ctx *gin.Context) {
 	ctx.JSON(200, empty())
 }
 
+/*Activate starts a trigger's action*/
 func (t *Trigger) Activate(ctx *gin.Context) {
 	/* TODO: sent an email based on the trigger
 	   and posted values */

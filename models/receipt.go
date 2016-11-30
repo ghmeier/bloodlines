@@ -8,31 +8,34 @@ import (
 	"github.com/pborman/uuid"
 )
 
+/*Receipt stores data for receipts*/
 type Receipt struct {
-	Id        uuid.UUID `json:"id"`
+	ID        uuid.UUID `json:"id"`
 	Created   time.Time `json:"ts"`
 	Values    []string  `json:"vals"`
 	SendState Status    `json:"sendState"`
-	ContentId uuid.UUID `json:"contentId"`
+	ContentID uuid.UUID `json:"contentId"`
 }
 
-func NewReceipt(Values []string, ContentId uuid.UUID) *Receipt {
+/*NewReceipt creates and returns a new receipt with a new id*/
+func NewReceipt(Values []string, ContentID uuid.UUID) *Receipt {
 	return &Receipt{
-		Id:        uuid.NewUUID(),
+		ID:        uuid.NewUUID(),
 		Values:    Values,
 		SendState: READY,
 		Created:   time.Now(),
-		ContentId: ContentId,
+		ContentID: ContentID,
 	}
 }
 
-func ReceiptFromSql(rows *sql.Rows) ([]*Receipt, error) {
+/*ReceiptFromSQL returns a receipt splice from sql rows*/
+func ReceiptFromSQL(rows *sql.Rows) ([]*Receipt, error) {
 	receipts := make([]*Receipt, 0)
 
 	for rows.Next() {
 		r := &Receipt{}
 		var valueList, rState string
-		rows.Scan(&r.Id, &r.Created, &valueList, &rState, &r.ContentId)
+		rows.Scan(&r.ID, &r.Created, &valueList, &rState, &r.ContentID)
 
 		r.Values = toList(valueList)
 
@@ -63,8 +66,10 @@ func toStatus(s string) (Status, bool) {
 	}
 }
 
+/*Status wraps valid receipt status strings*/
 type Status string
 
+/*valid Statuses*/
 const ( // iota is reset to 0
 	READY   = "READY"
 	QUEUED  = "QUEUED"

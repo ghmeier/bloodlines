@@ -5,13 +5,15 @@ import (
 	"os"
 )
 
+/*Root is the base struct containing bloodlines configs */
 type Root struct {
-	Sql      MySql  `json:"mysql"`
-	Sendgrid MySql  `json:"sendgrid"`
+	SQL      MySQL  `json:"mysql"`
+	Sendgrid MySQL  `json:"sendgrid"`
 	Port     string `json:"port"`
 }
 
-type MySql struct {
+/*MySQL contains information for connecting to a MySQL instance */
+type MySQL struct {
 	Host     string `json:"host"`
 	Port     string `json:"port"`
 	User     string `json:"user"`
@@ -19,10 +21,12 @@ type MySql struct {
 	Database string `json:"database"`
 }
 
+/*Sendgrid has connection information for the sendgrid gateway */
 type Sendgrid struct {
-	ApiKey string `json:"api_key"`
+	APIKey string `json:"api_key"`
 }
 
+/*Init returns a populated Root struct from config.json */
 func Init() (*Root, error) {
 	file, _ := os.Open("config.json")
 	decoder := json.NewDecoder(file)

@@ -4,22 +4,26 @@ import (
 	"database/sql"
 	"fmt"
 
+	// this is standard practice for using the mysql driver
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/ghmeier/bloodlines/config"
 )
 
-type Sql interface {
+/*SQL describes the implimentation of any sql gateway */
+type SQL interface {
 	Modify(string, ...interface{}) error
 	Select(string, ...interface{}) (*sql.Rows, error)
 	Destroy()
 }
 
-type Mysql struct {
+/*MySQL implimends SQL with the mysql driver */
+type MySQL struct {
 	db *sql.DB
 }
 
-func NewSql(config config.MySql) (*Mysql, error) {
+/*NewSQL returns an instance of MySQL with the given connection configuration */
+func NewSQL(config config.MySQL) (*MySQL, error) {
 	db, err := sql.Open(
 		"mysql",
 		config.User+":"+config.Password+"@tcp("+config.Host+":"+string(config.Port)+")/"+config.Database,
@@ -28,10 +32,11 @@ func NewSql(config config.MySql) (*Mysql, error) {
 		return nil, err
 	}
 
-	return &Mysql{db: db}, nil
+	return &MySQL{db: db}, nil
 }
 
-func (s *Mysql) Modify(query string, values ...interface{}) error {
+/*Modify executes any query which changes the db and doesn't return result rows */
+func (s *MySQL) Modify(query string, values ...interface{}) error {
 	stmt, err := s.db.Prepare(query)
 	if err != nil {
 		fmt.Printf("ERROR: unable to prepare query %s\n", query)
@@ -49,7 +54,8 @@ func (s *Mysql) Modify(query string, values ...interface{}) error {
 	return nil
 }
 
-func (s *Mysql) Select(query string, values ...interface{}) (*sql.Rows, error) {
+/*Select gets rows from a select query*/
+func (s *MySQL) Select(query string, values ...interface{}) (*sql.Rows, error) {
 	if values == nil {
 		values = make([]interface{}, 0)
 	}
@@ -62,6 +68,7 @@ func (s *Mysql) Select(query string, values ...interface{}) (*sql.Rows, error) {
 	return rows, nil
 }
 
-func (s *Mysql) Destroy() {
+/*Destroy cleans up the MySQL instance*/
+func (s *MySQL) Destroy() {
 	s.db.Close()
 }

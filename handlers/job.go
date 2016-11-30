@@ -11,6 +11,7 @@ import (
 	"github.com/ghmeier/bloodlines/models"
 )
 
+/*JobI is the interface for job endpoints*/
 type JobI interface {
 	New(ctx *gin.Context)
 	ViewAll(ctx *gin.Context)
@@ -19,14 +20,17 @@ type JobI interface {
 	Stop(ctx *gin.Context)
 }
 
+/*Job is the implimentation with helper of JobI*/
 type Job struct {
 	helper *helpers.Job
 }
 
-func NewJob(sql gateways.Sql) *Job {
+/*NewJob constructs a new Job handler*/
+func NewJob(sql gateways.SQL) *Job {
 	return &Job{helper: helpers.NewJob(sql)}
 }
 
+/*New creates and inserts a new job entity*/
 func (j *Job) New(ctx *gin.Context) {
 	var json models.Job
 	err := ctx.BindJSON(&json)
@@ -47,6 +51,7 @@ func (j *Job) New(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"data": job})
 }
 
+/*ViewAll returns a list of jobs from offset and limit params (default 0,20)*/
 func (j *Job) ViewAll(ctx *gin.Context) {
 	offset, limit := getPaging(ctx)
 	jobs, err := j.helper.GetAll(offset, limit)
@@ -57,6 +62,7 @@ func (j *Job) ViewAll(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"data": jobs})
 }
 
+/*View returns one job with the given id*/
 func (j *Job) View(ctx *gin.Context) {
 	id := ctx.Param("jobId")
 	if id == "" {
@@ -64,7 +70,7 @@ func (j *Job) View(ctx *gin.Context) {
 		return
 	}
 
-	job, err := j.helper.GetJobById(uuid.Parse(id))
+	job, err := j.helper.GetJobByID(uuid.Parse(id))
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
@@ -72,10 +78,12 @@ func (j *Job) View(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"data": job})
 }
 
+/*Update is not implimented*/
 func (j *Job) Update(ctx *gin.Context) {
 	ctx.JSON(200, empty())
 }
 
+/*Stop sets a job's status to Failure. Only used if the job hasn't started*/
 func (j *Job) Stop(ctx *gin.Context) {
 	id := ctx.Param("jobId")
 	if id == "" {

@@ -10,6 +10,7 @@ import (
 	"github.com/ghmeier/bloodlines/handlers"
 )
 
+/*Bloodlines is the main server object which routes requests*/
 type Bloodlines struct {
 	router     *gin.Engine
 	content    handlers.ContentI
@@ -19,13 +20,15 @@ type Bloodlines struct {
 	preference handlers.PreferenceI
 }
 
+/*New returns a ready-to-run Bloodlines struct from the given config*/
 func New(config *config.Root) (*Bloodlines, error) {
-	sql, err := gateways.NewSql(config.Sql)
+	sql, err := gateways.NewSQL(config.SQL)
 	if err != nil {
 		fmt.Println("ERROR: could not connect to mysql.")
 		fmt.Println(err.Error())
 		return nil, err
 	}
+
 	b := &Bloodlines{
 		content:    handlers.NewContent(sql),
 		receipt:    handlers.NewReceipt(sql),
@@ -77,6 +80,7 @@ func New(config *config.Root) (*Bloodlines, error) {
 	return b, nil
 }
 
+/*Start begins the Bloodlines server*/
 func (b *Bloodlines) Start(port string) {
 	b.router.Run(port)
 }
