@@ -26,7 +26,7 @@ func (r *Receipt) Insert(receipt *models.Receipt) error {
 		receipt.ID,
 		receipt.Created,
 		strings.Join(receipt.Values, ","),
-		receipt.SendState,
+		string(receipt.SendState),
 		receipt.ContentID,
 	)
 	return err
@@ -63,6 +63,6 @@ func (r *Receipt) GetReceiptByID(id string) (*models.Receipt, error) {
 
 /*SetSendState updates the status of the receipt with the given id*/
 func (r *Receipt) SetSendState(id uuid.UUID, state models.Status) error {
-	err := r.sql.Modify("UPDATE receipt SET sendState=? where id=?", state, id)
+	err := r.sql.Modify("UPDATE receipt SET sendState=? where id=?", string(state), id)
 	return err
 }

@@ -1,5 +1,9 @@
-deps:
-	go get -u gopkg.in/gin-gonic/gin.v1
+test:
+	go build
+	gocov test ./... | gocov report
+
+lint:
+	go lint ./...
 
 run:
 	go build

@@ -27,6 +27,7 @@ func NewTrigger(contentID uuid.UUID, key string, params []string) *Trigger {
 /*TriggerFromSQL returns a trigger splice from sql rows*/
 func TriggerFromSQL(rows *sql.Rows) ([]*Trigger, error) {
 	trigger := make([]*Trigger, 0)
+	defer rows.Close()
 
 	for rows.Next() {
 		t := &Trigger{}

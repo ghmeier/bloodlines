@@ -19,7 +19,7 @@ type SQL interface {
 
 /*MySQL implimends SQL with the mysql driver */
 type MySQL struct {
-	db *sql.DB
+	DB *sql.DB
 }
 
 /*NewSQL returns an instance of MySQL with the given connection configuration */
@@ -32,12 +32,12 @@ func NewSQL(config config.MySQL) (*MySQL, error) {
 		return nil, err
 	}
 
-	return &MySQL{db: db}, nil
+	return &MySQL{DB: db}, nil
 }
 
 /*Modify executes any query which changes the db and doesn't return result rows */
 func (s *MySQL) Modify(query string, values ...interface{}) error {
-	stmt, err := s.db.Prepare(query)
+	stmt, err := s.DB.Prepare(query)
 	if err != nil {
 		fmt.Printf("ERROR: unable to prepare query %s\n", query)
 		return err
@@ -59,7 +59,7 @@ func (s *MySQL) Select(query string, values ...interface{}) (*sql.Rows, error) {
 	if values == nil {
 		values = make([]interface{}, 0)
 	}
-	rows, err := s.db.Query(query, values...)
+	rows, err := s.DB.Query(query, values...)
 	if err != nil {
 		fmt.Printf("ERROR: unable to run select query %s\n", query)
 		return nil, err
@@ -70,5 +70,5 @@ func (s *MySQL) Select(query string, values ...interface{}) (*sql.Rows, error) {
 
 /*Destroy cleans up the MySQL instance*/
 func (s *MySQL) Destroy() {
-	s.db.Close()
+	s.DB.Close()
 }

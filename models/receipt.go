@@ -18,13 +18,13 @@ type Receipt struct {
 }
 
 /*NewReceipt creates and returns a new receipt with a new id*/
-func NewReceipt(Values []string, ContentID uuid.UUID) *Receipt {
+func NewReceipt(values []string, contentID uuid.UUID) *Receipt {
 	return &Receipt{
 		ID:        uuid.NewUUID(),
-		Values:    Values,
+		Values:    values,
 		SendState: READY,
 		Created:   time.Now(),
-		ContentID: ContentID,
+		ContentID: contentID,
 	}
 }
 
