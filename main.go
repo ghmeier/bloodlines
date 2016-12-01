@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	config, err := config.Init()
+	config, err := config.Init("config.json")
 	if err != nil {
 		fmt.Printf("ERROR: config initialization error. %s\n", err.Error())
 		return

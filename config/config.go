@@ -27,12 +27,16 @@ type Sendgrid struct {
 }
 
 /*Init returns a populated Root struct from config.json */
-func Init() (*Root, error) {
-	file, _ := os.Open("config.json")
+func Init(filename string) (*Root, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+
 	decoder := json.NewDecoder(file)
 
 	root := &Root{}
-	err := decoder.Decode(root)
+	err = decoder.Decode(root)
 	if err != nil {
 		return nil, err
 	}

@@ -20,7 +20,7 @@ func (p *Preference) Insert(preference *models.Preference) error {
 	err := p.sql.Modify("INSERT INTO preference (id, userId, email) VALUES (?, ?, ?)",
 		preference.ID,
 		preference.UserID,
-		preference.Email,
+		string(preference.Email),
 	)
 	return err
 }
@@ -42,7 +42,7 @@ func (p *Preference) GetAll(offset int, limit int) ([]*models.Preference, error)
 
 /*GetPreferenceByUserID returns a preference associated with the given user id*/
 func (p *Preference) GetPreferenceByUserID(id string) (*models.Preference, error) {
-	rows, err := p.sql.Select("SELECT id, userId, email from preference where userId=?", id)
+	rows, err := p.sql.Select("SELECT id, userId, email FROM preference where userId=?", id)
 	if err != nil {
 		return nil, err
 	}
@@ -57,6 +57,6 @@ func (p *Preference) GetPreferenceByUserID(id string) (*models.Preference, error
 
 /*Update sets the preference entry to the given values*/
 func (p *Preference) Update(preference *models.Preference) error {
-	err := p.sql.Modify("UPDATE preference SET email=? WHERE userId=?", preference.Email, preference.ID)
+	err := p.sql.Modify("UPDATE preference SET email=? WHERE userId=?", string(preference.Email), preference.ID)
 	return err
 }

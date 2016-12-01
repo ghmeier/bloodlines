@@ -16,6 +16,10 @@ func toList(s string) []string {
 
 func toUUIDList(s string) []uuid.UUID {
 	ids := make([]uuid.UUID, 0)
+	if s == "" {
+		return ids
+	}
+
 	receipts := strings.Split(s, ",")
 	for _, receipt := range receipts {
 		ids = append(ids, uuid.Parse(receipt))

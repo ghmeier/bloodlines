@@ -70,7 +70,7 @@ func (j *Job) View(ctx *gin.Context) {
 		return
 	}
 
-	job, err := j.helper.GetJobByID(uuid.Parse(id))
+	job, err := j.helper.GetJobByID(id)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return

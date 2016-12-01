@@ -28,7 +28,7 @@ func (j *Job) Insert(job *models.Job) error {
 	err := j.sql.Modify("INSERT INTO job (id, sendTime, sendStatus, receipts) VALUES (?, ?, ?, ?)",
 		job.ID,
 		job.SendTime,
-		job.SendStatus,
+		string(job.SendStatus),
 		strings.Join(ids, ","),
 	)
 	return err
@@ -36,7 +36,7 @@ func (j *Job) Insert(job *models.Job) error {
 
 /*GetAll returns <limit> job entities starting at <offset>*/
 func (j *Job) GetAll(offset int, limit int) ([]*models.Job, error) {
-	rows, err := j.sql.Select("SELECT id, sendTime, sendStatus, receipts from job ORDER BY id ASC LIMIT ?,?", offset, limit)
+	rows, err := j.sql.Select("SELECT id, sendTime, sendStatus, receipts FROM job ORDER BY id ASC LIMIT ?,?", offset, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -50,11 +50,12 @@ func (j *Job) GetAll(offset int, limit int) ([]*models.Job, error) {
 }
 
 /*GetJobByID returns one job with the give id, nil otherwise*/
-func (j *Job) GetJobByID(id uuid.UUID) (*models.Job, error) {
+func (j *Job) GetJobByID(id string) (*models.Job, error) {
 	rows, err := j.sql.Select("SELECT id, sendTime, sendStatus, receipts FROM job WHERE id=?", id)
 	if err != nil {
 		return nil, err
 	}
+
 	jobs, err := models.JobFromSQL(rows)
 	if err != nil {
 		return nil, err
@@ -65,6 +66,6 @@ func (j *Job) GetJobByID(id uuid.UUID) (*models.Job, error) {
 
 /*SetSendStatus updates the status of the job with the provided id*/
 func (j *Job) SetSendStatus(id uuid.UUID, state models.Status) error {
-	err := j.sql.Modify("UPDATE receipt SET sendStatus=? where id=?", state, id)
+	err := j.sql.Modify("UPDATE job SET sendStatus=? where id=?", string(state), id)
 	return err
 }
