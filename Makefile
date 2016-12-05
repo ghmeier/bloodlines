@@ -11,4 +11,5 @@ run:
 
 get-deps:
 	godep restore
-	go get github.com/axw/gocov
+	go get github.com/axw/gocov/gocov
+	go get github.com/stretchr/testify
