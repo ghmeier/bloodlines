@@ -3,4 +3,6 @@ language: go
 go:
   - 1.6
 
-# install: make get-deps
+install:
+  - go get github.com/tools/godep
+  - godep restoreinstall: make get-deps
