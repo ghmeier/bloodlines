@@ -1,5 +1,5 @@
 # bloodlines
-![Build Status](https://travis-ci.org/ghmeier/bloodlines.svg?branch=master)
+[![Build Status](https://travis-ci.org/ghmeier/bloodlines.svg?branch=master)](https://travis-ci.org/ghmeier/bloodlines)
 
 A go service for sending Expresso emails
 
