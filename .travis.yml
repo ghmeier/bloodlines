@@ -12,4 +12,4 @@ install:
   - godep restore
 
 script:
-  - goveralls -service=travis-ci
+  - goveralls -ignore=mocks/SQL.go -service=travis-ci
