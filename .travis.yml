@@ -5,4 +5,4 @@ go:
 
 install:
   - go get github.com/tools/godep
-  - godep restoreinstall: make get-deps
+  - godep restore
