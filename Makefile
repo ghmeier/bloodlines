@@ -10,5 +10,5 @@ run:
 	./bloodlines
 
 get-deps:
-	godeps restore
+	godep restore
 	go get github.com/axw/gocov
