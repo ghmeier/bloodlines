@@ -11,3 +11,4 @@ run:
 
 get-deps:
 	godeps restore
+	go get github.com/axw/gocov
