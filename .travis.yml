@@ -7,7 +7,8 @@ install:
   - go get github.com/tools/godep
   - go get github.com/stretchr/testify
   - godep restore
-  - go get github.com/axw/gocov/gocov
+  - go get github.com/mattn/goveralls
+  # - go get github.com/axw/gocov/gocov
 
 script:
   - go test -v -covermode=count -coverprofile=coverage.out
