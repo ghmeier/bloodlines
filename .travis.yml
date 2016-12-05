@@ -8,3 +8,10 @@ install:
   - go get github.com/stretchr/testify
   - godep restore
   - go get github.com/axw/gocov/gocov
+
+script:
+  - go test -v -covermode=count -coverprofile=coverage.out
+  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+
+service_name: travis-pro
+repo_token: TsYJp1FRVur3StuxW8C6HXRApWgL5NJeQ
