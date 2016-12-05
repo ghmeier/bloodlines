@@ -8,3 +8,6 @@ lint:
 run:
 	go build
 	./bloodlines
+
+get-deps:
+	godeps restore
