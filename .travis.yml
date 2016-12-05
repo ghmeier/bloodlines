@@ -3,4 +3,4 @@ language: go
 go:
   - 1.6
 
-install: make get-deps
+# install: make get-deps
