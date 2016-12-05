@@ -4,25 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/ghmeier/bloodlines/config"
-
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 )
-
-func TestSQLNewFail(t *testing.T) {
-	assert := assert.New(t)
-
-	_, err := NewSQL(config.MySQL{
-		Host:     "1.1.1.1",
-		Port:     "1111",
-		User:     "test",
-		Password: "test",
-		Database: "test",
-	})
-
-	assert.NoError(err)
-}
 
 func TestSQLModifySuccess(t *testing.T) {
 	assert := assert.New(t)

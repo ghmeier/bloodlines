@@ -28,11 +28,8 @@ func NewSQL(config config.MySQL) (*MySQL, error) {
 		"mysql",
 		config.User+":"+config.Password+"@tcp("+config.Host+":"+string(config.Port)+")/"+config.Database,
 	)
-	if err != nil {
-		return nil, err
-	}
 
-	return &MySQL{DB: db}, nil
+	return &MySQL{DB: db}, err
 }
 
 /*Modify executes any query which changes the db and doesn't return result rows */

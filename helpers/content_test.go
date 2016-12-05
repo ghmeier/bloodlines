@@ -69,6 +69,23 @@ func TestGetByIDMapFail(t *testing.T) {
 	assert.Error(err)
 }
 
+func TestGetByIDMapStatusFail(t *testing.T) {
+	assert := assert.New(t)
+
+	id := uuid.NewUUID()
+	s, mock, _ := sqlmock.New()
+	c := getMockContent(s)
+
+	mock.ExpectQuery("SELECT id, contentType, text, parameters, status FROM content").
+		WithArgs(id.String()).
+		WillReturnRows(getMockRows().AddRow(id.String(), "ACTIVE", "HelloWorld", "", "INVALID"))
+
+	_, err := c.GetByID(id.String())
+
+	assert.Equal(mock.ExpectationsWereMet(), nil)
+	assert.Error(err)
+}
+
 func TestGetAllSuccess(t *testing.T) {
 	assert := assert.New(t)
 
@@ -79,7 +96,7 @@ func TestGetAllSuccess(t *testing.T) {
 	mock.ExpectQuery("SELECT id, contentType, text, parameters, status FROM content").
 		WithArgs(models.ACTIVE, offset, limit).
 		WillReturnRows(getMockRows().
-			AddRow(uuid.New(), "EMAIL", "HelloWorld", "", "ACTIVE").
+			AddRow(uuid.New(), "EMAIL", "HelloWorld", "", "INACTIVE").
 			AddRow(uuid.New(), "EMAIL", "HelloWorld", "", "ACTIVE"))
 
 	contents, err := c.GetAll(offset, limit)
