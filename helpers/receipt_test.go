@@ -52,6 +52,23 @@ func TestReceiptGetByIDQueryFail(t *testing.T) {
 	assert.Error(err)
 }
 
+func TestReceiptGetByIDMapValueFail(t *testing.T) {
+	assert := assert.New(t)
+
+	receipt := getDefaultReceipt()
+	s, mock, _ := sqlmock.New()
+	c := getMockReceipt(s)
+
+	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId FROM receipt").
+		WithArgs(receipt.ID.String()).
+		WillReturnRows(getReceiptRows().AddRow(receipt.ID.String(), receipt.Created, "", "INVALID", receipt.ContentID.String()))
+
+	_, err := c.GetReceiptByID(receipt.ID.String())
+
+	assert.Equal(mock.ExpectationsWereMet(), nil)
+	assert.Error(err)
+}
+
 func TestReceiptGetByIDMapFail(t *testing.T) {
 	assert := assert.New(t)
 

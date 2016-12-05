@@ -15,7 +15,7 @@ func toList(s string) []string {
 }
 
 func toMap(s []string) map[string]string {
-	var m map[string]string
+	m := make(map[string]string)
 	for _, v := range s {
 		kv := strings.Split(v, ":")
 		m[kv[0]] = kv[1]
