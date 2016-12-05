@@ -3,6 +3,8 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/pborman/uuid"
 )
@@ -54,6 +56,19 @@ func ContentFromSQL(rows *sql.Rows) ([]*Content, error) {
 	}
 
 	return content, nil
+}
+
+func (c *Content) ResolveText(values map[string]string) (string, error) {
+	t := c.Text
+
+	for _, v := range c.Params {
+		if values[v] == "" {
+			return "", fmt.Errorf("no value for %s", v)
+		}
+		t = strings.Replace(t, "$"+v+"$", values[v], -1)
+	}
+
+	return t, nil
 }
 
 func toContentType(s string) (ContentType, bool) {

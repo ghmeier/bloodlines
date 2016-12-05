@@ -22,7 +22,7 @@ func TestReceiptGetByIDSuccess(t *testing.T) {
 
 	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId FROM receipt").
 		WithArgs(receipt.ID.String()).
-		WillReturnRows(getReceiptRows().AddRow(receipt.ID.String(), receipt.Created, "", string(receipt.SendState), receipt.ContentID.String()))
+		WillReturnRows(getReceiptRows().AddRow(receipt.ID.String(), receipt.Created, "{}", string(receipt.SendState), receipt.ContentID.String()))
 
 	res, err := c.GetReceiptByID(receipt.ID.String())
 
@@ -61,7 +61,7 @@ func TestReceiptGetByIDMapFail(t *testing.T) {
 
 	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId FROM receipt").
 		WithArgs(receipt.ID.String()).
-		WillReturnRows(getReceiptRows().AddRow(receipt.ID.String(), receipt.Created, "", "INVALID", receipt.ContentID.String()))
+		WillReturnRows(getReceiptRows().AddRow(receipt.ID.String(), receipt.Created, "{}", "INVALID", receipt.ContentID.String()))
 
 	_, err := c.GetReceiptByID(receipt.ID.String())
 
@@ -80,8 +80,8 @@ func TestReceiptGetReceiptsSuccess(t *testing.T) {
 	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId FROM receipt").
 		WithArgs(offset, limit).
 		WillReturnRows(getReceiptRows().
-			AddRow(receipt.ID.String(), receipt.Created, "", string(receipt.SendState), receipt.ContentID.String()).
-			AddRow(receipt.ID.String(), receipt.Created, "", string(receipt.SendState), receipt.ContentID.String()))
+			AddRow(receipt.ID.String(), receipt.Created, "{}", string(receipt.SendState), receipt.ContentID.String()).
+			AddRow(receipt.ID.String(), receipt.Created, "{}", string(receipt.SendState), receipt.ContentID.String()))
 
 	res, err := c.GetReceipts(offset, limit)
 
@@ -118,7 +118,7 @@ func TestReceiptGetReceiptsMapFail(t *testing.T) {
 	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId FROM receipt").
 		WithArgs(offset, limit).
 		WillReturnRows(getReceiptRows().
-			AddRow(receipt.ID.String(), receipt.Created, "", "INVALID", receipt.ContentID.String()))
+			AddRow(receipt.ID.String(), receipt.Created, "{}", "INVALID", receipt.ContentID.String()))
 
 	_, err := c.GetReceipts(offset, limit)
 
@@ -135,7 +135,7 @@ func TestReceiptInsertSuccess(t *testing.T) {
 
 	mock.ExpectPrepare("INSERT INTO receipt").
 		ExpectExec().
-		WithArgs(receipt.ID, receipt.Created, "", string(receipt.SendState), receipt.ContentID).
+		WithArgs(receipt.ID, receipt.Created, "{}", string(receipt.SendState), receipt.ContentID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	err := c.Insert(receipt)
@@ -153,7 +153,7 @@ func TestReceiptInsertFail(t *testing.T) {
 
 	mock.ExpectPrepare("INSERT INTO receipt").
 		ExpectExec().
-		WithArgs(receipt.ID, receipt.Created, "", string(receipt.SendState), receipt.ContentID).
+		WithArgs(receipt.ID, receipt.Created, "{}", string(receipt.SendState), receipt.ContentID).
 		WillReturnError(fmt.Errorf("some error"))
 
 	err := c.Insert(receipt)
@@ -199,7 +199,7 @@ func TestReceiptSetSendStateFail(t *testing.T) {
 }
 
 func getDefaultReceipt() *models.Receipt {
-	return models.NewReceipt(make([]string, 0), uuid.NewUUID())
+	return models.NewReceipt(make(map[string]string), uuid.NewUUID())
 }
 
 func getReceiptRows() sqlmock.Rows {

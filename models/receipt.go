@@ -2,7 +2,9 @@ package models
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/pborman/uuid"
@@ -10,15 +12,15 @@ import (
 
 /*Receipt stores data for receipts*/
 type Receipt struct {
-	ID        uuid.UUID `json:"id"`
-	Created   time.Time `json:"ts"`
-	Values    []string  `json:"vals"`
-	SendState Status    `json:"sendState"`
-	ContentID uuid.UUID `json:"contentId"`
+	ID        uuid.UUID         `json:"id"`
+	Created   time.Time         `json:"ts"`
+	Values    map[string]string `json:"values"`
+	SendState Status            `json:"sendState"`
+	ContentID uuid.UUID         `json:"contentId"`
 }
 
 /*NewReceipt creates and returns a new receipt with a new id*/
-func NewReceipt(values []string, contentID uuid.UUID) *Receipt {
+func NewReceipt(values map[string]string, contentID uuid.UUID) *Receipt {
 	return &Receipt{
 		ID:        uuid.NewUUID(),
 		Values:    values,
@@ -26,6 +28,11 @@ func NewReceipt(values []string, contentID uuid.UUID) *Receipt {
 		Created:   time.Now(),
 		ContentID: contentID,
 	}
+}
+
+func (r *Receipt) SerializeValues() string {
+	s, _ := json.Marshal(r.Values)
+	return string(s)
 }
 
 /*ReceiptFromSQL returns a receipt splice from sql rows*/
@@ -37,12 +44,16 @@ func ReceiptFromSQL(rows *sql.Rows) ([]*Receipt, error) {
 		var valueList, rState string
 		rows.Scan(&r.ID, &r.Created, &valueList, &rState, &r.ContentID)
 
-		r.Values = toList(valueList)
+		err := json.Unmarshal([]byte(valueList), &r.Values)
+		fmt.Printf("%s\n", valueList)
+		if err != nil {
+			return nil, errors.New("invalid value list")
+		}
 
 		var ok bool
 		r.SendState, ok = toStatus(rState)
 		if !ok {
-			return nil, errors.New("Invalid Send State")
+			return nil, errors.New("invalid send state")
 		}
 
 		receipts = append(receipts, r)

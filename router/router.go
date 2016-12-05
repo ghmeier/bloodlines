@@ -67,7 +67,7 @@ func New(config *config.Root) (*Bloodlines, error) {
 		trigger.GET("/:triggerKey", b.trigger.View)
 		trigger.PUT("/:triggerKey", b.trigger.Update)
 		trigger.DELETE("/:triggerKey", b.trigger.Remove)
-		trigger.POST("/:triggerKey/activate")
+		trigger.POST("/:triggerKey/activate", b.trigger.Activate)
 	}
 	pref := b.router.Group("/api/preference")
 	{

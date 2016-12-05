@@ -1,8 +1,6 @@
 package helpers
 
 import (
-	"strings"
-
 	"github.com/pborman/uuid"
 
 	"github.com/ghmeier/bloodlines/gateways"
@@ -25,7 +23,7 @@ func (r *Receipt) Insert(receipt *models.Receipt) error {
 		"INSERT INTO receipt (id, ts, vals, sendState, contentId) VALUES (?, ?, ?, ?, ?)",
 		receipt.ID,
 		receipt.Created,
-		strings.Join(receipt.Values, ","),
+		receipt.SerializeValues(),
 		string(receipt.SendState),
 		receipt.ContentID,
 	)
