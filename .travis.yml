@@ -12,4 +12,4 @@ install:
   - godep restore
 
 script:
-  - goveralls -package=./... -service=travis-ci
+  - travis_retry goveralls -coverprofile=cover.out -service=travis-ci
