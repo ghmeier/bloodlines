@@ -15,13 +15,3 @@ get-deps:
 	go get github.com/mattn/goveralls
 	go get github.com/axw/gocov/gocov
 	go get github.com/stretchr/testify
-
-.PHONY: test-cover-html
-PACKAGES = $(cat testpackages.txt)
-
-test-cover-html:
-	echo "mode: count" > coverage-all.out
-	$(foreach pkg,$(PACKAGES),\
-		go test -coverprofile=coverage.out -covermode=count $(pkg);\
-		tail -n +2 coverage.out >> coverage-all.out;)
-	go tool cover -html=coverage-all.out
