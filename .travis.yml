@@ -14,4 +14,4 @@ install:
 
 script:
   - ./gosweep.sh
-  - travis_retry goveralls -coverprofile=profile.cov -service=travis-ci
+  - travis_retry goveralls -service=travis-ci
