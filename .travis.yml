@@ -12,4 +12,4 @@ install:
   - godep restore
 
 script:
-  - goveralls -ignore=mocks/* -service=travis-ci
+  - goveralls -service=travis-ci
