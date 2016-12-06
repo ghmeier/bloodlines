@@ -22,7 +22,7 @@ type JobI interface {
 
 /*Job is the implimentation with helper of JobI*/
 type Job struct {
-	helper *helpers.Job
+	helper helpers.JobI
 }
 
 /*NewJob constructs a new Job handler*/
@@ -70,7 +70,7 @@ func (j *Job) View(ctx *gin.Context) {
 		return
 	}
 
-	job, err := j.helper.GetJobByID(id)
+	job, err := j.helper.GetByID(id)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
@@ -91,7 +91,7 @@ func (j *Job) Stop(ctx *gin.Context) {
 		return
 	}
 
-	err := j.helper.SetSendStatus(uuid.Parse(id), models.FAILURE)
+	err := j.helper.SetStatus(uuid.Parse(id), models.FAILURE)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return

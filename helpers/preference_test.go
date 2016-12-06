@@ -24,7 +24,7 @@ func TestPreferenceGetByUserIDSuccess(t *testing.T) {
 		WithArgs(p.UserID.String()).
 		WillReturnRows(getPreferenceRows().AddRow(p.ID.String(), p.UserID.String(), string(p.Email)))
 
-	res, err := c.GetPreferenceByUserID(p.UserID.String())
+	res, err := c.GetByUserID(p.UserID.String())
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.NoError(err)
@@ -44,7 +44,7 @@ func TestPreferenceGetByUserIDMapFail(t *testing.T) {
 		WithArgs(p.UserID.String()).
 		WillReturnRows(getPreferenceRows().AddRow(p.ID.String(), p.UserID.String(), "INVALID"))
 
-	_, err := c.GetPreferenceByUserID(p.UserID.String())
+	_, err := c.GetByUserID(p.UserID.String())
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)
@@ -61,7 +61,7 @@ func TestPreferenceGetByIDQueryFail(t *testing.T) {
 		WithArgs(p.UserID.String()).
 		WillReturnError(fmt.Errorf("some error"))
 
-	_, err := c.GetPreferenceByUserID(p.UserID.String())
+	_, err := c.GetByUserID(p.UserID.String())
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)
@@ -205,6 +205,6 @@ func getPreferenceRows() sqlmock.Rows {
 	return sqlmock.NewRows([]string{"id", "userId", "email"})
 }
 
-func getMockPreference(s *sql.DB) *Preference {
+func getMockPreference(s *sql.DB) PreferenceI {
 	return NewPreference(&gateways.MySQL{DB: s})
 }

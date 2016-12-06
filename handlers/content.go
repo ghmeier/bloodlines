@@ -20,11 +20,11 @@ type ContentI interface {
 
 /*Content is the handler for all content api calls*/
 type Content struct {
-	helper *helpers.Content
+	helper helpers.ContentI
 }
 
 /*NewContent returns a content handler*/
-func NewContent(sql gateways.SQL) *Content {
+func NewContent(sql gateways.SQL) ContentI {
 	return &Content{helper: helpers.NewContent(sql)}
 }
 

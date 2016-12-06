@@ -11,6 +11,14 @@ type baseHelper struct {
 	sql gateways.SQL
 }
 
+type ContentI interface {
+	GetByID(string) (*models.Content, error)
+	GetAll(int, int) ([]*models.Content, error)
+	Insert(*models.Content) error
+	Update(*models.Content) error
+	SetStatus(string, models.ContentStatus) error
+}
+
 /*Content is the helper for content entries*/
 type Content struct {
 	*baseHelper

@@ -36,6 +36,12 @@ func New(config *config.Root) (*Bloodlines, error) {
 		trigger:    handlers.NewTrigger(sql),
 		preference: handlers.NewPreference(sql),
 	}
+
+	InitRouter(b)
+	return b, nil
+}
+
+func InitRouter(b *Bloodlines) {
 	b.router = gin.Default()
 
 	content := b.router.Group("/api/content")
@@ -76,8 +82,6 @@ func New(config *config.Root) (*Bloodlines, error) {
 		pref.PATCH("/:userId", b.preference.Update)
 		pref.DELETE("/:userId", b.preference.Deactivate)
 	}
-
-	return b, nil
 }
 
 /*Start begins the Bloodlines server*/

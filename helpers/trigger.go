@@ -9,13 +9,21 @@ import (
 	"github.com/ghmeier/bloodlines/models"
 )
 
+type TriggerI interface {
+	GetAll(int, int) ([]*models.Trigger, error)
+	GetByKey(string) (*models.Trigger, error)
+	Update(string, uuid.UUID, []string) error
+	Insert(*models.Trigger) error
+	Delete(string) error
+}
+
 /*Trigger is the helper for trigger entites*/
 type Trigger struct {
 	*baseHelper
 }
 
 /*NewTrigger constructs and returns a new Trigger helper*/
-func NewTrigger(sql gateways.SQL) *Trigger {
+func NewTrigger(sql gateways.SQL) TriggerI {
 	return &Trigger{baseHelper: &baseHelper{sql: sql}}
 }
 

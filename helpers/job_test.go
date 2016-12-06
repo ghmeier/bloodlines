@@ -25,7 +25,7 @@ func TestJobGetByIDSuccess(t *testing.T) {
 		WithArgs(job.ID.String()).
 		WillReturnRows(getJobRows().AddRow(job.ID.String(), job.SendTime, string(job.SendStatus), ""))
 
-	res, err := c.GetJobByID(job.ID.String())
+	res, err := c.GetByID(job.ID.String())
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.NoError(err)
@@ -46,7 +46,7 @@ func TestJobGetByIDQueryFail(t *testing.T) {
 		WithArgs(job.ID.String()).
 		WillReturnError(fmt.Errorf("some error"))
 
-	_, err := c.GetJobByID(job.ID.String())
+	_, err := c.GetByID(job.ID.String())
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)
@@ -63,7 +63,7 @@ func TestJobGetByIDMapFail(t *testing.T) {
 		WithArgs(job.ID.String()).
 		WillReturnRows(getJobRows().AddRow(job.ID.String(), job.SendTime, "INVALID", ""))
 
-	_, err := c.GetJobByID(job.ID.String())
+	_, err := c.GetByID(job.ID.String())
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)
@@ -176,7 +176,7 @@ func TestJobSetSendStatusSuccess(t *testing.T) {
 		WithArgs(string(job.SendStatus), job.ID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	err := c.SetSendStatus(job.ID, job.SendStatus)
+	err := c.SetStatus(job.ID, job.SendStatus)
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.NoError(err)
@@ -194,7 +194,7 @@ func TestJobSetSendStatusFail(t *testing.T) {
 		WithArgs(string(job.SendStatus), job.ID).
 		WillReturnError(fmt.Errorf("some error"))
 
-	err := c.SetSendStatus(job.ID, job.SendStatus)
+	err := c.SetStatus(job.ID, job.SendStatus)
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)
@@ -208,6 +208,6 @@ func getJobRows() sqlmock.Rows {
 	return sqlmock.NewRows([]string{"id", "sendTime", "sendStatus", "receipts"})
 }
 
-func getMockJob(s *sql.DB) *Job {
+func getMockJob(s *sql.DB) JobI {
 	return NewJob(&gateways.MySQL{DB: s})
 }

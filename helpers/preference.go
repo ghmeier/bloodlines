@@ -5,13 +5,20 @@ import (
 	"github.com/ghmeier/bloodlines/models"
 )
 
+type PreferenceI interface {
+	Insert(*models.Preference) error
+	GetAll(int, int) ([]*models.Preference, error)
+	GetByUserID(string) (*models.Preference, error)
+	Update(*models.Preference) error
+}
+
 /*Preference is the helper for preference entities*/
 type Preference struct {
 	*baseHelper
 }
 
 /*NewPreference constructs and returns a Preference helper*/
-func NewPreference(sql gateways.SQL) *Preference {
+func NewPreference(sql gateways.SQL) PreferenceI {
 	return &Preference{baseHelper: &baseHelper{sql: sql}}
 }
 
@@ -41,7 +48,7 @@ func (p *Preference) GetAll(offset int, limit int) ([]*models.Preference, error)
 }
 
 /*GetPreferenceByUserID returns a preference associated with the given user id*/
-func (p *Preference) GetPreferenceByUserID(id string) (*models.Preference, error) {
+func (p *Preference) GetByUserID(id string) (*models.Preference, error) {
 	rows, err := p.sql.Select("SELECT id, userId, email FROM preference where userId=?", id)
 	if err != nil {
 		return nil, err

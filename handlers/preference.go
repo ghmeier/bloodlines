@@ -19,7 +19,7 @@ type PreferenceI interface {
 
 /*Preference impliments PreferenceI for handling requests*/
 type Preference struct {
-	helper *helpers.Preference
+	helper helpers.PreferenceI
 }
 
 /*NewPreference constructs and returns a new preference handler*/
@@ -54,7 +54,7 @@ func (p *Preference) View(ctx *gin.Context) {
 		return
 	}
 
-	preference, err := p.helper.GetPreferenceByUserID(id)
+	preference, err := p.helper.GetByUserID(id)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return

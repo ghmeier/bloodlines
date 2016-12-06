@@ -24,7 +24,7 @@ func TestReceiptGetByIDSuccess(t *testing.T) {
 		WithArgs(receipt.ID.String()).
 		WillReturnRows(getReceiptRows().AddRow(receipt.ID.String(), receipt.Created, "{}", string(receipt.SendState), receipt.ContentID.String()))
 
-	res, err := c.GetReceiptByID(receipt.ID.String())
+	res, err := c.GetByID(receipt.ID.String())
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.NoError(err)
@@ -46,7 +46,7 @@ func TestReceiptGetByIDQueryFail(t *testing.T) {
 		WithArgs(receipt.ID.String()).
 		WillReturnError(fmt.Errorf("some error"))
 
-	_, err := c.GetReceiptByID(receipt.ID.String())
+	_, err := c.GetByID(receipt.ID.String())
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)
@@ -63,7 +63,7 @@ func TestReceiptGetByIDMapValueFail(t *testing.T) {
 		WithArgs(receipt.ID.String()).
 		WillReturnRows(getReceiptRows().AddRow(receipt.ID.String(), receipt.Created, "", "INVALID", receipt.ContentID.String()))
 
-	_, err := c.GetReceiptByID(receipt.ID.String())
+	_, err := c.GetByID(receipt.ID.String())
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)
@@ -80,7 +80,7 @@ func TestReceiptGetByIDMapFail(t *testing.T) {
 		WithArgs(receipt.ID.String()).
 		WillReturnRows(getReceiptRows().AddRow(receipt.ID.String(), receipt.Created, "{}", "INVALID", receipt.ContentID.String()))
 
-	_, err := c.GetReceiptByID(receipt.ID.String())
+	_, err := c.GetByID(receipt.ID.String())
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)
@@ -100,7 +100,7 @@ func TestReceiptGetReceiptsSuccess(t *testing.T) {
 			AddRow(receipt.ID.String(), receipt.Created, "{}", string(receipt.SendState), receipt.ContentID.String()).
 			AddRow(receipt.ID.String(), receipt.Created, "{}", string(receipt.SendState), receipt.ContentID.String()))
 
-	res, err := c.GetReceipts(offset, limit)
+	res, err := c.GetAll(offset, limit)
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.NoError(err)
@@ -118,7 +118,7 @@ func TestReceiptGetReceiptsFail(t *testing.T) {
 		WithArgs(offset, limit).
 		WillReturnError(fmt.Errorf("some error"))
 
-	_, err := c.GetReceipts(offset, limit)
+	_, err := c.GetAll(offset, limit)
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)
@@ -137,7 +137,7 @@ func TestReceiptGetReceiptsMapFail(t *testing.T) {
 		WillReturnRows(getReceiptRows().
 			AddRow(receipt.ID.String(), receipt.Created, "{}", "INVALID", receipt.ContentID.String()))
 
-	_, err := c.GetReceipts(offset, limit)
+	_, err := c.GetAll(offset, limit)
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)
@@ -179,7 +179,7 @@ func TestReceiptInsertFail(t *testing.T) {
 	assert.Error(err)
 }
 
-func TestReceiptSetSendStateSuccess(t *testing.T) {
+func TestReceiptSetStatusSuccess(t *testing.T) {
 	assert := assert.New(t)
 
 	receipt := getDefaultReceipt()
@@ -191,13 +191,13 @@ func TestReceiptSetSendStateSuccess(t *testing.T) {
 		WithArgs(string(receipt.SendState), receipt.ID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	err := c.SetSendState(receipt.ID, receipt.SendState)
+	err := c.SetStatus(receipt.ID, receipt.SendState)
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.NoError(err)
 }
 
-func TestReceiptSetSendStateFail(t *testing.T) {
+func TestReceiptSetStatusFail(t *testing.T) {
 	assert := assert.New(t)
 
 	receipt := getDefaultReceipt()
@@ -209,7 +209,7 @@ func TestReceiptSetSendStateFail(t *testing.T) {
 		WithArgs(string(receipt.SendState), receipt.ID).
 		WillReturnError(fmt.Errorf("some error"))
 
-	err := c.SetSendState(receipt.ID, receipt.SendState)
+	err := c.SetStatus(receipt.ID, receipt.SendState)
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)
@@ -223,6 +223,6 @@ func getReceiptRows() sqlmock.Rows {
 	return sqlmock.NewRows([]string{"id", "ts", "vals", "sendState", "contentId"})
 }
 
-func getMockReceipt(s *sql.DB) *Receipt {
+func getMockReceipt(s *sql.DB) ReceiptI {
 	return NewReceipt(&gateways.MySQL{DB: s})
 }

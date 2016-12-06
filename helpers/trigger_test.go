@@ -205,6 +205,6 @@ func getTriggerRows() sqlmock.Rows {
 	return sqlmock.NewRows([]string{"id", "contentId", "key", "params"})
 }
 
-func getMockTrigger(s *sql.DB) *Trigger {
+func getMockTrigger(s *sql.DB) TriggerI {
 	return NewTrigger(&gateways.MySQL{DB: s})
 }

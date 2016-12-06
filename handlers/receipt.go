@@ -17,7 +17,7 @@ type ReceiptI interface {
 
 /*Receipt implements ReceiptI for the receipt router*/
 type Receipt struct {
-	helper *helpers.Receipt
+	helper helpers.ReceiptI
 }
 
 /*NewReceipt constructs and returns a new receipt handler*/
@@ -50,7 +50,7 @@ func (r *Receipt) Send(ctx *gin.Context) {
 /*ViewAll returns a list of Receipt entities starting at offset up to limit*/
 func (r *Receipt) ViewAll(ctx *gin.Context) {
 	offset, limit := getPaging(ctx)
-	receipts, err := r.helper.GetReceipts(offset, limit)
+	receipts, err := r.helper.GetAll(offset, limit)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
@@ -67,7 +67,7 @@ func (r *Receipt) View(ctx *gin.Context) {
 		return
 	}
 
-	receipt, err := r.helper.GetReceiptByID(id)
+	receipt, err := r.helper.GetByID(id)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 	}

@@ -9,13 +9,20 @@ import (
 	"github.com/ghmeier/bloodlines/models"
 )
 
+type JobI interface {
+	GetAll(int, int) ([]*models.Job, error)
+	GetByID(string) (*models.Job, error)
+	SetStatus(uuid.UUID, models.Status) error
+	Insert(*models.Job) error
+}
+
 /*Job Helper has helper methods for job entities and the database*/
 type Job struct {
 	*baseHelper
 }
 
 /*NewJob reutrns a constructed job helper*/
-func NewJob(sql gateways.SQL) *Job {
+func NewJob(sql gateways.SQL) JobI {
 	return &Job{baseHelper: &baseHelper{sql: sql}}
 }
 
@@ -50,7 +57,7 @@ func (j *Job) GetAll(offset int, limit int) ([]*models.Job, error) {
 }
 
 /*GetJobByID returns one job with the give id, nil otherwise*/
-func (j *Job) GetJobByID(id string) (*models.Job, error) {
+func (j *Job) GetByID(id string) (*models.Job, error) {
 	rows, err := j.sql.Select("SELECT id, sendTime, sendStatus, receipts FROM job WHERE id=?", id)
 	if err != nil {
 		return nil, err
@@ -65,7 +72,7 @@ func (j *Job) GetJobByID(id string) (*models.Job, error) {
 }
 
 /*SetSendStatus updates the status of the job with the provided id*/
-func (j *Job) SetSendStatus(id uuid.UUID, state models.Status) error {
+func (j *Job) SetStatus(id uuid.UUID, state models.Status) error {
 	err := j.sql.Modify("UPDATE job SET sendStatus=? where id=?", string(state), id)
 	return err
 }
