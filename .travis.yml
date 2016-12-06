@@ -12,4 +12,5 @@ install:
   - godep restore
 
 script:
-  - travis_retry goveralls -coverprofile=cover.out -service=travis-ci
+  - ./gosweep.sh
+  - travis_retry goveralls -coverprofile=profile.cov -service=travis-ci
