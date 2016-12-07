@@ -70,10 +70,10 @@ func InitRouter(b *Bloodlines) {
 	{
 		trigger.POST("", b.trigger.New)
 		trigger.GET("", b.trigger.ViewAll)
-		trigger.GET("/:triggerKey", b.trigger.View)
-		trigger.PUT("/:triggerKey", b.trigger.Update)
-		trigger.DELETE("/:triggerKey", b.trigger.Remove)
-		trigger.POST("/:triggerKey/activate", b.trigger.Activate)
+		trigger.GET("/:key", b.trigger.View)
+		trigger.PUT("/:key", b.trigger.Update)
+		trigger.DELETE("/:key", b.trigger.Remove)
+		trigger.POST("/:key/activate", b.trigger.Activate)
 	}
 	pref := b.router.Group("/api/preference")
 	{

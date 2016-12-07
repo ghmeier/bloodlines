@@ -63,13 +63,11 @@ func (t *Trigger) ViewAll(ctx *gin.Context) {
 /*View returns a trigger with id provided*/
 func (t *Trigger) View(ctx *gin.Context) {
 	key := ctx.Param("key")
-	if key == "" {
-		ctx.JSON(400, errResponse("key is a required parameter"))
-	}
 
 	trigger, err := t.Helper.GetByKey(key)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
+		return
 	}
 
 	ctx.JSON(200, gin.H{"data": trigger})
@@ -78,9 +76,6 @@ func (t *Trigger) View(ctx *gin.Context) {
 /*Update overwrites the trigger entity with new values provided*/
 func (t *Trigger) Update(ctx *gin.Context) {
 	key := ctx.Param("key")
-	if key == "" {
-		ctx.JSON(400, errResponse("key is a required parameter"))
-	}
 
 	var json models.Trigger
 	err := ctx.BindJSON(&json)
@@ -102,13 +97,10 @@ func (t *Trigger) Update(ctx *gin.Context) {
 /*Remove sets a trigger to inactive*/
 func (t *Trigger) Remove(ctx *gin.Context) {
 	key := ctx.Param("key")
-	if key == "" {
-		ctx.JSON(400, errResponse("key is a required parameter"))
-	}
 
 	err := t.Helper.Delete(key)
 	if err != nil {
-		ctx.JSON(200, errResponse(err.Error()))
+		ctx.JSON(500, errResponse(err.Error()))
 		return
 	}
 
@@ -119,6 +111,7 @@ func (t *Trigger) Remove(ctx *gin.Context) {
 func (t *Trigger) Activate(ctx *gin.Context) {
 	/* TODO: sent an email based on the trigger
 	   and posted values */
+	key := ctx.Param("key")
 
-	ctx.JSON(200, empty())
+	ctx.JSON(200, gin.H{"data": key})
 }
