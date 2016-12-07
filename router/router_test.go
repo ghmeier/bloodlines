@@ -38,3 +38,12 @@ func mockTrigger() (*Bloodlines, *mocks.TriggerI) {
 
 	return b, mock
 }
+
+func mockContent() (*Bloodlines, *mocks.ContentI) {
+	b := getMockBloodlines()
+	mock := new(mocks.ContentI)
+	b.content = &handlers.Content{Helper: mock}
+	InitRouter(b)
+
+	return b, mock
+}

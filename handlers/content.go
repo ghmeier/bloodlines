@@ -20,12 +20,12 @@ type ContentI interface {
 
 /*Content is the handler for all content api calls*/
 type Content struct {
-	helper helpers.ContentI
+	Helper helpers.ContentI
 }
 
 /*NewContent returns a content handler*/
 func NewContent(sql gateways.SQL) ContentI {
-	return &Content{helper: helpers.NewContent(sql)}
+	return &Content{Helper: helpers.NewContent(sql)}
 }
 
 /*New adds the given content entry to the database*/
@@ -39,7 +39,7 @@ func (c *Content) New(ctx *gin.Context) {
 	}
 
 	content := models.NewContent("EMAIL", json.Text, json.Params)
-	err = c.helper.Insert(content)
+	err = c.Helper.Insert(content)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
@@ -52,7 +52,7 @@ func (c *Content) New(ctx *gin.Context) {
   determining the entries and amount (default 0,20)*/
 func (c *Content) ViewAll(ctx *gin.Context) {
 	offset, limit := getPaging(ctx)
-	content, err := c.helper.GetAll(offset, limit)
+	content, err := c.Helper.GetAll(offset, limit)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
@@ -64,12 +64,8 @@ func (c *Content) ViewAll(ctx *gin.Context) {
 /*View returns a content described by the given id*/
 func (c *Content) View(ctx *gin.Context) {
 	id := ctx.Param("contentId")
-	if id == "" {
-		ctx.JSON(400, errResponse("contentId is a required parameter"))
-		return
-	}
 
-	content, err := c.helper.GetByID(id)
+	content, err := c.Helper.GetByID(id)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
@@ -81,19 +77,16 @@ func (c *Content) View(ctx *gin.Context) {
 /*Update overwrites content data for the content with the given id*/
 func (c *Content) Update(ctx *gin.Context) {
 	id := ctx.Param("contentId")
-	if id == "" {
-		ctx.JSON(400, errResponse("contentId is a required parameter"))
-	}
 
 	var json models.Content
 	err := ctx.BindJSON(&json)
-	json.ID = uuid.Parse(id)
 	if err != nil {
 		ctx.JSON(400, errResponse(err.Error()))
 		return
 	}
+	json.ID = uuid.Parse(id)
 
-	err = c.helper.Update(&json)
+	err = c.Helper.Update(&json)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
@@ -105,11 +98,8 @@ func (c *Content) Update(ctx *gin.Context) {
 /*Deactivate sets a content's status to INACTIVE*/
 func (c *Content) Deactivate(ctx *gin.Context) {
 	id := ctx.Param("contentId")
-	if id == "" {
-		ctx.JSON(400, errResponse("contentId is a required parameter"))
-	}
 
-	err := c.helper.SetStatus(id, models.INACTIVE)
+	err := c.Helper.SetStatus(id, models.INACTIVE)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
