@@ -24,7 +24,7 @@ func NewReceipt(sql gateways.SQL) ReceiptI {
 	return &Receipt{baseHelper: &baseHelper{sql: sql}}
 }
 
-/*Insert takes a reciept model and appends it to the entity*/
+/*Insert takes a receipt model and appends it to the entity*/
 func (r *Receipt) Insert(receipt *models.Receipt) error {
 	err := r.sql.Modify(
 		"INSERT INTO receipt (id, ts, vals, sendState, contentId) VALUES (?, ?, ?, ?, ?)",

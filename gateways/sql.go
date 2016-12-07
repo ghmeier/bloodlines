@@ -10,14 +10,14 @@ import (
 	"github.com/ghmeier/bloodlines/config"
 )
 
-/*SQL describes the implimentation of any sql gateway */
+/*SQL describes the implementation of any sql gateway */
 type SQL interface {
 	Modify(string, ...interface{}) error
 	Select(string, ...interface{}) (*sql.Rows, error)
 	Destroy()
 }
 
-/*MySQL implimends SQL with the mysql driver */
+/*MySQL implements SQL with the mysql driver */
 type MySQL struct {
 	DB *sql.DB
 }

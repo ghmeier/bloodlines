@@ -20,7 +20,7 @@ type JobI interface {
 	Stop(ctx *gin.Context)
 }
 
-/*Job is the implimentation with helper of JobI*/
+/*Job is the implementation with helper of JobI*/
 type Job struct {
 	helper helpers.JobI
 }
@@ -78,7 +78,7 @@ func (j *Job) View(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"data": job})
 }
 
-/*Update is not implimented*/
+/*Update is not implemented*/
 func (j *Job) Update(ctx *gin.Context) {
 	ctx.JSON(200, empty())
 }
