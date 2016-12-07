@@ -1,6 +1,7 @@
 # bloodlines
 [![Build Status](https://travis-ci.org/ghmeier/bloodlines.svg?branch=master)](https://travis-ci.org/ghmeier/bloodlines)
 [![Coverage Status](https://coveralls.io/repos/github/ghmeier/bloodlines/badge.svg?branch=master)](https://coveralls.io/github/ghmeier/bloodlines?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ghmeier/bloodlines)](https://goreportcard.com/report/github.com/ghmeier/bloodlines)
 
 A go service for sending Expresso emails
 
