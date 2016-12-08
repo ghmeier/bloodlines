@@ -10,7 +10,7 @@ import (
 type Trigger struct {
 	ID        uuid.UUID `json:"id"`
 	ContentID uuid.UUID `json:"contentId"`
-	Key       string    `json:"key"`
+	Key       string    `json:"tkey"`
 	Params    []string  `json:"params"`
 }
 

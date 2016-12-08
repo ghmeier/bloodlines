@@ -54,9 +54,13 @@ func (r *Receipt) Send(ctx *gin.Context) {
 		return
 	}
 
-	err = r.Helper.Send(receipt, resolved)
+	err = r.Helper.Send(receipt, content.Subject, resolved)
+	if err != nil {
+		ctx.JSON(500, errResponse(err.Error()))
+		return
+	}
 
-	ctx.JSON(200, gin.H{"Data": receipt})
+	ctx.JSON(200, gin.H{"data": receipt})
 }
 
 /*ViewAll returns a list of Receipt entities starting at offset up to limit*/

@@ -188,7 +188,7 @@ func TestUpdateSuccess(t *testing.T) {
 
 	mock.ExpectPrepare("UPDATE content").
 		ExpectExec().
-		WithArgs(string(content.Type), content.Text, "", string(models.ACTIVE), content.ID.String(), "test").
+		WithArgs(string(content.Type), content.Text, "", string(models.ACTIVE), "test", content.ID.String()).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	err := c.Update(content)
@@ -206,7 +206,7 @@ func TestUpdateFail(t *testing.T) {
 
 	mock.ExpectPrepare("UPDATE content").
 		ExpectExec().
-		WithArgs(string(content.Type), content.Text, "", string(models.ACTIVE), content.ID.String(), "test").
+		WithArgs(string(content.Type), content.Text, "", string(models.ACTIVE), "test", content.ID.String()).
 		WillReturnError(fmt.Errorf("some error"))
 
 	err := c.Update(content)

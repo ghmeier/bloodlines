@@ -12,7 +12,7 @@ type ReceiptI interface {
 	GetByID(string) (*models.Receipt, error)
 	Insert(*models.Receipt) error
 	SetStatus(uuid.UUID, models.Status) error
-	Send(*models.Receipt, string) error
+	Send(*models.Receipt, string, string) error
 }
 
 /*Receipt helps with managing receipt entities and fetching them*/
@@ -34,7 +34,7 @@ func NewReceipt(sql gateways.SQL, sendgrid gateways.SendgridI, townCenter gatewa
 /*Insert takes a receipt model and appends it to the entity*/
 func (r *Receipt) Insert(receipt *models.Receipt) error {
 	err := r.sql.Modify(
-		"INSERT INTO receipt (id, ts, vals, sendState, contentId, userId) VALUES (?, ?, ?, ?, ?)",
+		"INSERT INTO receipt (id, ts, vals, sendState, contentId, userId) VALUES (?, ?, ?, ?, ?, ?)",
 		receipt.ID,
 		receipt.Created,
 		receipt.SerializeValues(),

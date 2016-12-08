@@ -79,8 +79,8 @@ func (c *Content) Update(content *models.Content) error {
 		content.Text,
 		strings.Join(content.Params, ","),
 		string(content.Status),
-		content.ID,
 		content.Subject,
+		content.ID,
 	)
 	return err
 }
