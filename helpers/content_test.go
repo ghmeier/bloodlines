@@ -20,9 +20,9 @@ func TestGetByIDSuccess(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	c := getMockContent(s)
 
-	mock.ExpectQuery("SELECT id, contentType, text, parameters, status FROM content").
+	mock.ExpectQuery("SELECT id, contentType, text, parameters, status, subject FROM content").
 		WithArgs(id.String()).
-		WillReturnRows(getMockRows().AddRow(id.String(), "EMAIL", "HelloWorld", "", "ACTIVE"))
+		WillReturnRows(getMockRows().AddRow(id.String(), "EMAIL", "HelloWorld", "", "ACTIVE", "test"))
 
 	content, err := c.GetByID(id.String())
 
@@ -31,6 +31,7 @@ func TestGetByIDSuccess(t *testing.T) {
 	assert.Equal(content.ID, id)
 	assert.EqualValues(content.Type, models.EMAIL)
 	assert.Equal(content.Text, "HelloWorld")
+	assert.Equal(content.Subject, "test")
 	assert.Equal(len(content.Params), 0)
 	assert.EqualValues(content.Status, models.ACTIVE)
 }
@@ -42,7 +43,7 @@ func TestGetByIDQueryFail(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	c := getMockContent(s)
 
-	mock.ExpectQuery("SELECT id, contentType, text, parameters, status FROM content").
+	mock.ExpectQuery("SELECT id, contentType, text, parameters, status, subject FROM content").
 		WithArgs(id.String()).
 		WillReturnError(fmt.Errorf("some error"))
 
@@ -59,9 +60,9 @@ func TestGetByIDMapFail(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	c := getMockContent(s)
 
-	mock.ExpectQuery("SELECT id, contentType, text, parameters, status FROM content").
+	mock.ExpectQuery("SELECT id, contentType, text, parameters, status, subject FROM content").
 		WithArgs(id.String()).
-		WillReturnRows(getMockRows().AddRow(id.String(), "INVALID", "HelloWorld", "", "ACTIVE"))
+		WillReturnRows(getMockRows().AddRow(id.String(), "INVALID", "HelloWorld", "", "ACTIVE", "test"))
 
 	_, err := c.GetByID(id.String())
 
@@ -76,9 +77,9 @@ func TestGetByIDMapStatusFail(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	c := getMockContent(s)
 
-	mock.ExpectQuery("SELECT id, contentType, text, parameters, status FROM content").
+	mock.ExpectQuery("SELECT id, contentType, text, parameters, status, subject FROM content").
 		WithArgs(id.String()).
-		WillReturnRows(getMockRows().AddRow(id.String(), "ACTIVE", "HelloWorld", "", "INVALID"))
+		WillReturnRows(getMockRows().AddRow(id.String(), "ACTIVE", "HelloWorld", "", "INVALID", "test"))
 
 	_, err := c.GetByID(id.String())
 
@@ -93,11 +94,11 @@ func TestGetAllSuccess(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	c := getMockContent(s)
 
-	mock.ExpectQuery("SELECT id, contentType, text, parameters, status FROM content").
+	mock.ExpectQuery("SELECT id, contentType, text, parameters, status, subject FROM content").
 		WithArgs(models.ACTIVE, offset, limit).
 		WillReturnRows(getMockRows().
-			AddRow(uuid.New(), "EMAIL", "HelloWorld", "", "INACTIVE").
-			AddRow(uuid.New(), "EMAIL", "HelloWorld", "", "ACTIVE"))
+			AddRow(uuid.New(), "EMAIL", "HelloWorld", "", "INACTIVE", "test").
+			AddRow(uuid.New(), "EMAIL", "HelloWorld", "", "ACTIVE", "test"))
 
 	contents, err := c.GetAll(offset, limit)
 
@@ -113,7 +114,7 @@ func TestGetAllQueryFail(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	c := getMockContent(s)
 
-	mock.ExpectQuery("SELECT id, contentType, text, parameters, status FROM content").
+	mock.ExpectQuery("SELECT id, contentType, text, parameters, status, subject FROM content").
 		WithArgs(models.ACTIVE, offset, limit).
 		WillReturnError(fmt.Errorf("some error"))
 
@@ -130,11 +131,11 @@ func TestGetAllMapFail(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	c := getMockContent(s)
 
-	mock.ExpectQuery("SELECT id, contentType, text, parameters, status FROM content").
+	mock.ExpectQuery("SELECT id, contentType, text, parameters, status, subject FROM content").
 		WithArgs(models.ACTIVE, offset, limit).
 		WillReturnRows(getMockRows().
-			AddRow(uuid.New(), "INVALID", "HelloWorld", "", "ACTIVE").
-			AddRow(uuid.New(), "INVALID", "HelloWorld", "", "ACTIVE"))
+			AddRow(uuid.New(), "INVALID", "HelloWorld", "", "ACTIVE", "test").
+			AddRow(uuid.New(), "INVALID", "HelloWorld", "", "ACTIVE", "test"))
 
 	_, err := c.GetAll(offset, limit)
 
@@ -151,7 +152,7 @@ func TestInsertSuccess(t *testing.T) {
 
 	mock.ExpectPrepare("INSERT INTO content").
 		ExpectExec().
-		WithArgs(content.ID.String(), string(content.Type), content.Text, "", string(models.ACTIVE)).
+		WithArgs(content.ID.String(), string(content.Type), content.Text, "", string(models.ACTIVE), "test").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	err := c.Insert(content)
@@ -169,7 +170,7 @@ func TestInsertFail(t *testing.T) {
 
 	mock.ExpectPrepare("INSERT INTO content").
 		ExpectExec().
-		WithArgs(content.ID, string(content.Type), content.Text, "", string(models.ACTIVE)).
+		WithArgs(content.ID, string(content.Type), content.Text, "", string(models.ACTIVE), "test").
 		WillReturnError(fmt.Errorf("some error"))
 
 	err := c.Insert(content)
@@ -187,7 +188,7 @@ func TestUpdateSuccess(t *testing.T) {
 
 	mock.ExpectPrepare("UPDATE content").
 		ExpectExec().
-		WithArgs(string(content.Type), content.Text, "", string(models.ACTIVE), content.ID.String()).
+		WithArgs(string(content.Type), content.Text, "", string(models.ACTIVE), content.ID.String(), "test").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	err := c.Update(content)
@@ -205,7 +206,7 @@ func TestUpdateFail(t *testing.T) {
 
 	mock.ExpectPrepare("UPDATE content").
 		ExpectExec().
-		WithArgs(string(content.Type), content.Text, "", string(models.ACTIVE), content.ID.String()).
+		WithArgs(string(content.Type), content.Text, "", string(models.ACTIVE), content.ID.String(), "test").
 		WillReturnError(fmt.Errorf("some error"))
 
 	err := c.Update(content)
@@ -251,11 +252,11 @@ func TestSetStatusFail(t *testing.T) {
 }
 
 func getDefaultContent() *models.Content {
-	return models.NewContent(models.EMAIL, "Hello", make([]string, 0))
+	return models.NewContent(models.EMAIL, "Hello", "test", make([]string, 0))
 }
 
 func getMockRows() sqlmock.Rows {
-	return sqlmock.NewRows([]string{"id", "contentType", "text", "parameters", "status"})
+	return sqlmock.NewRows([]string{"id", "contentType", "text", "parameters", "status", "subject"})
 }
 
 func getMockContent(s *sql.DB) *Content {

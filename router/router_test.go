@@ -3,7 +3,8 @@ package router
 import (
 	"testing"
 
-	"github.com/ghmeier/bloodlines/_mocks"
+	mocks "github.com/ghmeier/bloodlines/_mocks"
+	mockg "github.com/ghmeier/bloodlines/_mocks/gateways"
 	"github.com/ghmeier/bloodlines/config"
 	"github.com/ghmeier/bloodlines/handlers"
 
@@ -20,10 +21,12 @@ func TestNewSuccess(t *testing.T) {
 }
 
 func getMockBloodlines() *Bloodlines {
-	sql := new(mocks.SQL)
+	sql := new(mockg.SQL)
+	towncenter := new(mockg.TownCenterI)
+	sendgrid := new(mockg.SendgridI)
 	return &Bloodlines{
 		content:    handlers.NewContent(sql),
-		receipt:    handlers.NewReceipt(sql),
+		receipt:    handlers.NewReceipt(sql, sendgrid, towncenter),
 		job:        handlers.NewJob(sql),
 		trigger:    handlers.NewTrigger(sql),
 		preference: handlers.NewPreference(sql),

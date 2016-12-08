@@ -11,21 +11,23 @@ import (
 
 /*Content is the representation of content entries in bloodlines*/
 type Content struct {
-	ID     uuid.UUID     `json:"id"`
-	Type   ContentType   `json:"contentType"`
-	Text   string        `json:"text"`
-	Params []string      `json:"parameters"`
-	Status ContentStatus `json:"status"`
+	ID      uuid.UUID     `json:"id"`
+	Type    ContentType   `json:"contentType"`
+	Text    string        `json:"text"`
+	Params  []string      `json:"parameters"`
+	Status  ContentStatus `json:"status"`
+	Subject string        `json:"subject"`
 }
 
 /*NewContent constructs and returns a new content entity with a new uuid*/
-func NewContent(contentType ContentType, text string, params []string) *Content {
+func NewContent(contentType ContentType, text string, subject string, params []string) *Content {
 	return &Content{
-		ID:     uuid.NewUUID(),
-		Type:   contentType,
-		Text:   text,
-		Params: params,
-		Status: ACTIVE,
+		ID:      uuid.NewUUID(),
+		Type:    contentType,
+		Text:    text,
+		Params:  params,
+		Status:  ACTIVE,
+		Subject: subject,
 	}
 }
 
@@ -37,7 +39,7 @@ func ContentFromSQL(rows *sql.Rows) ([]*Content, error) {
 	for rows.Next() {
 		c := &Content{}
 		var paramList, cType, cStatus string
-		rows.Scan(&c.ID, &cType, &c.Text, &paramList, &cStatus)
+		rows.Scan(&c.ID, &cType, &c.Text, &paramList, &cStatus, &c.Subject)
 
 		c.Params = toList(paramList)
 

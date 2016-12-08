@@ -7,9 +7,10 @@ import (
 
 /*Root is the base struct containing bloodlines configs */
 type Root struct {
-	SQL      MySQL  `json:"mysql"`
-	Sendgrid MySQL  `json:"sendgrid"`
-	Port     string `json:"port"`
+	SQL        MySQL      `json:"mysql"`
+	Sendgrid   Sendgrid   `json:"sendgrid"`
+	TownCenter TownCenter `json:"towncenter"`
+	Port       string     `json:"port"`
 }
 
 /*MySQL contains information for connecting to a MySQL instance */
@@ -23,7 +24,14 @@ type MySQL struct {
 
 /*Sendgrid has connection information for the sendgrid gateway */
 type Sendgrid struct {
-	APIKey string `json:"api_key"`
+	APIKey    string `json:"api_key"`
+	FromEmail string `json:"from_email"`
+	FromName  string `json:"from_name"`
+	Host      string `json:"host"`
+}
+
+/*TownCenter has connection information for the town center service */
+type TownCenter struct {
 }
 
 /*Init returns a populated Root struct from config.json */

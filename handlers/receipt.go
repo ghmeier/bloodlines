@@ -17,32 +17,44 @@ type ReceiptI interface {
 
 /*Receipt implements ReceiptI for the receipt router*/
 type Receipt struct {
-	helper helpers.ReceiptI
+	Helper  helpers.ReceiptI
+	CHelper helpers.ContentI
 }
 
 /*NewReceipt constructs and returns a new receipt handler*/
-func NewReceipt(sql gateways.SQL) *Receipt {
-	return &Receipt{helper: helpers.NewReceipt(sql)}
+func NewReceipt(sql gateways.SQL, sendgrid gateways.SendgridI, towncenter gateways.TownCenterI) *Receipt {
+	return &Receipt{
+		Helper:  helpers.NewReceipt(sql, sendgrid, towncenter),
+		CHelper: helpers.NewContent(sql),
+	}
 }
 
 /*Send creates a message based on the receipt provided*/
 func (r *Receipt) Send(ctx *gin.Context) {
 	var json models.Receipt
 	err := ctx.BindJSON(&json)
-	if err != nil {
-		ctx.JSON(400, errResponse("Invalid vals or contentId"))
-		return
-	}
 
-	receipt := models.NewReceipt(json.Values, json.ContentID)
+	receipt := models.NewReceipt(json.Values, json.ContentID, json.UserID)
 
-	err = r.helper.Insert(receipt)
+	err = r.Helper.Insert(receipt)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
 	}
 
-	// SEND SOMETHING
+	content, err := r.CHelper.GetByID(receipt.ContentID.String())
+	if err != nil {
+		ctx.JSON(500, errResponse(err.Error()))
+		return
+	}
+
+	resolved, err := content.ResolveText(receipt.Values)
+	if err != nil {
+		ctx.JSON(400, errResponse(err.Error()))
+		return
+	}
+
+	err = r.Helper.Send(receipt, resolved)
 
 	ctx.JSON(200, gin.H{"Data": receipt})
 }
@@ -50,7 +62,7 @@ func (r *Receipt) Send(ctx *gin.Context) {
 /*ViewAll returns a list of Receipt entities starting at offset up to limit*/
 func (r *Receipt) ViewAll(ctx *gin.Context) {
 	offset, limit := getPaging(ctx)
-	receipts, err := r.helper.GetAll(offset, limit)
+	receipts, err := r.Helper.GetAll(offset, limit)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
@@ -67,7 +79,7 @@ func (r *Receipt) View(ctx *gin.Context) {
 		return
 	}
 
-	receipt, err := r.helper.GetByID(id)
+	receipt, err := r.Helper.GetByID(id)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 	}

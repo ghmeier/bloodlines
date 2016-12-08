@@ -3,5 +3,6 @@ CREATE TABLE receipt(
 	id VARCHAR(36) NOT NULL PRIMARY KEY,
 	sendState VARCHAR(20) NOT NULL,
 	vals VARCHAR(4096) NOT NULL,
-	contentId VARCHAR(36) NOT NULL, FOREIGN KEY fk_content(contentId) REFERENCES content(id)
+	contentId VARCHAR(36) NOT NULL, FOREIGN KEY fk_content(contentId) REFERENCES content(id),
+	userId VARCHAR(36) NOT NULL
 );

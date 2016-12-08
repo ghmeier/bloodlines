@@ -17,16 +17,18 @@ type Receipt struct {
 	Values    map[string]string `json:"values"`
 	SendState Status            `json:"sendState"`
 	ContentID uuid.UUID         `json:"contentId"`
+	UserID    uuid.UUID         `json:"userId"`
 }
 
 /*NewReceipt creates and returns a new receipt with a new id*/
-func NewReceipt(values map[string]string, contentID uuid.UUID) *Receipt {
+func NewReceipt(values map[string]string, contentID uuid.UUID, userID uuid.UUID) *Receipt {
 	return &Receipt{
 		ID:        uuid.NewUUID(),
 		Values:    values,
 		SendState: READY,
 		Created:   time.Now(),
 		ContentID: contentID,
+		UserID:    userID,
 	}
 }
 
@@ -42,7 +44,7 @@ func ReceiptFromSQL(rows *sql.Rows) ([]*Receipt, error) {
 	for rows.Next() {
 		r := &Receipt{}
 		var valueList, rState string
-		rows.Scan(&r.ID, &r.Created, &valueList, &rState, &r.ContentID)
+		rows.Scan(&r.ID, &r.Created, &valueList, &rState, &r.ContentID, &r.UserID)
 
 		err := json.Unmarshal([]byte(valueList), &r.Values)
 		fmt.Printf("%s\n", valueList)

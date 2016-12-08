@@ -70,7 +70,7 @@ func TestContentNewSuccess(t *testing.T) {
 	b, cMock := mockContent()
 	cMock.On("Insert", mock.AnythingOfType("*models.Content")).Return(nil)
 
-	c := getContentString(models.NewContent(models.EMAIL, "test", make([]string, 0)))
+	c := getContentString(models.NewContent(models.EMAIL, "test", "test", make([]string, 0)))
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("POST", "/api/content", c)
 	b.router.ServeHTTP(w, r)
@@ -86,7 +86,7 @@ func TestContentNewFail(t *testing.T) {
 	b, cMock := mockContent()
 	cMock.On("Insert", mock.AnythingOfType("*models.Content")).Return(fmt.Errorf("some error"))
 
-	c := getContentString(models.NewContent(models.EMAIL, "test", make([]string, 0)))
+	c := getContentString(models.NewContent(models.EMAIL, "test", "test", make([]string, 0)))
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("POST", "/api/content", c)
 	b.router.ServeHTTP(w, r)
@@ -147,7 +147,7 @@ func TestContentUpdateSuccess(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 
-	content := models.NewContent(models.EMAIL, "test", make([]string, 0))
+	content := models.NewContent(models.EMAIL, "test", "test", make([]string, 0))
 
 	b, cMock := mockContent()
 	cMock.On("Update", content).Return(nil)
@@ -168,7 +168,7 @@ func TestContentUpdateFail(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 
-	content := models.NewContent(models.EMAIL, "test", make([]string, 0))
+	content := models.NewContent(models.EMAIL, "test", "test", make([]string, 0))
 
 	b, cMock := mockContent()
 	cMock.On("Update", content).Return(fmt.Errorf("some error"))

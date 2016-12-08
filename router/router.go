@@ -28,10 +28,12 @@ func New(config *config.Root) (*Bloodlines, error) {
 		fmt.Println(err.Error())
 		return nil, err
 	}
+	sendgrid := gateways.NewSendgrid(config.Sendgrid)
+	towncenter := gateways.NewTownCenter(config.TownCenter)
 
 	b := &Bloodlines{
 		content:    handlers.NewContent(sql),
-		receipt:    handlers.NewReceipt(sql),
+		receipt:    handlers.NewReceipt(sql, sendgrid, towncenter),
 		job:        handlers.NewJob(sql),
 		trigger:    handlers.NewTrigger(sql),
 		preference: handlers.NewPreference(sql),

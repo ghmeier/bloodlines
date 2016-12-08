@@ -3,7 +3,7 @@ package handlers
 import (
 	"testing"
 
-	"github.com/ghmeier/bloodlines/_mocks"
+	mocks "github.com/ghmeier/bloodlines/_mocks/gateways"
 
 	"github.com/stretchr/testify/assert"
 )

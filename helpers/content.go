@@ -31,7 +31,7 @@ func NewContent(sql gateways.SQL) *Content {
 
 /*GetByID returns the content referenced by the provided id, otherwise nil*/
 func (c *Content) GetByID(id string) (*models.Content, error) {
-	rows, err := c.sql.Select("SELECT id, contentType, text, parameters, status FROM content WHERE id=?", id)
+	rows, err := c.sql.Select("SELECT id, contentType, text, parameters, status, subject FROM content WHERE id=?", id)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (c *Content) GetByID(id string) (*models.Content, error) {
 
 /*GetAll returns <limit> content entries from <offset> number*/
 func (c *Content) GetAll(offset int, limit int) ([]*models.Content, error) {
-	rows, err := c.sql.Select("SELECT id, contentType, text, parameters, status FROM content WHERE status=? ORDER BY id ASC LIMIT ?,?", models.ACTIVE, offset, limit)
+	rows, err := c.sql.Select("SELECT id, contentType, text, parameters, status, subject FROM content WHERE status=? ORDER BY id ASC LIMIT ?,?", models.ACTIVE, offset, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -60,24 +60,27 @@ func (c *Content) GetAll(offset int, limit int) ([]*models.Content, error) {
 /*Insert adds the given content entry*/
 func (c *Content) Insert(content *models.Content) error {
 	err := c.sql.Modify(
-		"INSERT INTO content (id, contentType, text, parameters, status)VALUE(?, ?, ?, ?, ?)",
+		"INSERT INTO content (id, contentType, text, parameters, status, subject)VALUE(?, ?, ?, ?, ?, ?)",
 		content.ID,
 		string(content.Type),
 		content.Text,
 		strings.Join(content.Params, ","),
-		string(models.ACTIVE))
+		string(models.ACTIVE),
+		content.Subject,
+	)
 	return err
 
 }
 
 /*Update upserts the content with the given id*/
 func (c *Content) Update(content *models.Content) error {
-	err := c.sql.Modify("UPDATE content SET contentType=?,text=?,parameters=?,status=? WHERE id=?",
+	err := c.sql.Modify("UPDATE content SET contentType=?,text=?,parameters=?,status=?,subject=? WHERE id=?",
 		string(content.Type),
 		content.Text,
 		strings.Join(content.Params, ","),
 		string(content.Status),
 		content.ID,
+		content.Subject,
 	)
 	return err
 }
