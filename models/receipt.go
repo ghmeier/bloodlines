@@ -20,6 +20,12 @@ type Receipt struct {
 	UserID    uuid.UUID         `json:"userId"`
 }
 
+type SendRequest struct {
+	Receipt *Receipt `json:"receipt"`
+	Subject string   `json:"subject"`
+	Text    string   `json:"text"`
+}
+
 /*NewReceipt creates and returns a new receipt with a new id*/
 func NewReceipt(values map[string]string, contentID uuid.UUID, userID uuid.UUID) *Receipt {
 	return &Receipt{

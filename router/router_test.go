@@ -16,17 +16,19 @@ func TestNewSuccess(t *testing.T) {
 
 	r, err := New(&config.Root{SQL: config.MySQL{}})
 
-	assert.NoError(err)
-	assert.NotNil(r)
+	assert.Error(err)
+	assert.Nil(r)
 }
 
 func getMockBloodlines() *Bloodlines {
 	sql := new(mockg.SQL)
 	towncenter := new(mockg.TownCenterI)
 	sendgrid := new(mockg.SendgridI)
+	rabbit := new(mockg.RabbitI)
+	rabbit.On("Consume").Return(nil, nil)
 	return &Bloodlines{
 		content:    handlers.NewContent(sql),
-		receipt:    handlers.NewReceipt(sql, sendgrid, towncenter),
+		receipt:    handlers.NewReceipt(sql, sendgrid, towncenter, rabbit),
 		job:        handlers.NewJob(sql),
 		trigger:    handlers.NewTrigger(sql),
 		preference: handlers.NewPreference(sql),

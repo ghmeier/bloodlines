@@ -22,9 +22,9 @@ type Receipt struct {
 }
 
 /*NewReceipt constructs and returns a new receipt handler*/
-func NewReceipt(sql gateways.SQL, sendgrid gateways.SendgridI, towncenter gateways.TownCenterI) *Receipt {
+func NewReceipt(sql gateways.SQL, sendgrid gateways.SendgridI, towncenter gateways.TownCenterI, rabbit gateways.RabbitI) *Receipt {
 	return &Receipt{
-		Helper:  helpers.NewReceipt(sql, sendgrid, towncenter),
+		Helper:  helpers.NewReceipt(sql, sendgrid, towncenter, rabbit),
 		CHelper: helpers.NewContent(sql),
 	}
 }
@@ -54,7 +54,11 @@ func (r *Receipt) Send(ctx *gin.Context) {
 		return
 	}
 
-	err = r.Helper.Send(receipt, content.Subject, resolved)
+	err = r.Helper.Send(&models.SendRequest{
+		Receipt: receipt,
+		Subject: content.Subject,
+		Text:    resolved,
+	})
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return

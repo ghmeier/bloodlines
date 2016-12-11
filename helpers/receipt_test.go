@@ -227,5 +227,9 @@ func getReceiptRows() sqlmock.Rows {
 }
 
 func getMockReceipt(s *sql.DB) ReceiptI {
-	return NewReceipt(&gateways.MySQL{DB: s}, &mocks.SendgridI{}, &mocks.TownCenterI{})
+	rabbitMock := &mocks.RabbitI{}
+	r := NewReceipt(&gateways.MySQL{DB: s}, &mocks.SendgridI{}, &mocks.TownCenterI{}, rabbitMock)
+	rabbitMock.On("Consume").Return(nil, nil)
+
+	return r
 }

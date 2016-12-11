@@ -31,9 +31,16 @@ func New(config *config.Root) (*Bloodlines, error) {
 	sendgrid := gateways.NewSendgrid(config.Sendgrid)
 	towncenter := gateways.NewTownCenter(config.TownCenter)
 
+	rabbit, err := gateways.NewRabbit(config.Rabbit)
+	if err != nil {
+		fmt.Println("ERROR: coud not connect to RabbitMQ")
+		fmt.Println(err.Error())
+		return nil, err
+	}
+
 	b := &Bloodlines{
 		content:    handlers.NewContent(sql),
-		receipt:    handlers.NewReceipt(sql, sendgrid, towncenter),
+		receipt:    handlers.NewReceipt(sql, sendgrid, towncenter, rabbit),
 		job:        handlers.NewJob(sql),
 		trigger:    handlers.NewTrigger(sql),
 		preference: handlers.NewPreference(sql),

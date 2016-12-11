@@ -10,6 +10,7 @@ type Root struct {
 	SQL        MySQL      `json:"mysql"`
 	Sendgrid   Sendgrid   `json:"sendgrid"`
 	TownCenter TownCenter `json:"towncenter"`
+	Rabbit     Rabbit     `json:"rabbit"`
 	Port       string     `json:"port"`
 }
 
@@ -32,6 +33,13 @@ type Sendgrid struct {
 
 /*TownCenter has connection information for the town center service */
 type TownCenter struct {
+}
+
+/*Rabbit has connection info for RabbitMQ*/
+type Rabbit struct {
+	Host string `json:"host"`
+	Port string `json:"port"`
+	PubQ string `json:"pubq"`
 }
 
 /*Init returns a populated Root struct from config.json */

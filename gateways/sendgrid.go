@@ -46,7 +46,7 @@ func (s *Sendgrid) getSendRequest(m *mail.SGMailV3) rest.Request {
 
 func (s *Sendgrid) getSGMail(target string, subject string, text string) *mail.SGMailV3 {
 	from := mail.NewEmail(s.config.FromName, s.config.FromEmail)
-	to := mail.NewEmail("User", target)
+	to := mail.NewEmail("Garret Meier", target)
 	content := mail.NewContent("text/plain", text)
 
 	return mail.NewV3MailInit(from, subject, to, content)
