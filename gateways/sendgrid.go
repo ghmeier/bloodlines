@@ -30,6 +30,9 @@ func (s *Sendgrid) SendEmail(target string, subject string, text string) error {
 	if err != nil {
 		return err
 	}
+	if response.StatusCode > 299 {
+		return fmt.Errorf("ERROR: invalid request, &s", response.Body)
+	}
 
 	fmt.Println(response.StatusCode)
 	fmt.Println(response.Body)

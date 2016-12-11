@@ -218,6 +218,43 @@ func TestReceiptSetStatusFail(t *testing.T) {
 	assert.Error(err)
 }
 
+func TestReceiptSendSuccess(t *testing.T) {
+	assert := assert.New(t)
+
+	receipt := getDefaultReceipt()
+	request := &models.SendRequest{Receipt: receipt, Subject: "test", Text: "text"}
+
+	s, _, _ := sqlmock.New()
+	rabbitMock := &mocks.RabbitI{}
+	r := NewReceipt(&gateways.MySQL{DB: s}, &mocks.SendgridI{}, &mocks.TownCenterI{}, rabbitMock)
+	rabbitMock.On("Consume").Return(nil, nil)
+	rabbitMock.On("Produce", request).Return(nil)
+
+	err := r.Send(request)
+
+	assert.NoError(err)
+}
+
+func TestReceiptHandleRequestSuccess(t *testing.T) {
+	assert := assert.New(t)
+
+	receipt := getDefaultReceipt()
+	s, _, _ := sqlmock.New()
+	rabbitMock := &mocks.RabbitI{}
+	sgMock := &mocks.SendgridI{}
+	tcMock := &mocks.TownCenterI{}
+	r := NewReceipt(&gateways.MySQL{DB: s}, sgMock, tcMock, rabbitMock)
+	rabbitMock.On("Consume").Return(nil, nil)
+	tcMock.On("GetUser", receipt.UserID).Return("test", nil)
+	sgMock.On("SendEmail", "test", "test", "text").Return(nil)
+
+	request := &models.SendRequest{Receipt: receipt, Subject: "test", Text: "text"}
+
+	err := r.HandleRequest(request)
+
+	assert.NoError(err)
+}
+
 func getDefaultReceipt() *models.Receipt {
 	return models.NewReceipt(make(map[string]string), uuid.NewUUID(), uuid.NewUUID())
 }

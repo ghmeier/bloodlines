@@ -17,6 +17,7 @@ type ReceiptI interface {
 	SetStatus(uuid.UUID, models.Status) error
 	Send(*models.SendRequest) error
 	Consume() error
+	HandleRequest(request *models.SendRequest) error
 }
 
 /*Receipt helps with managing receipt entities and fetching them*/
@@ -37,12 +38,6 @@ func NewReceipt(sql gateways.SQL, sendgrid gateways.SendgridI, townCenter gatewa
 	}
 
 	go helper.Consume()
-	// if err != nil {
-	// 	fmt.Println("ERROR: unable to start consumer")
-	// 	fmt.Println(err.Error())
-	// 	return nil
-	// }
-
 	return helper
 }
 
@@ -102,6 +97,7 @@ func (r *Receipt) Send(request *models.SendRequest) error {
 }
 
 func (r *Receipt) HandleRequest(request *models.SendRequest) error {
+	//ignoring error until TC is actually implement
 	target, _ := r.TC.GetUser(request.Receipt.UserID)
 	err := r.SG.SendEmail(target, request.Subject, request.Text)
 	return err
@@ -113,7 +109,6 @@ func (r *Receipt) Consume() error {
 	msgs, err := r.RB.Consume()
 	if err != nil {
 		return err
-
 	}
 
 	forever := make(chan bool)
@@ -132,7 +127,7 @@ func (r *Receipt) Consume() error {
 			if err != nil {
 				fmt.Println("ERROR: unable to complete request")
 				fmt.Println(err.Error())
-				// resent receipt?
+				// resend receipt?
 			}
 		}
 	}()

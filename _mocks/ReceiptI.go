@@ -70,6 +70,20 @@ func (_m *ReceiptI) GetByID(_a0 string) (*models.Receipt, error) {
 	return r0, r1
 }
 
+// HandleRequest provides a mock function with given fields: request
+func (_m *ReceiptI) HandleRequest(request *models.SendRequest) error {
+	ret := _m.Called(request)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*models.SendRequest) error); ok {
+		r0 = rf(request)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Insert provides a mock function with given fields: _a0
 func (_m *ReceiptI) Insert(_a0 *models.Receipt) error {
 	ret := _m.Called(_a0)
