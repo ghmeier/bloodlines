@@ -116,6 +116,7 @@ func (t *Trigger) Remove(ctx *gin.Context) {
 /*Activate starts a trigger's action*/
 func (t *Trigger) Activate(ctx *gin.Context) {
 	key := ctx.Param("key")
+
 	var json models.Receipt
 	err := ctx.BindJSON(&json)
 	if err != nil {

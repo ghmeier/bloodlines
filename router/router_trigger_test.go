@@ -8,6 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	mocks "github.com/ghmeier/bloodlines/_mocks"
+	"github.com/ghmeier/bloodlines/handlers"
 	"github.com/ghmeier/bloodlines/models"
 
 	"github.com/pborman/uuid"
@@ -236,4 +238,59 @@ func TestTriggerDeleteFail(t *testing.T) {
 	b.router.ServeHTTP(w, r)
 
 	assert.Equal(500, w.Code)
+}
+
+func TestTriggerActivateSuccess(t *testing.T) {
+	assert := assert.New(t)
+
+	gin.SetMode(gin.TestMode)
+
+	mockTrigger := &mocks.TriggerI{}
+	mockContent := &mocks.ContentI{}
+	mockReceipt := &mocks.ReceiptI{}
+	b := getMockBloodlines()
+	b.trigger = &handlers.Trigger{
+		Helper:  mockTrigger,
+		RHelper: mockReceipt,
+		CHelper: mockContent,
+	}
+	InitRouter(b)
+
+	key := "test_key"
+	values := make(map[string]string)
+	values["first_name"] = "Wololo"
+
+	trigger := &models.Trigger{
+		Key:       key,
+		ID:        uuid.NewUUID(),
+		ContentID: uuid.NewUUID(),
+		Values:    values,
+	}
+
+	content := &models.Content{
+		ID:      trigger.ContentID,
+		Type:    models.EMAIL,
+		Text:    "$first_name$ $last_name$",
+		Params:  []string{"first_name", "last_name"},
+		Status:  models.ACTIVE,
+		Subject: "Welcome",
+	}
+
+	values = make(map[string]string)
+	values["last_name"] = "ololo"
+	receipt := &models.Receipt{
+		Values: values,
+		UserID: uuid.NewUUID(),
+	}
+	s, _ := json.Marshal(receipt)
+
+	mockTrigger.On("GetByKey", key).Return(trigger, nil)
+	mockContent.On("GetByID", trigger.ContentID.String()).Return(content, nil)
+	mockReceipt.On("Send", mock.AnythingOfType("*models.SendRequest")).Return(nil)
+
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("POST", "/api/trigger/test_key/activate", bytes.NewReader(s))
+	b.router.ServeHTTP(w, r)
+
+	assert.Equal(200, w.Code)
 }

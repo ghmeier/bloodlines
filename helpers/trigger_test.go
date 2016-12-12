@@ -51,6 +51,23 @@ func TestTriggerGetByKeyFail(t *testing.T) {
 	assert.Error(err)
 }
 
+func TestTriggerGetByKeyMapFail(t *testing.T) {
+	assert := assert.New(t)
+
+	trigger := getDefaultTrigger()
+	s, mock, _ := sqlmock.New()
+	h := getMockTrigger(s)
+
+	mock.ExpectQuery("SELECT id, contentId, tkey, vals FROM b_trigger").
+		WithArgs(trigger.Key).
+		WillReturnRows(getTriggerRows().AddRow(trigger.ID.String(), trigger.ContentID.String(), trigger.Key, "[]"))
+
+	_, err := h.GetByKey(trigger.Key)
+
+	assert.Equal(mock.ExpectationsWereMet(), nil)
+	assert.Error(err)
+}
+
 func TestTriggerGetAllSuccess(t *testing.T) {
 	assert := assert.New(t)
 

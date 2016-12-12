@@ -26,11 +26,6 @@ func NewTrigger(contentID uuid.UUID, key string, values map[string]string) *Trig
 	}
 }
 
-func (t *Trigger) SerializeValues() string {
-	s, _ := json.Marshal(t.Values)
-	return string(s)
-}
-
 /*TriggerFromSQL returns a trigger splice from sql rows*/
 func TriggerFromSQL(rows *sql.Rows) ([]*Trigger, error) {
 	trigger := make([]*Trigger, 0)
