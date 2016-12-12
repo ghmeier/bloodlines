@@ -54,7 +54,7 @@ func (t *Trigger) GetAll(offset int, limit int) ([]*models.Trigger, error) {
 
 /*GetByKey given a string key, returns the trigger associated with it*/
 func (t *Trigger) GetByKey(key string) (*models.Trigger, error) {
-	rows, err := t.sql.Select("SELECT id, contentId, tkey, vals FROM b_trigger WHERE key=?", key)
+	rows, err := t.sql.Select("SELECT id, contentId, tkey, vals FROM b_trigger WHERE tkey=?", key)
 	if err != nil {
 		return nil, err
 	}
