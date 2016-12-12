@@ -30,7 +30,7 @@ func getMockBloodlines() *Bloodlines {
 		content:    handlers.NewContent(sql),
 		receipt:    handlers.NewReceipt(sql, sendgrid, towncenter, rabbit),
 		job:        handlers.NewJob(sql),
-		trigger:    handlers.NewTrigger(sql),
+		trigger:    handlers.NewTrigger(sql, sendgrid, towncenter, rabbit),
 		preference: handlers.NewPreference(sql),
 	}
 }

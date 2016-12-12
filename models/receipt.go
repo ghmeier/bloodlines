@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/pborman/uuid"
@@ -38,11 +37,6 @@ func NewReceipt(values map[string]string, contentID uuid.UUID, userID uuid.UUID)
 	}
 }
 
-func (r *Receipt) SerializeValues() string {
-	s, _ := json.Marshal(r.Values)
-	return string(s)
-}
-
 /*ReceiptFromSQL returns a receipt splice from sql rows*/
 func ReceiptFromSQL(rows *sql.Rows) ([]*Receipt, error) {
 	receipts := make([]*Receipt, 0)
@@ -53,7 +47,6 @@ func ReceiptFromSQL(rows *sql.Rows) ([]*Receipt, error) {
 		rows.Scan(&r.ID, &r.Created, &valueList, &rState, &r.ContentID, &r.UserID)
 
 		err := json.Unmarshal([]byte(valueList), &r.Values)
-		fmt.Printf("%s\n", valueList)
 		if err != nil {
 			return nil, errors.New("invalid value list")
 		}

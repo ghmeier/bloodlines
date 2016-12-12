@@ -42,7 +42,7 @@ func New(config *config.Root) (*Bloodlines, error) {
 		content:    handlers.NewContent(sql),
 		receipt:    handlers.NewReceipt(sql, sendgrid, towncenter, rabbit),
 		job:        handlers.NewJob(sql),
-		trigger:    handlers.NewTrigger(sql),
+		trigger:    handlers.NewTrigger(sql, sendgrid, towncenter, rabbit),
 		preference: handlers.NewPreference(sql),
 	}
 
@@ -67,6 +67,7 @@ func InitRouter(b *Bloodlines) {
 		receipt.POST("/send", b.receipt.Send)
 		receipt.GET("/:receiptId", b.receipt.View)
 	}
+	b.receipt.StartConsumer()
 	job := b.router.Group("/api/job")
 	{
 		job.GET("", b.job.ViewAll)

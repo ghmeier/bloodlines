@@ -1,8 +1,6 @@
 package helpers
 
 import (
-	"strings"
-
 	"github.com/pborman/uuid"
 
 	"github.com/ghmeier/bloodlines/gateways"
@@ -12,7 +10,7 @@ import (
 type TriggerI interface {
 	GetAll(int, int) ([]*models.Trigger, error)
 	GetByKey(string) (*models.Trigger, error)
-	Update(string, uuid.UUID, []string) error
+	Update(string, uuid.UUID, map[string]string) error
 	Insert(*models.Trigger) error
 	Delete(string) error
 }
@@ -30,18 +28,18 @@ func NewTrigger(sql gateways.SQL) TriggerI {
 /*Insert creates a new trigger from the model and inserts it into the database*/
 func (t *Trigger) Insert(trigger *models.Trigger) error {
 	err := t.sql.Modify(
-		"INSERT INTO b_trigger (id, contentId, tkey, params) VALUES (?, ?, ?, ?)",
+		"INSERT INTO b_trigger (id, contentId, tkey, values) VALUES (?, ?, ?, ?)",
 		trigger.ID,
 		trigger.ContentID,
 		trigger.Key,
-		strings.Join(trigger.Params, ","),
+		models.SerializeValues(trigger.Values),
 	)
 	return err
 }
 
 /*GetAll returns <limit> trigger entities starting at <offset>*/
 func (t *Trigger) GetAll(offset int, limit int) ([]*models.Trigger, error) {
-	rows, err := t.sql.Select("SELECT id, contentId, tkey, params FROM b_trigger ORDER BY id ASC LIMIT ?,? ", offset, limit)
+	rows, err := t.sql.Select("SELECT id, contentId, tkey, values FROM b_trigger ORDER BY id ASC LIMIT ?,? ", offset, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +54,7 @@ func (t *Trigger) GetAll(offset int, limit int) ([]*models.Trigger, error) {
 
 /*GetByKey given a string key, returns the trigger associated with it*/
 func (t *Trigger) GetByKey(key string) (*models.Trigger, error) {
-	rows, err := t.sql.Select("SELECT id, contentId, tkey, params FROM b_trigger WHERE key=?", key)
+	rows, err := t.sql.Select("SELECT id, contentId, tkey, values FROM b_trigger WHERE key=?", key)
 	if err != nil {
 		return nil, err
 	}
@@ -69,11 +67,11 @@ func (t *Trigger) GetByKey(key string) (*models.Trigger, error) {
 }
 
 /*Update overwrites a trigger's entry with the given data*/
-func (t *Trigger) Update(key string, contentID uuid.UUID, params []string) error {
+func (t *Trigger) Update(key string, contentID uuid.UUID, values map[string]string) error {
 	err := t.sql.Modify(
-		"UPDATE b_trigger SET contentId=?,params=? WHERE tkey=?",
+		"UPDATE b_trigger SET contentId=?,values=? WHERE tkey=?",
 		contentID,
-		strings.Join(params, ","),
+		models.SerializeValues(values),
 		key,
 	)
 	return err

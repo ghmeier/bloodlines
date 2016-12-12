@@ -227,7 +227,6 @@ func TestReceiptSendSuccess(t *testing.T) {
 	s, _, _ := sqlmock.New()
 	rabbitMock := &mocks.RabbitI{}
 	r := NewReceipt(&gateways.MySQL{DB: s}, &mocks.SendgridI{}, &mocks.TownCenterI{}, rabbitMock)
-	rabbitMock.On("Consume").Return(nil, nil)
 	rabbitMock.On("Produce", request).Return(nil)
 
 	err := r.Send(request)
@@ -244,7 +243,6 @@ func TestReceiptHandleRequestSuccess(t *testing.T) {
 	sgMock := &mocks.SendgridI{}
 	tcMock := &mocks.TownCenterI{}
 	r := NewReceipt(&gateways.MySQL{DB: s}, sgMock, tcMock, rabbitMock)
-	rabbitMock.On("Consume").Return(nil, nil)
 	tcMock.On("GetUser", receipt.UserID).Return("test", nil)
 	sgMock.On("SendEmail", "test", "test", "text").Return(nil)
 
@@ -266,7 +264,6 @@ func getReceiptRows() sqlmock.Rows {
 func getMockReceipt(s *sql.DB) ReceiptI {
 	rabbitMock := &mocks.RabbitI{}
 	r := NewReceipt(&gateways.MySQL{DB: s}, &mocks.SendgridI{}, &mocks.TownCenterI{}, rabbitMock)
-	rabbitMock.On("Consume").Return(nil, nil)
 
 	return r
 }

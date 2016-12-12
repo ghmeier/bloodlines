@@ -68,7 +68,7 @@ func TestTriggerNewSuccess(t *testing.T) {
 	trigger := models.Trigger{
 		ContentID: uuid.NewUUID(),
 		Key:       "test_key",
-		Params:    make([]string, 0),
+		Values:    make(map[string]string),
 	}
 
 	b, tMock := mockTrigger()
@@ -89,7 +89,7 @@ func TestTriggerNewFail(t *testing.T) {
 	trigger := models.Trigger{
 		ContentID: uuid.NewUUID(),
 		Key:       "test_key",
-		Params:    make([]string, 0),
+		Values:    make(map[string]string),
 	}
 
 	b, tMock := mockTrigger()
@@ -154,12 +154,12 @@ func TestTriggerUpdateSuccess(t *testing.T) {
 	trigger := models.Trigger{
 		ID:        uuid.NewUUID(),
 		ContentID: uuid.NewUUID(),
-		Params:    make([]string, 0),
+		Values:    make(map[string]string),
 		Key:       "test_key",
 	}
 
 	b, tMock := mockTrigger()
-	tMock.On("Update", trigger.Key, trigger.ContentID, trigger.Params).Return(nil)
+	tMock.On("Update", trigger.Key, trigger.ContentID, trigger.Values).Return(nil)
 
 	s, _ := json.Marshal(trigger)
 	w := httptest.NewRecorder()
@@ -192,11 +192,11 @@ func TestTriggerUpdateFail(t *testing.T) {
 		ID:        uuid.NewUUID(),
 		ContentID: uuid.NewUUID(),
 		Key:       "test_key",
-		Params:    make([]string, 0),
+		Values:    make(map[string]string),
 	}
 
 	b, tMock := mockTrigger()
-	tMock.On("Update", trigger.Key, trigger.ContentID, trigger.Params).Return(fmt.Errorf("some error"))
+	tMock.On("Update", trigger.Key, trigger.ContentID, trigger.Values).Return(fmt.Errorf("some error"))
 
 	s, _ := json.Marshal(trigger)
 	w := httptest.NewRecorder()
@@ -236,18 +236,4 @@ func TestTriggerDeleteFail(t *testing.T) {
 	b.router.ServeHTTP(w, r)
 
 	assert.Equal(500, w.Code)
-}
-
-func TestTriggerActivateSuccess(t *testing.T) {
-	assert := assert.New(t)
-
-	gin.SetMode(gin.TestMode)
-
-	b, _ := mockTrigger()
-
-	w := httptest.NewRecorder()
-	r, _ := http.NewRequest("POST", "/api/trigger/test_key/activate", nil)
-	b.router.ServeHTTP(w, r)
-
-	assert.Equal(200, w.Code)
 }

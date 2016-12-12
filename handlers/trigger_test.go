@@ -10,7 +10,7 @@ import (
 
 func TestNewTrigger(t *testing.T) {
 	assert := assert.New(t)
-	tr := NewTrigger(new(mocks.SQL))
+	tr := NewTrigger(new(mocks.SQL), &mocks.SendgridI{}, &mocks.TownCenterI{}, &mocks.RabbitI{})
 
 	assert.NotNil(tr)
 }

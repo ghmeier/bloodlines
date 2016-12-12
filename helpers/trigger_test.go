@@ -20,9 +20,9 @@ func TestTriggerGetByKeySuccess(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	h := getMockTrigger(s)
 
-	mock.ExpectQuery("SELECT id, contentId, tkey, params FROM b_trigger").
+	mock.ExpectQuery("SELECT id, contentId, tkey, values FROM b_trigger").
 		WithArgs(trigger.Key).
-		WillReturnRows(getTriggerRows().AddRow(trigger.ID.String(), trigger.ContentID.String(), trigger.Key, ""))
+		WillReturnRows(getTriggerRows().AddRow(trigger.ID.String(), trigger.ContentID.String(), trigger.Key, "{}"))
 
 	res, err := h.GetByKey(trigger.Key)
 
@@ -31,7 +31,7 @@ func TestTriggerGetByKeySuccess(t *testing.T) {
 	assert.Equal(trigger.ID, res.ID)
 	assert.EqualValues(trigger.ContentID, res.ContentID)
 	assert.EqualValues(trigger.Key, res.Key)
-	assert.Equal(0, len(trigger.Params))
+	assert.Equal(0, len(trigger.Values))
 }
 
 func TestTriggerGetByKeyFail(t *testing.T) {
@@ -41,7 +41,7 @@ func TestTriggerGetByKeyFail(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	h := getMockTrigger(s)
 
-	mock.ExpectQuery("SELECT id, contentId, tkey, params FROM b_trigger").
+	mock.ExpectQuery("SELECT id, contentId, tkey, values FROM b_trigger").
 		WithArgs(trigger.Key).
 		WillReturnError(fmt.Errorf("some error"))
 
@@ -59,11 +59,11 @@ func TestTriggerGetAllSuccess(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	h := getMockTrigger(s)
 
-	mock.ExpectQuery("SELECT id, contentId, tkey, params FROM b_trigger").
+	mock.ExpectQuery("SELECT id, contentId, tkey, values FROM b_trigger").
 		WithArgs(offset, limit).
 		WillReturnRows(getTriggerRows().
-			AddRow(trigger.ID.String(), trigger.ContentID.String(), trigger.Key, "").
-			AddRow(trigger.ID.String(), trigger.ContentID.String(), trigger.Key, ""))
+			AddRow(trigger.ID.String(), trigger.ContentID.String(), trigger.Key, "{}").
+			AddRow(trigger.ID.String(), trigger.ContentID.String(), trigger.Key, "{}"))
 
 	res, err := h.GetAll(offset, limit)
 
@@ -79,7 +79,7 @@ func TestTriggerGetAllFail(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	h := getMockTrigger(s)
 
-	mock.ExpectQuery("SELECT id, contentId, tkey, params FROM b_trigger").
+	mock.ExpectQuery("SELECT id, contentId, tkey, values FROM b_trigger").
 		WithArgs(offset, limit).
 		WillReturnError(fmt.Errorf("some error"))
 
@@ -98,7 +98,7 @@ func TestTriggerInsertSuccess(t *testing.T) {
 
 	mock.ExpectPrepare("INSERT INTO b_trigger").
 		ExpectExec().
-		WithArgs(trigger.ID, trigger.ContentID, trigger.Key, "").
+		WithArgs(trigger.ID, trigger.ContentID, trigger.Key, "{}").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	err := h.Insert(trigger)
@@ -116,7 +116,7 @@ func TestTriggerInsertFail(t *testing.T) {
 
 	mock.ExpectPrepare("INSERT INTO b_trigger").
 		ExpectExec().
-		WithArgs(trigger.ID, trigger.ContentID, trigger.Key, "").
+		WithArgs(trigger.ID, trigger.ContentID, trigger.Key, "{}").
 		WillReturnError(fmt.Errorf("some error"))
 
 	err := h.Insert(trigger)
@@ -134,10 +134,10 @@ func TestTriggerUpdateSuccess(t *testing.T) {
 
 	mock.ExpectPrepare("UPDATE b_trigger").
 		ExpectExec().
-		WithArgs(trigger.ContentID, "", trigger.Key).
+		WithArgs(trigger.ContentID, "{}", trigger.Key).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	err := h.Update(trigger.Key, trigger.ContentID, trigger.Params)
+	err := h.Update(trigger.Key, trigger.ContentID, trigger.Values)
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.NoError(err)
@@ -152,10 +152,10 @@ func TestTriggerUpdateFail(t *testing.T) {
 
 	mock.ExpectPrepare("UPDATE b_trigger").
 		ExpectExec().
-		WithArgs(trigger.ContentID, "", trigger.Key).
+		WithArgs(trigger.ContentID, "{}", trigger.Key).
 		WillReturnError(fmt.Errorf("some error"))
 
-	err := h.Update(trigger.Key, trigger.ContentID, trigger.Params)
+	err := h.Update(trigger.Key, trigger.ContentID, trigger.Values)
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)
@@ -198,11 +198,11 @@ func TestTriggerDeleteFail(t *testing.T) {
 }
 
 func getDefaultTrigger() *models.Trigger {
-	return models.NewTrigger(uuid.NewUUID(), "DEFAULT", make([]string, 0))
+	return models.NewTrigger(uuid.NewUUID(), "DEFAULT", make(map[string]string))
 }
 
 func getTriggerRows() sqlmock.Rows {
-	return sqlmock.NewRows([]string{"id", "contentId", "tkey", "params"})
+	return sqlmock.NewRows([]string{"id", "contentId", "tkey", "values"})
 }
 
 func getMockTrigger(s *sql.DB) TriggerI {

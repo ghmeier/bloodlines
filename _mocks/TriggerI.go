@@ -85,11 +85,11 @@ func (_m *TriggerI) Insert(_a0 *models.Trigger) error {
 }
 
 // Update provides a mock function with given fields: _a0, _a1, _a2
-func (_m *TriggerI) Update(_a0 string, _a1 uuid.UUID, _a2 []string) error {
+func (_m *TriggerI) Update(_a0 string, _a1 uuid.UUID, _a2 map[string]string) error {
 	ret := _m.Called(_a0, _a1, _a2)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string, uuid.UUID, []string) error); ok {
+	if rf, ok := ret.Get(0).(func(string, uuid.UUID, map[string]string) error); ok {
 		r0 = rf(_a0, _a1, _a2)
 	} else {
 		r0 = ret.Error(0)

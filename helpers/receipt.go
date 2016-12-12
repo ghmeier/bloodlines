@@ -36,8 +36,6 @@ func NewReceipt(sql gateways.SQL, sendgrid gateways.SendgridI, townCenter gatewa
 		TC:         townCenter,
 		RB:         rabbit,
 	}
-
-	go helper.Consume()
 	return helper
 }
 
@@ -47,7 +45,7 @@ func (r *Receipt) Insert(receipt *models.Receipt) error {
 		"INSERT INTO receipt (id, ts, vals, sendState, contentId, userId) VALUES (?, ?, ?, ?, ?, ?)",
 		receipt.ID,
 		receipt.Created,
-		receipt.SerializeValues(),
+		models.SerializeValues(receipt.Values),
 		string(receipt.SendState),
 		receipt.ContentID,
 		receipt.UserID,

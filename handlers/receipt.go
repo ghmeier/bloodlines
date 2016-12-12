@@ -13,6 +13,7 @@ type ReceiptI interface {
 	Send(ctx *gin.Context)
 	ViewAll(ctx *gin.Context)
 	View(ctx *gin.Context)
+	StartConsumer()
 }
 
 /*Receipt implements ReceiptI for the receipt router*/
@@ -93,4 +94,8 @@ func (r *Receipt) View(ctx *gin.Context) {
 	}
 
 	ctx.JSON(200, gin.H{"data": receipt})
+}
+
+func (r *Receipt) StartConsumer() {
+	go r.Helper.Consume()
 }

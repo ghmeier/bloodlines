@@ -1,10 +1,16 @@
 package models
 
 import (
+	"encoding/json"
 	"strings"
 
 	"github.com/pborman/uuid"
 )
+
+func SerializeValues(values map[string]string) string {
+	s, _ := json.Marshal(values)
+	return string(s)
+}
 
 func toList(s string) []string {
 	if s == "" {
