@@ -212,7 +212,7 @@ func TestContentDeactivateSuccess(t *testing.T) {
 	id := uuid.NewUUID()
 	b, cMock := mockContent()
 	cMock.
-		On("SetStatus", id.String(), mock.AnythingOfType("models.ContentStatus")).
+		On("SetStatus", id.String(), models.ContentStatus(models.INACTIVE)).
 		Return(nil)
 
 	w := httptest.NewRecorder()
@@ -230,7 +230,7 @@ func TestContentDeactivateFail(t *testing.T) {
 	id := uuid.NewUUID()
 	b, cMock := mockContent()
 	cMock.
-		On("SetStatus", id.String(), mock.AnythingOfType("models.ContentType")).
+		On("SetStatus", id.String(), models.ContentStatus(models.INACTIVE)).
 		Return(fmt.Errorf("some error"))
 
 	w := httptest.NewRecorder()

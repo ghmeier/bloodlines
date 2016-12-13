@@ -83,10 +83,6 @@ func (r *Receipt) ViewAll(ctx *gin.Context) {
 /*View returns the receipt with the given id*/
 func (r *Receipt) View(ctx *gin.Context) {
 	id := ctx.Param("receiptId")
-	if id == "" {
-		ctx.JSON(400, errResponse("receiptId is a required parameter"))
-		return
-	}
 
 	receipt, err := r.Helper.GetByID(id)
 	if err != nil {

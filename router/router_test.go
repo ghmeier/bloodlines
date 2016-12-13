@@ -52,3 +52,14 @@ func mockContent() (*Bloodlines, *mocks.ContentI) {
 
 	return b, mock
 }
+
+func mockReceipt() (*Bloodlines, *mocks.ReceiptI, *mocks.ContentI) {
+	b := getMockBloodlines()
+	mock := new(mocks.ReceiptI)
+	cmock := new(mocks.ContentI)
+	b.receipt = &handlers.Receipt{Helper: mock, CHelper: cmock}
+	mock.On("Consume").Return(nil)
+	InitRouter(b)
+
+	return b, mock, cmock
+}
