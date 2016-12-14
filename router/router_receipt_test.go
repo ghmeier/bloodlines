@@ -1,6 +1,8 @@
 package router
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -10,6 +12,7 @@ import (
 
 	"github.com/pborman/uuid"
 	"github.com/stretchr/testify/assert"
+	mocks "github.com/stretchr/testify/mock"
 	"gopkg.in/gin-gonic/gin.v1"
 )
 
@@ -88,6 +91,131 @@ func TestReceiptViewFail(t *testing.T) {
 	b.router.ServeHTTP(w, r)
 
 	assert.Equal(500, w.Code)
+}
+
+func TestReceiptSendSuccess(t *testing.T) {
+	assert := assert.New(t)
+
+	gin.SetMode(gin.TestMode)
+
+	receipt := getDefaultReceipt()
+	receipt.Values["first_name"] = "test"
+	content := &models.Content{
+		ID:      receipt.ContentID,
+		Type:    models.EMAIL,
+		Text:    "Hello $first_name$",
+		Params:  []string{"first_name"},
+		Status:  models.ACTIVE,
+		Subject: "Test",
+	}
+	s, _ := json.Marshal(receipt)
+
+	b, mock, cmock := mockReceipt()
+	mock.On("Insert", mocks.AnythingOfType("*models.Receipt")).Return(nil)
+	mock.On("Send", mocks.AnythingOfType("*models.SendRequest")).Return(nil)
+	cmock.On("GetByID", content.ID.String()).Return(content, nil)
+
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("POST", "/api/receipt/send", bytes.NewReader(s))
+	b.router.ServeHTTP(w, r)
+
+	assert.Equal(200, w.Code)
+}
+
+func TestReceiptSendInsertFail(t *testing.T) {
+	assert := assert.New(t)
+
+	gin.SetMode(gin.TestMode)
+
+	receipt := getDefaultReceipt()
+	receipt.Values["first_name"] = "test"
+	s, _ := json.Marshal(receipt)
+
+	b, mock, _ := mockReceipt()
+	mock.On("Insert", mocks.AnythingOfType("*models.Receipt")).Return(fmt.Errorf("some error"))
+
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("POST", "/api/receipt/send", bytes.NewReader(s))
+	b.router.ServeHTTP(w, r)
+
+	assert.Equal(500, w.Code)
+}
+
+func TestReceiptSendGetFail(t *testing.T) {
+	assert := assert.New(t)
+
+	gin.SetMode(gin.TestMode)
+
+	receipt := getDefaultReceipt()
+	receipt.Values["first_name"] = "test"
+	s, _ := json.Marshal(receipt)
+
+	b, mock, cmock := mockReceipt()
+	mock.On("Insert", mocks.AnythingOfType("*models.Receipt")).Return(nil)
+	cmock.On("GetByID", receipt.ContentID.String()).Return(nil, fmt.Errorf("some error"))
+
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("POST", "/api/receipt/send", bytes.NewReader(s))
+	b.router.ServeHTTP(w, r)
+
+	assert.Equal(500, w.Code)
+}
+
+func TestReceiptSendFail(t *testing.T) {
+	assert := assert.New(t)
+
+	gin.SetMode(gin.TestMode)
+
+	receipt := getDefaultReceipt()
+	receipt.Values["first_name"] = "test"
+	content := &models.Content{
+		ID:      receipt.ContentID,
+		Type:    models.EMAIL,
+		Text:    "Hello $first_name$",
+		Params:  []string{"first_name"},
+		Status:  models.ACTIVE,
+		Subject: "Test",
+	}
+	s, _ := json.Marshal(receipt)
+
+	b, mock, cmock := mockReceipt()
+	mock.On("Insert", mocks.AnythingOfType("*models.Receipt")).Return(nil)
+	mock.On("Send", mocks.AnythingOfType("*models.SendRequest")).Return(fmt.Errorf("some error"))
+	cmock.On("GetByID", content.ID.String()).Return(content, nil)
+
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("POST", "/api/receipt/send", bytes.NewReader(s))
+	b.router.ServeHTTP(w, r)
+
+	assert.Equal(500, w.Code)
+}
+
+func TestReceiptSendResolveFail(t *testing.T) {
+	assert := assert.New(t)
+
+	gin.SetMode(gin.TestMode)
+
+	receipt := getDefaultReceipt()
+	content := &models.Content{
+		ID:      receipt.ContentID,
+		Type:    models.EMAIL,
+		Text:    "Hello $first_name$",
+		Params:  []string{"first_name"},
+		Status:  models.ACTIVE,
+		Subject: "Test",
+	}
+	s, _ := json.Marshal(receipt)
+
+	b, mock, cmock := mockReceipt()
+	mock.On("Insert", mocks.AnythingOfType("*models.Receipt")).Return(nil)
+	mock.On("Send", mocks.AnythingOfType("*models.SendRequest")).Return(nil)
+	cmock.On("GetByID", content.ID.String()).Return(content, nil)
+
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("POST", "/api/receipt/send", bytes.NewReader(s))
+	b.router.ServeHTTP(w, r)
+
+	assert.Equal(400, w.Code)
 }
 
 func getDefaultReceipt() *models.Receipt {
