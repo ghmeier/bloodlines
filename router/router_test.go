@@ -63,3 +63,12 @@ func mockReceipt() (*Bloodlines, *mocks.ReceiptI, *mocks.ContentI) {
 
 	return b, mock, cmock
 }
+
+func mockPreference() (*Bloodlines, *mocks.PreferenceI) {
+	b := getMockBloodlines()
+	mock := new(mocks.PreferenceI)
+	b.preference = &handlers.Preference{Helper: mock}
+	InitRouter(b)
+
+	return b, mock
+}
