@@ -50,6 +50,7 @@ func New(config *config.Root) (*Bloodlines, error) {
 	return b, nil
 }
 
+/*InitRouter connects the handlers to endpoints with gin*/
 func InitRouter(b *Bloodlines) {
 	b.router = gin.Default()
 

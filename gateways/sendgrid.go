@@ -10,18 +10,22 @@ import (
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
 
+/*SendgridI is the interface for sendgrid gateways*/
 type SendgridI interface {
 	SendEmail(string, string, string) error
 }
 
+/*Sendgrid impliments SendgridI for a given sendgrid config*/
 type Sendgrid struct {
 	config config.Sendgrid
 }
 
+/*NewSendgrid returns a pointer to a Sendgrid struct*/
 func NewSendgrid(config config.Sendgrid) SendgridI {
 	return &Sendgrid{config: config}
 }
 
+/*SendEmail sends an email through sendgrid with the given target email*/
 func (s *Sendgrid) SendEmail(target string, subject string, text string) error {
 	m := s.getSGMail(target, subject, text)
 
@@ -31,7 +35,7 @@ func (s *Sendgrid) SendEmail(target string, subject string, text string) error {
 		return err
 	}
 	if response.StatusCode > 299 {
-		return fmt.Errorf("ERROR: invalid request, &s", response.Body)
+		return fmt.Errorf("ERROR: invalid request, %s", response.Body)
 	}
 
 	fmt.Println(response.StatusCode)

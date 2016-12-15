@@ -19,6 +19,7 @@ type Receipt struct {
 	UserID    uuid.UUID         `json:"userId"`
 }
 
+/*SendRequest has the info for sending a message through the sendgrid api*/
 type SendRequest struct {
 	Receipt *Receipt `json:"receipt"`
 	Subject string   `json:"subject"`
