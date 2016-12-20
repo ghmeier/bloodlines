@@ -20,14 +20,14 @@ type JobI interface {
 	Stop(ctx *gin.Context)
 }
 
-/*Job is the implementation with helper of JobI*/
+/*Job is the implementation with Helper of JobI*/
 type Job struct {
-	helper helpers.JobI
+	Helper helpers.JobI
 }
 
 /*NewJob constructs a new Job handler*/
 func NewJob(sql gateways.SQL) *Job {
-	return &Job{helper: helpers.NewJob(sql)}
+	return &Job{Helper: helpers.NewJob(sql)}
 }
 
 /*New creates and inserts a new job entity*/
@@ -35,7 +35,7 @@ func (j *Job) New(ctx *gin.Context) {
 	var json models.Job
 	err := ctx.BindJSON(&json)
 	if err != nil {
-		ctx.JSON(400, errResponse("Invalid Job input."))
+		ctx.JSON(400, errResponse("invalid job input"))
 		return
 	}
 
@@ -43,7 +43,7 @@ func (j *Job) New(ctx *gin.Context) {
 		json.SendTime = time.Now()
 	}
 	job := models.NewJob(json.Receipts, json.SendTime)
-	err = j.helper.Insert(job)
+	err = j.Helper.Insert(job)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
@@ -54,7 +54,7 @@ func (j *Job) New(ctx *gin.Context) {
 /*ViewAll returns a list of jobs from offset and limit params (default 0,20)*/
 func (j *Job) ViewAll(ctx *gin.Context) {
 	offset, limit := getPaging(ctx)
-	jobs, err := j.helper.GetAll(offset, limit)
+	jobs, err := j.Helper.GetAll(offset, limit)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
@@ -66,11 +66,11 @@ func (j *Job) ViewAll(ctx *gin.Context) {
 func (j *Job) View(ctx *gin.Context) {
 	id := ctx.Param("jobId")
 	if id == "" {
-		ctx.JSON(500, errResponse("JobId is a required parameter."))
+		ctx.JSON(500, errResponse("jobId is a required parameter"))
 		return
 	}
 
-	job, err := j.helper.GetByID(id)
+	job, err := j.Helper.GetByID(id)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
@@ -87,11 +87,11 @@ func (j *Job) Update(ctx *gin.Context) {
 func (j *Job) Stop(ctx *gin.Context) {
 	id := ctx.Param("jobId")
 	if id == "" {
-		ctx.JSON(400, errResponse("JobId is a required parameter"))
+		ctx.JSON(400, errResponse("jobId is a required parameter"))
 		return
 	}
 
-	err := j.helper.SetStatus(uuid.Parse(id), models.FAILURE)
+	err := j.Helper.SetStatus(uuid.Parse(id), models.FAILURE)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
 		return

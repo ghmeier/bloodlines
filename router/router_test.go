@@ -53,6 +53,15 @@ func mockContent() (*Bloodlines, *mocks.ContentI) {
 	return b, mock
 }
 
+func mockJob() (*Bloodlines, *mocks.JobI) {
+	b := getMockBloodlines()
+	mock := new(mocks.JobI)
+	b.job = &handlers.Job{Helper: mock}
+	InitRouter(b)
+
+	return b, mock
+}
+
 func mockReceipt() (*Bloodlines, *mocks.ReceiptI, *mocks.ContentI) {
 	b := getMockBloodlines()
 	mock := new(mocks.ReceiptI)
