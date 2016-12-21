@@ -21,9 +21,8 @@ type Receipt struct {
 
 /*SendRequest has the info for sending a message through the sendgrid api*/
 type SendRequest struct {
-	Receipt *Receipt `json:"receipt"`
-	Subject string   `json:"subject"`
-	Text    string   `json:"text"`
+	ReceiptID uuid.UUID `json:"receiptId"`
+	ContentID uuid.UUID `json:"contentId"`
 }
 
 /*NewReceipt creates and returns a new receipt with a new id*/

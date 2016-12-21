@@ -286,6 +286,7 @@ func TestTriggerActivateSuccess(t *testing.T) {
 
 	mockTrigger.On("GetByKey", key).Return(trigger, nil)
 	mockContent.On("GetByID", trigger.ContentID.String()).Return(content, nil)
+	mockReceipt.On("Insert", mock.AnythingOfType("*models.Receipt")).Return(nil)
 	mockReceipt.On("Send", mock.AnythingOfType("*models.SendRequest")).Return(nil)
 
 	w := httptest.NewRecorder()
@@ -295,7 +296,7 @@ func TestTriggerActivateSuccess(t *testing.T) {
 	assert.Equal(200, w.Code)
 }
 
-func TestTriggerActivateResolveFail(t *testing.T) {
+func TestTriggerActivateInsertFail(t *testing.T) {
 	assert := assert.New(t)
 
 	gin.SetMode(gin.TestMode)
@@ -340,13 +341,13 @@ func TestTriggerActivateResolveFail(t *testing.T) {
 
 	mockTrigger.On("GetByKey", key).Return(trigger, nil)
 	mockContent.On("GetByID", trigger.ContentID.String()).Return(content, nil)
-	mockReceipt.On("Send", mock.AnythingOfType("*models.SendRequest")).Return(nil)
+	mockReceipt.On("Insert", mock.AnythingOfType("*models.Receipt")).Return(fmt.Errorf("some error"))
 
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("POST", "/api/trigger/test_key/activate", bytes.NewReader(s))
 	b.router.ServeHTTP(w, r)
 
-	assert.Equal(400, w.Code)
+	assert.Equal(500, w.Code)
 }
 
 func TestTriggerActivateTriggerFail(t *testing.T) {

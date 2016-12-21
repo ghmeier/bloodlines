@@ -10,13 +10,13 @@ type ReceiptI struct {
 	mock.Mock
 }
 
-// Consume provides a mock function with given fields:
-func (_m *ReceiptI) Consume() error {
-	ret := _m.Called()
+// DeliverContent provides a mock function with given fields: _a0, _a1
+func (_m *ReceiptI) DeliverContent(_a0 *models.Receipt, _a1 *models.Content) error {
+	ret := _m.Called(_a0, _a1)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func() error); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(*models.Receipt, *models.Content) error); ok {
+		r0 = rf(_a0, _a1)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -68,20 +68,6 @@ func (_m *ReceiptI) GetByID(_a0 string) (*models.Receipt, error) {
 	}
 
 	return r0, r1
-}
-
-// HandleRequest provides a mock function with given fields: request
-func (_m *ReceiptI) HandleRequest(request *models.SendRequest) error {
-	ret := _m.Called(request)
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(*models.SendRequest) error); ok {
-		r0 = rf(request)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
 }
 
 // Insert provides a mock function with given fields: _a0

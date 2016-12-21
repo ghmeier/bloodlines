@@ -13,7 +13,6 @@ type ReceiptI interface {
 	Send(ctx *gin.Context)
 	ViewAll(ctx *gin.Context)
 	View(ctx *gin.Context)
-	StartConsumer()
 }
 
 /*Receipt implements ReceiptI for the receipt router*/
@@ -49,16 +48,9 @@ func (r *Receipt) Send(ctx *gin.Context) {
 		return
 	}
 
-	resolved, err := content.ResolveText(receipt.Values)
-	if err != nil {
-		ctx.JSON(400, errResponse(err.Error()))
-		return
-	}
-
 	err = r.Helper.Send(&models.SendRequest{
-		Receipt: receipt,
-		Subject: content.Subject,
-		Text:    resolved,
+		ReceiptID: receipt.ID,
+		ContentID: content.ID,
 	})
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
@@ -87,11 +79,8 @@ func (r *Receipt) View(ctx *gin.Context) {
 	receipt, err := r.Helper.GetByID(id)
 	if err != nil {
 		ctx.JSON(500, errResponse(err.Error()))
+		return
 	}
 
 	ctx.JSON(200, gin.H{"data": receipt})
-}
-
-func (r *Receipt) StartConsumer() {
-	go r.Helper.Consume()
 }

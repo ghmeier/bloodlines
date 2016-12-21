@@ -8,6 +8,7 @@ import (
 	"github.com/ghmeier/bloodlines/config"
 	"github.com/ghmeier/bloodlines/gateways"
 	"github.com/ghmeier/bloodlines/handlers"
+	"github.com/ghmeier/bloodlines/workers"
 )
 
 /*Bloodlines is the main server object which routes requests*/
@@ -18,6 +19,7 @@ type Bloodlines struct {
 	job        handlers.JobI
 	trigger    handlers.TriggerI
 	preference handlers.PreferenceI
+	workers    []workers.Send
 }
 
 /*New returns a ready-to-run Bloodlines struct from the given config*/
@@ -44,6 +46,7 @@ func New(config *config.Root) (*Bloodlines, error) {
 		job:        handlers.NewJob(sql),
 		trigger:    handlers.NewTrigger(sql, sendgrid, towncenter, rabbit),
 		preference: handlers.NewPreference(sql),
+		workers:    []workers.Send{workers.NewSend(sql, sendgrid, towncenter, rabbit)},
 	}
 
 	InitRouter(b)
@@ -68,7 +71,6 @@ func InitRouter(b *Bloodlines) {
 		receipt.POST("/send", b.receipt.Send)
 		receipt.GET("/:receiptId", b.receipt.View)
 	}
-	b.receipt.StartConsumer()
 	job := b.router.Group("/api/job")
 	{
 		job.GET("", b.job.ViewAll)
@@ -92,6 +94,10 @@ func InitRouter(b *Bloodlines) {
 		pref.GET("/:userId", b.preference.View)
 		pref.PATCH("/:userId", b.preference.Update)
 		pref.DELETE("/:userId", b.preference.Deactivate)
+	}
+
+	for _, w := range b.workers {
+		w.Consume()
 	}
 }
 

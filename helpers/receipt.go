@@ -1,8 +1,8 @@
 package helpers
 
 import (
-	"encoding/json"
-	"fmt"
+	//"encoding/json"
+	//"fmt"
 
 	"github.com/pborman/uuid"
 
@@ -16,8 +16,8 @@ type ReceiptI interface {
 	Insert(*models.Receipt) error
 	SetStatus(uuid.UUID, models.Status) error
 	Send(*models.SendRequest) error
-	Consume() error
-	HandleRequest(request *models.SendRequest) error
+	//Consume() error
+	DeliverContent(*models.Receipt, *models.Content) error
 }
 
 /*Receipt helps with managing receipt entities and fetching them*/
@@ -91,45 +91,58 @@ func (r *Receipt) SetStatus(id uuid.UUID, state models.Status) error {
 /*Send attempts to send the text to the recipient in the receipt*/
 //receipt *models.Receipt, subject string, text string
 func (r *Receipt) Send(request *models.SendRequest) error {
-	return r.RB.Produce(request)
-}
+	err := r.RB.Produce(request)
+	if err != nil {
+		r.SetStatus(request.ReceiptID, models.FAILURE)
+		return err
+	}
 
-func (r *Receipt) HandleRequest(request *models.SendRequest) error {
-	//ignoring error until TC is actually implement
-	target, _ := r.TC.GetUser(request.Receipt.UserID)
-	err := r.SG.SendEmail(target, request.Subject, request.Text)
+	err = r.SetStatus(request.ReceiptID, models.QUEUED)
 	return err
 }
 
-/*Consume starts a channel that consumes messages from the front of the queue*/
-func (r *Receipt) Consume() error {
+func (r *Receipt) DeliverContent(receipt *models.Receipt, content *models.Content) error {
+	//ignoring error until TC is actually implemented
+	target, _ := r.TC.GetUser(receipt.UserID)
 
-	msgs, err := r.RB.Consume()
+	text, err := content.ResolveText(receipt.Values)
 	if err != nil {
 		return err
 	}
 
-	forever := make(chan bool)
-
-	go func() {
-		for d := range msgs {
-			fmt.Printf("Received a message: %s", d.Body)
-			var request models.SendRequest
-			err := json.Unmarshal(d.Body, &request)
-			if err != nil {
-				fmt.Println("ERROR: unable to unmarshal body")
-				// Resend message??
-			}
-
-			err = r.HandleRequest(&request)
-			if err != nil {
-				fmt.Println("ERROR: unable to complete request")
-				fmt.Println(err.Error())
-				// resend receipt?
-			}
-		}
-	}()
-
-	<-forever
-	return nil
+	err = r.SG.SendEmail(target, content.Subject, text)
+	return err
 }
+
+/*Consume starts a channel that consumes messages from the front of the queue*/
+// func (r *Receipt) Consume() error {
+
+// 	msgs, err := r.RB.Consume()
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	forever := make(chan bool)
+
+// 	go func() {
+// 		for d := range msgs {
+// 			fmt.Printf("Received a message: %s", d.Body)
+// 			var request models.SendRequest
+// 			err := json.Unmarshal(d.Body, &request)
+// 			if err != nil {
+// 				fmt.Println("ERROR: unable to unmarshal body")
+// 				// Resend message??
+// 			}
+
+// 			err = r.HandleRequest(&request)
+// 			if err != nil {
+// 				fmt.Println("ERROR: unable to complete request")
+// 				fmt.Println(err.Error())
+// 				// resend receipt?
+// 			}
+// 		}
+// 	}()
+
+// 	<-forever
+// 	return nil
+// }

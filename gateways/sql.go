@@ -26,7 +26,7 @@ type MySQL struct {
 func NewSQL(config config.MySQL) (*MySQL, error) {
 	db, err := sql.Open(
 		"mysql",
-		config.User+":"+config.Password+"@tcp("+config.Host+":"+string(config.Port)+")/"+config.Database,
+		config.User+":"+config.Password+"@tcp("+config.Host+":"+string(config.Port)+")/"+config.Database+"?parseTime=true",
 	)
 
 	return &MySQL{DB: db}, err

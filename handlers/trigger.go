@@ -146,13 +146,16 @@ func (t *Trigger) Activate(ctx *gin.Context) {
 	}
 
 	receipt := models.NewReceipt(json.Values, trigger.ContentID, json.UserID)
-	resolved, err := content.ResolveText(receipt.Values)
+	err = t.RHelper.Insert(receipt)
 	if err != nil {
-		ctx.JSON(400, errResponse(err.Error()))
+		ctx.JSON(500, errResponse(err.Error()))
 		return
 	}
 
-	request := &models.SendRequest{Receipt: receipt, Subject: content.Subject, Text: resolved}
+	request := &models.SendRequest{
+		ReceiptID: receipt.ID,
+		ContentID: content.ID,
+	}
 	t.RHelper.Send(request)
 
 	ctx.JSON(200, gin.H{"data": request})

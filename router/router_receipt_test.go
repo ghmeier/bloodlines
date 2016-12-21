@@ -190,34 +190,6 @@ func TestReceiptSendFail(t *testing.T) {
 	assert.Equal(500, w.Code)
 }
 
-func TestReceiptSendResolveFail(t *testing.T) {
-	assert := assert.New(t)
-
-	gin.SetMode(gin.TestMode)
-
-	receipt := getDefaultReceipt()
-	content := &models.Content{
-		ID:      receipt.ContentID,
-		Type:    models.EMAIL,
-		Text:    "Hello $first_name$",
-		Params:  []string{"first_name"},
-		Status:  models.ACTIVE,
-		Subject: "Test",
-	}
-	s, _ := json.Marshal(receipt)
-
-	b, mock, cmock := mockReceipt()
-	mock.On("Insert", mocks.AnythingOfType("*models.Receipt")).Return(nil)
-	mock.On("Send", mocks.AnythingOfType("*models.SendRequest")).Return(nil)
-	cmock.On("GetByID", content.ID.String()).Return(content, nil)
-
-	w := httptest.NewRecorder()
-	r, _ := http.NewRequest("POST", "/api/receipt/send", bytes.NewReader(s))
-	b.router.ServeHTTP(w, r)
-
-	assert.Equal(400, w.Code)
-}
-
 func getDefaultReceipt() *models.Receipt {
 	return &models.Receipt{
 		ID:        uuid.NewUUID(),

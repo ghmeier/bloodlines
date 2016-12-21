@@ -222,33 +222,37 @@ func TestReceiptSendSuccess(t *testing.T) {
 	assert := assert.New(t)
 
 	receipt := getDefaultReceipt()
-	request := &models.SendRequest{Receipt: receipt, Subject: "test", Text: "text"}
+	content := getDefaultContent()
+	request := &models.SendRequest{ReceiptID: receipt.ID, ContentID: content.ID}
 
-	s, _, _ := sqlmock.New()
+	s, mock, _ := sqlmock.New()
 	rabbitMock := &mocks.RabbitI{}
 	r := NewReceipt(&gateways.MySQL{DB: s}, &mocks.SendgridI{}, &mocks.TownCenterI{}, rabbitMock)
 	rabbitMock.On("Produce", request).Return(nil)
+	mock.ExpectPrepare("UPDATE receipt").
+		ExpectExec().
+		WithArgs(string(models.QUEUED), receipt.ID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	err := r.Send(request)
 
 	assert.NoError(err)
 }
 
-func TestReceiptHandleRequestSuccess(t *testing.T) {
+func TestReceiptDeliverContentSuccess(t *testing.T) {
 	assert := assert.New(t)
 
 	receipt := getDefaultReceipt()
+	content := getDefaultContent()
 	s, _, _ := sqlmock.New()
 	rabbitMock := &mocks.RabbitI{}
 	sgMock := &mocks.SendgridI{}
 	tcMock := &mocks.TownCenterI{}
 	r := NewReceipt(&gateways.MySQL{DB: s}, sgMock, tcMock, rabbitMock)
 	tcMock.On("GetUser", receipt.UserID).Return("test", nil)
-	sgMock.On("SendEmail", "test", "test", "text").Return(nil)
+	sgMock.On("SendEmail", "test", "test", "Hello").Return(nil)
 
-	request := &models.SendRequest{Receipt: receipt, Subject: "test", Text: "text"}
-
-	err := r.HandleRequest(request)
+	err := r.DeliverContent(receipt, content)
 
 	assert.NoError(err)
 }
