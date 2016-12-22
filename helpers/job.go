@@ -76,3 +76,7 @@ func (j *Job) SetStatus(id uuid.UUID, state models.Status) error {
 	err := j.sql.Modify("UPDATE job SET sendStatus=? where id=?", string(state), id)
 	return err
 }
+
+func (j *Job) SendJob() error {
+	return nil
+}

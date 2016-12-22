@@ -48,6 +48,7 @@ func (j *Job) New(ctx *gin.Context) {
 		ctx.JSON(500, errResponse(err.Error()))
 		return
 	}
+
 	ctx.JSON(200, gin.H{"data": job})
 }
 
@@ -65,10 +66,6 @@ func (j *Job) ViewAll(ctx *gin.Context) {
 /*View returns one job with the given id*/
 func (j *Job) View(ctx *gin.Context) {
 	id := ctx.Param("jobId")
-	if id == "" {
-		ctx.JSON(500, errResponse("jobId is a required parameter"))
-		return
-	}
 
 	job, err := j.Helper.GetByID(id)
 	if err != nil {
@@ -86,10 +83,6 @@ func (j *Job) Update(ctx *gin.Context) {
 /*Stop sets a job's status to Failure. Only used if the job hasn't started*/
 func (j *Job) Stop(ctx *gin.Context) {
 	id := ctx.Param("jobId")
-	if id == "" {
-		ctx.JSON(400, errResponse("jobId is a required parameter"))
-		return
-	}
 
 	err := j.Helper.SetStatus(uuid.Parse(id), models.FAILURE)
 	if err != nil {
