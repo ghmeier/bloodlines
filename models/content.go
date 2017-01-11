@@ -78,7 +78,7 @@ func toContentType(s string) (ContentType, bool) {
 	case EMAIL:
 		return EMAIL, true
 	default:
-		return "", false
+		return NOOP, false
 	}
 }
 
@@ -99,6 +99,7 @@ type ContentType string
 /*valid ContentTypes*/
 const (
 	EMAIL = "EMAIL"
+	NOOP  = "NOOP"
 )
 
 /*ContentStatus is an enum wrapper for valid ContentStatus strings*/

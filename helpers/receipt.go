@@ -103,6 +103,15 @@ func (r *Receipt) Send(request *models.SendRequest) error {
 
 func (r *Receipt) DeliverContent(receipt *models.Receipt, content *models.Content) error {
 	//ignoring error until TC is actually implemented
+	switch content.Type {
+	case models.EMAIL:
+		return r.deliverEmail(receipt, content)
+	default:
+		return r.deliverNoop(receipt, content)
+	}
+}
+
+func (r *Receipt) deliverEmail(receipt *models.Receipt, content *models.Content) error {
 	target, _ := r.TC.GetUser(receipt.UserID)
 
 	text, err := content.ResolveText(receipt.Values)
@@ -114,35 +123,6 @@ func (r *Receipt) DeliverContent(receipt *models.Receipt, content *models.Conten
 	return err
 }
 
-/*Consume starts a channel that consumes messages from the front of the queue*/
-// func (r *Receipt) Consume() error {
-
-// 	msgs, err := r.RB.Consume()
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	forever := make(chan bool)
-
-// 	go func() {
-// 		for d := range msgs {
-// 			fmt.Printf("Received a message: %s", d.Body)
-// 			var request models.SendRequest
-// 			err := json.Unmarshal(d.Body, &request)
-// 			if err != nil {
-// 				fmt.Println("ERROR: unable to unmarshal body")
-// 				// Resend message??
-// 			}
-
-// 			err = r.HandleRequest(&request)
-// 			if err != nil {
-// 				fmt.Println("ERROR: unable to complete request")
-// 				fmt.Println(err.Error())
-// 				// resend receipt?
-// 			}
-// 		}
-// 	}()
-
-// 	<-forever
-// 	return nil
-// }
+func (r *Receipt) deliverNoop(receipt *models.Receipt, content *models.Content) error {
+	return nil
+}

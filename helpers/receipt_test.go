@@ -257,6 +257,25 @@ func TestReceiptDeliverContentSuccess(t *testing.T) {
 	assert.NoError(err)
 }
 
+func TestReceiptDeliverContentNoopSuccess(t *testing.T) {
+	assert := assert.New(t)
+
+	receipt := getDefaultReceipt()
+	content := getDefaultContent()
+	content.Type = models.NOOP
+	s, _, _ := sqlmock.New()
+	rabbitMock := &mocks.RabbitI{}
+	sgMock := &mocks.SendgridI{}
+	tcMock := &mocks.TownCenterI{}
+	r := NewReceipt(&gateways.MySQL{DB: s}, sgMock, tcMock, rabbitMock)
+	tcMock.On("GetUser", receipt.UserID).Return("test", nil)
+	sgMock.On("SendEmail", "test", "test", "Hello").Return(nil)
+
+	err := r.DeliverContent(receipt, content)
+
+	assert.NoError(err)
+}
+
 func getDefaultReceipt() *models.Receipt {
 	return models.NewReceipt(make(map[string]string), uuid.NewUUID(), uuid.NewUUID())
 }
