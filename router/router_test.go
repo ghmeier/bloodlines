@@ -16,8 +16,8 @@ func TestNewSuccess(t *testing.T) {
 
 	r, err := New(&config.Root{SQL: config.MySQL{}})
 
-	assert.Error(err)
-	assert.Nil(r)
+	assert.NoError(err)
+	assert.NotNil(r)
 }
 
 func getMockBloodlines() *Bloodlines {
