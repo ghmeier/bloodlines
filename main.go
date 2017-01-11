@@ -2,15 +2,19 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path"
+	"path/filepath"
 
 	"github.com/ghmeier/bloodlines/config"
 	"github.com/ghmeier/bloodlines/router"
 )
 
 func main() {
-	config, err := config.Init("config.json")
+	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+	config, err := config.Init(path.Join(dir, "config.json"))
 	if err != nil {
-		fmt.Printf("ERROR: config initialization error. %s\n", err.Error())
+		fmt.Printf("ERROR: config initialization error.\n%s\n", err.Error())
 		return
 	}
 	b, err := router.New(config)

@@ -37,7 +37,6 @@ func New(config *config.Root) (*Bloodlines, error) {
 	if err != nil {
 		fmt.Println("ERROR: coud not connect to RabbitMQ")
 		fmt.Println(err.Error())
-		return nil, err
 	}
 
 	b := &Bloodlines{

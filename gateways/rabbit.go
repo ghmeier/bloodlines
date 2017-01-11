@@ -20,35 +20,22 @@ type Rabbit struct {
 	Conn    *amqp.Connection
 	Channel *amqp.Channel
 	Queue   *amqp.Queue
+	Config  config.Rabbit
 }
 
 func NewRabbit(config config.Rabbit) (*Rabbit, error) {
-	conn, err := amqp.Dial("amqp://guest:guest@" + config.Host + ":" + config.Port + "/")
-	if err != nil {
-		return nil, err
-	}
+	r := &Rabbit{Config: config}
 
-	ch, err := conn.Channel()
-	if err != nil {
-		return nil, err
-	}
-
-	q, err := ch.QueueDeclare(
-		config.PubQ, // name
-		false,       // durable
-		false,       // delete when unused
-		false,       // exclusive
-		false,       // no-wait
-		nil,         // arguments
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return &Rabbit{Conn: conn, Channel: ch, Queue: &q}, nil
+	err := r.connect()
+	return r, err
 }
 
 func (r *Rabbit) Produce(request *models.SendRequest) error {
+	err := r.connect()
+	if err != nil {
+		return err
+	}
+
 	s, err := json.Marshal(request)
 	if err != nil {
 		return err
@@ -67,6 +54,11 @@ func (r *Rabbit) Produce(request *models.SendRequest) error {
 }
 
 func (r *Rabbit) Consume() (<-chan amqp.Delivery, error) {
+	err := r.connect()
+	if err != nil {
+		return nil, err
+	}
+
 	msgs, err := r.Channel.Consume(
 		r.Queue.Name, // queue
 		"",           // consumer
@@ -86,4 +78,36 @@ func (r *Rabbit) Consume() (<-chan amqp.Delivery, error) {
 func (r *Rabbit) Destroy() {
 	r.Channel.Close()
 	r.Conn.Close()
+}
+
+func (r *Rabbit) connect() error {
+	if r.Conn != nil && r.Channel != nil && r.Queue != nil {
+		return nil
+	}
+	conn, err := amqp.Dial("amqp://guest:guest@" + r.Config.Host + ":" + r.Config.Port + "/")
+	if err != nil {
+		return err
+	}
+
+	ch, err := conn.Channel()
+	if err != nil {
+		return err
+	}
+
+	q, err := ch.QueueDeclare(
+		r.Config.PubQ, // name
+		false,         // durable
+		false,         // delete when unused
+		false,         // exclusive
+		false,         // no-wait
+		nil,           // arguments
+	)
+	if err != nil {
+		return err
+	}
+
+	r.Conn = conn
+	r.Channel = ch
+	r.Queue = &q
+	return nil
 }
