@@ -5,6 +5,7 @@ import (
 	"github.com/ghmeier/bloodlines/models"
 )
 
+/*PreferenceI describes the functions of preference helpers*/
 type PreferenceI interface {
 	Insert(*models.Preference) error
 	GetAll(int, int) ([]*models.Preference, error)
@@ -47,7 +48,7 @@ func (p *Preference) GetAll(offset int, limit int) ([]*models.Preference, error)
 	return preferences, nil
 }
 
-/*GetPreferenceByUserID returns a preference associated with the given user id*/
+/*GetByUserID returns a preference associated with the given user id*/
 func (p *Preference) GetByUserID(id string) (*models.Preference, error) {
 	rows, err := p.sql.Select("SELECT id, userId, email FROM preference where userId=?", id)
 	if err != nil {

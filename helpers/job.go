@@ -9,6 +9,7 @@ import (
 	"github.com/ghmeier/bloodlines/models"
 )
 
+/*JobI describes the methods of job helpers*/
 type JobI interface {
 	GetAll(int, int) ([]*models.Job, error)
 	GetByID(string) (*models.Job, error)
@@ -56,7 +57,7 @@ func (j *Job) GetAll(offset int, limit int) ([]*models.Job, error) {
 	return jobs, nil
 }
 
-/*GetJobByID returns one job with the give id, nil otherwise*/
+/*GetByID returns one job with the give id, nil otherwise*/
 func (j *Job) GetByID(id string) (*models.Job, error) {
 	rows, err := j.sql.Select("SELECT id, sendTime, sendStatus, receipts FROM job WHERE id=?", id)
 	if err != nil {
@@ -71,12 +72,14 @@ func (j *Job) GetByID(id string) (*models.Job, error) {
 	return jobs[0], nil
 }
 
-/*SetSendStatus updates the status of the job with the provided id*/
+/*SetStatus updates the status of the job with the provided id*/
 func (j *Job) SetStatus(id uuid.UUID, state models.Status) error {
 	err := j.sql.Modify("UPDATE job SET sendStatus=? where id=?", string(state), id)
 	return err
 }
 
+/*SendJob should queue messages based on a job, not sure whether to
+  do this by jobID or receipt yet*/
 func (j *Job) SendJob() error {
 	return nil
 }

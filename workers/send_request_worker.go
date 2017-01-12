@@ -9,16 +9,19 @@ import (
 	"github.com/ghmeier/bloodlines/models"
 )
 
+/*Send describes the functions a send request uses*/
 type Send interface {
 	Consume() error
 }
 
+/*SendRequest has acces to receipt and content helpers as well as rabbitmq for publishing*/
 type SendRequest struct {
 	RHelper helpers.ReceiptI
 	CHelper helpers.ContentI
 	RB      gateways.RabbitI
 }
 
+/*NewSend creates and returns a new SendRequest*/
 func NewSend(sql gateways.SQL, sendgrid gateways.SendgridI, towncenter gateways.TownCenterI, rabbit gateways.RabbitI) Send {
 	return &SendRequest{
 		RHelper: helpers.NewReceipt(sql, sendgrid, towncenter, rabbit),

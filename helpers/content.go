@@ -11,6 +11,7 @@ type baseHelper struct {
 	sql gateways.SQL
 }
 
+/*ContentI describes the functions for manipulating content models*/
 type ContentI interface {
 	GetByID(string) (*models.Content, error)
 	GetAll(int, int) ([]*models.Content, error)
