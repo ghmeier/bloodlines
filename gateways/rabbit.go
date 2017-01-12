@@ -10,12 +10,14 @@ import (
 	"github.com/streadway/amqp"
 )
 
+/*RabbitI describes the gateway for interacting with RabbitMQ*/
 type RabbitI interface {
 	Produce(*models.SendRequest) error
 	Consume() (<-chan amqp.Delivery, error)
 	Destroy()
 }
 
+/*Rabbit stores references to RabbitMQ connections, channels, queues, and config*/
 type Rabbit struct {
 	Conn    *amqp.Connection
 	Channel *amqp.Channel
@@ -23,6 +25,7 @@ type Rabbit struct {
 	Config  config.Rabbit
 }
 
+/*NewRabbit creates and returns a new Rabbit struct*/
 func NewRabbit(config config.Rabbit) (*Rabbit, error) {
 	r := &Rabbit{Config: config}
 
@@ -30,6 +33,7 @@ func NewRabbit(config config.Rabbit) (*Rabbit, error) {
 	return r, err
 }
 
+/*Produce adds a message to the queue based on a send request*/
 func (r *Rabbit) Produce(request *models.SendRequest) error {
 	err := r.connect()
 	if err != nil {
@@ -53,6 +57,7 @@ func (r *Rabbit) Produce(request *models.SendRequest) error {
 	return err
 }
 
+/*Consume starts a worker that returns a channel from the queue to read from*/
 func (r *Rabbit) Consume() (<-chan amqp.Delivery, error) {
 	err := r.connect()
 	if err != nil {
@@ -75,6 +80,7 @@ func (r *Rabbit) Consume() (<-chan amqp.Delivery, error) {
 	return msgs, nil
 }
 
+/*Destroy ends the rabbitmq connection*/
 func (r *Rabbit) Destroy() {
 	r.Channel.Close()
 	r.Conn.Close()

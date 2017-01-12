@@ -7,6 +7,7 @@ import (
 	"github.com/ghmeier/bloodlines/models"
 )
 
+/*TriggerI describes methods of the Trigger Helper*/
 type TriggerI interface {
 	GetAll(int, int) ([]*models.Trigger, error)
 	GetByKey(string) (*models.Trigger, error)

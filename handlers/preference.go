@@ -17,7 +17,7 @@ type PreferenceI interface {
 	Deactivate(ctx *gin.Context)
 }
 
-/*Preference impliments PreferenceI for handling requests*/
+/*Preference implements PreferenceI for handling requests*/
 type Preference struct {
 	Helper helpers.PreferenceI
 }

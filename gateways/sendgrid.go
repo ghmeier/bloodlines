@@ -15,7 +15,7 @@ type SendgridI interface {
 	SendEmail(string, string, string) error
 }
 
-/*Sendgrid impliments SendgridI for a given sendgrid config*/
+/*Sendgrid implements SendgridI for a given sendgrid config*/
 type Sendgrid struct {
 	config config.Sendgrid
 }

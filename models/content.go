@@ -60,6 +60,8 @@ func ContentFromSQL(rows *sql.Rows) ([]*Content, error) {
 	return content, nil
 }
 
+/*ResolveText adds the given values to their corresponding position in this content's
+  Text string*/
 func (c *Content) ResolveText(values map[string]string) (string, error) {
 	t := c.Text
 

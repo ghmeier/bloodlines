@@ -7,6 +7,7 @@ import (
 	"github.com/pborman/uuid"
 )
 
+/*SerializeValues returns a string representation of the given map like in JSON*/
 func SerializeValues(values map[string]string) string {
 	s, _ := json.Marshal(values)
 	return string(s)

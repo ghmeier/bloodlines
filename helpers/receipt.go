@@ -10,6 +10,7 @@ import (
 	"github.com/ghmeier/bloodlines/models"
 )
 
+/*ReceiptI describes methods for the Receipt Helper*/
 type ReceiptI interface {
 	GetAll(int, int) ([]*models.Receipt, error)
 	GetByID(string) (*models.Receipt, error)
@@ -53,7 +54,7 @@ func (r *Receipt) Insert(receipt *models.Receipt) error {
 	return err
 }
 
-/*GetReceipts returns a list of receipts of length <limit> starting at <offset>*/
+/*GetAll returns a list of receipts of length <limit> starting at <offset>*/
 func (r *Receipt) GetAll(offset int, limit int) ([]*models.Receipt, error) {
 	rows, err := r.sql.Select("SELECT id, ts, vals, sendState, contentId, userId FROM receipt ORDER BY id ASC LIMIT ?,? ", offset, limit)
 	if err != nil {
@@ -68,7 +69,7 @@ func (r *Receipt) GetAll(offset int, limit int) ([]*models.Receipt, error) {
 	return receipts, nil
 }
 
-/*GetReceiptByID returns the receipt entitiy with the given id*/
+/*GetByID returns the receipt entitiy with the given id*/
 func (r *Receipt) GetByID(id string) (*models.Receipt, error) {
 	rows, err := r.sql.Select("SELECT id, ts, vals, sendState, contentId, userId FROM receipt WHERE id=?", id)
 	if err != nil {
@@ -82,7 +83,7 @@ func (r *Receipt) GetByID(id string) (*models.Receipt, error) {
 	return receipts[0], nil
 }
 
-/*SetSendState updates the status of the receipt with the given id*/
+/*SetStatus updates the status of the receipt with the given id*/
 func (r *Receipt) SetStatus(id uuid.UUID, state models.Status) error {
 	err := r.sql.Modify("UPDATE receipt SET sendState=? where id=?", string(state), id)
 	return err
@@ -101,6 +102,7 @@ func (r *Receipt) Send(request *models.SendRequest) error {
 	return err
 }
 
+/*DeliverContent combines receipt and content to send a message to the given ContentType */
 func (r *Receipt) DeliverContent(receipt *models.Receipt, content *models.Content) error {
 	//ignoring error until TC is actually implemented
 	switch content.Type {
