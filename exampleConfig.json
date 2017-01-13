@@ -1,0 +1,22 @@
+{
+	"mysql": {
+		"host": "",
+		"port": "3306",
+		"user": "admin",
+		"password": "",
+		"database": ""
+	},
+	"sendgrid": {
+		"api_key": "",
+		"from_email": "",
+		"from_name": "",
+		"host": ""
+	},
+	"towncenter": {},
+	"rabbit": {
+		"host": "",
+		"port": "5672",
+		"pubq": "messages"
+	},
+	"port": "8080"
+}
