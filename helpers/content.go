@@ -3,12 +3,15 @@ package helpers
 import (
 	"strings"
 
+	"gopkg.in/alexcesaro/statsd.v2"
+
 	"github.com/ghmeier/bloodlines/gateways"
 	"github.com/ghmeier/bloodlines/models"
 )
 
 type baseHelper struct {
-	sql gateways.SQL
+	sql   gateways.SQL
+	stats *statsd.Client
 }
 
 /*ContentI describes the functions for manipulating content models*/

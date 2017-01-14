@@ -55,47 +55,406 @@ $ make run
 ```
 
 ## API
-__All api methods should return `{"success":true}`__
 
 ### Content
-Object
+
+**Object**
 ```javascript
 {
-	"id": "24073c8c-119e-4d7d-836e-4fff2db98549",
-	"contentType": "EMAIL",
-	"text": "Hello!",
-	"parameters": [],
-	"active": true
+	"id":"dd82cc65-d79d-11e6-9d4c-0242ac120004",
+	"contentType":"EMAIL",
+	"text":"$greeting$ $first_name$,\n Welcome to Expresso.",
+	"parameters":["first_name","greeting"],
+	"status":"ACTIVE",
+	"subject":""
 }
 ```
-* `POST /api/content`
-* `GET /api/content`
-* `GET /api/content/:contentId`
+
+* `POST /api/content` creates and adds a new content record to the database.
+
+Example:
+
+*Request:*
+```
+POST localhost:8080/api/content
+{
+	"contentType": "EMAIL",
+	"text": "$greeting$ $first_name$,\n Welcome to Expresso.",
+	"parameters": ["first_name","greeting"]
+}
+```
+
+*Response:*
+```
+{
+  "data": {
+    "id": "86c3d82d-da86-11e6-9d4c-0242ac120004",
+    "contentType": "EMAIL",
+    "text": "Hey $first_name$,\n Welcome to Expresso.",
+    "parameters": [
+      "first_name"
+    ],
+    "status": "ACTIVE",
+    "subject": ""
+  }
+}
+```
+
+* `GET /api/content?offset=0&limit=20` returns up to `limit` content records starting from `offset` when ordered by contentId
+
+Example:
+
+*Request:*
+```
+GET localhost:8080/api/content?offset=0&limit=20
+```
+
+*Response:*
+```
+{
+  "data": [
+    {
+      "id": "86c3d82d-da86-11e6-9d4c-0242ac120004",
+      "contentType": "EMAIL",
+      "text": "Hey $first_name$,\n Welcome to Expresso.",
+      "parameters": [
+        "first_name"
+      ],
+      "status": "ACTIVE",
+      "subject": ""
+    }
+  ]
+}
+```
+
+* `GET /api/content/:contentId` returns the content record with the given contentID
+
+Example:
+
+*Request:*
+```
+GET localhost:8080/api/content/86c3d82d-da86-11e6-9d4c-0242ac120004
+```
+
+*Response:*
+```
+{
+  "data": {
+    "id": "86c3d82d-da86-11e6-9d4c-0242ac120004",
+    "contentType": "EMAIL",
+    "text": "Hey $first_name$,\n Welcome to Expresso.",
+    "parameters": [
+      "first_name"
+    ],
+    "status": "ACTIVE",
+    "subject": ""
+  }
+}
+```
+
 * `PUT /api/content/:contentId`
+
+Example:
+
+*Request:*
+```
+PUT localhost:8080/api/content/86c3d82d-da86-11e6-9d4c-0242ac120004
+{
+    "id": "86c3d82d-da86-11e6-9d4c-0242ac120004",
+    "contentType": "EMAIL",
+    "text": "Hey $first_name$,\n Welcome to Expresso.",
+    "parameters": [
+      "first_name"
+    ],
+    "status": "ACTIVE",
+    "subject": "Hello world"
+}
+```
+
+*Response:*
+```
+{
+  "data": {
+    "id": "86c3d82d-da86-11e6-9d4c-0242ac120004",
+    "contentType": "EMAIL",
+    "text": "Hey $first_name$,\n Welcome to Expresso.",
+    "parameters": [
+      "first_name"
+    ],
+    "status": "ACTIVE",
+    "subject": "Hello world"
+  }
+}
+```
+
 * `DELETE /api/content/:contentId`
 
+Example:
+
+*Request:*
+```
+DELETE localhost:8080/api/content/86c3d82d-da86-11e6-9d4c-0242ac120004
+```
+
+*Response:*
+```
+{
+  "success": true
+}
+```
+
 ### Receipt
-* `GET /api/receipt`
 * `POST /api/receipt/send`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
+
+* `GET /api/receipt`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
+
 * `GET /api/receipt/:receiptId`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
 
 ### Job
 * `GET /api/job`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
+
 * `POST /api/job`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
+
 * `GET /api/job/:jobId`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
+
 * `PUT /api/job/:jobId`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
+
 * `DELETE /api/job/:jobId`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
 
 ### Trigger
 * `POST /api/trigger`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
+
 * `GET /api/trigger`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
+
 * `GET /api/trigger/:triggerKey`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
+
 * `PUT /api/trigger/:triggerKey`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
+
 * `DELETE /api/trigger/:triggerKey`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
+
 * `POST /api/trigger/:triggerKey/activate`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
 
 ### Preference
 * `POST /api/preference`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
+
 * `GET /api/preference/:userId`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
+
 * `PATCH /api/preference/:userId`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```
+
 * `DELETE /api/preference/:userId`
+
+Example:
+
+*Request:*
+```
+
+```
+
+*Response:*
+```
+
+```

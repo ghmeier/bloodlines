@@ -3,6 +3,7 @@ package router
 import (
 	"fmt"
 
+	"gopkg.in/alexcesaro/statsd.v2"
 	"gopkg.in/gin-gonic/gin.v1"
 
 	"github.com/ghmeier/bloodlines/config"
@@ -30,6 +31,13 @@ func New(config *config.Root) (*Bloodlines, error) {
 		fmt.Println(err.Error())
 		return nil, err
 	}
+
+	stats, err := statsd.New(statsd.Address("192.168.99.100:8125"), statsd.Prefix("bloodlines"))
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil, err
+	}
+
 	sendgrid := gateways.NewSendgrid(config.Sendgrid)
 	towncenter := gateways.NewTownCenter(config.TownCenter)
 
