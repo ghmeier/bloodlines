@@ -33,6 +33,10 @@ func NewReceipt(sql gateways.SQL, sendgrid gateways.SendgridI, towncenter gatewa
 func (r *Receipt) Send(ctx *gin.Context) {
 	var json models.Receipt
 	err := ctx.BindJSON(&json)
+	if err != nil {
+		ctx.JSON(400, errResponse(err.Error()))
+		return
+	}
 
 	receipt := models.NewReceipt(json.Values, json.ContentID, json.UserID)
 

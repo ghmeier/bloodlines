@@ -1,9 +1,6 @@
 package helpers
 
 import (
-	//"encoding/json"
-	//"fmt"
-
 	"github.com/pborman/uuid"
 
 	"github.com/ghmeier/bloodlines/gateways"

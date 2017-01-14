@@ -58,19 +58,7 @@ $ make run
 
 ### Content
 
-**Object**
-```javascript
-{
-	"id":"dd82cc65-d79d-11e6-9d4c-0242ac120004",
-	"contentType":"EMAIL",
-	"text":"$greeting$ $first_name$,\n Welcome to Expresso.",
-	"parameters":["first_name","greeting"],
-	"status":"ACTIVE",
-	"subject":""
-}
-```
-
-* `POST /api/content` creates and adds a new content record to the database.
+#### `POST /api/content` creates and adds a new content record to the database.
 
 Example:
 
@@ -100,7 +88,7 @@ POST localhost:8080/api/content
 }
 ```
 
-* `GET /api/content?offset=0&limit=20` returns up to `limit` content records starting from `offset` when ordered by contentId
+#### `GET /api/content?offset=0&limit=20` returns up to `limit` content records starting from `offset` when ordered by contentId
 
 Example:
 
@@ -127,7 +115,7 @@ GET localhost:8080/api/content?offset=0&limit=20
 }
 ```
 
-* `GET /api/content/:contentId` returns the content record with the given contentID
+#### `GET /api/content/:contentId` returns the content record with the given contentID
 
 Example:
 
@@ -152,7 +140,7 @@ GET localhost:8080/api/content/86c3d82d-da86-11e6-9d4c-0242ac120004
 }
 ```
 
-* `PUT /api/content/:contentId`
+#### `PUT /api/content/:contentId` updates the content record with the given contentID to match the provided data. This just overrides values, so anything not present in the request will be set to NULL
 
 Example:
 
@@ -187,7 +175,7 @@ PUT localhost:8080/api/content/86c3d82d-da86-11e6-9d4c-0242ac120004
 }
 ```
 
-* `DELETE /api/content/:contentId`
+#### `DELETE /api/content/:contentId` sets the contentStatus to INACTIVE so it won't be shown when getting all content. The data can still be accessed by getting the content object by contentId
 
 Example:
 
@@ -204,202 +192,253 @@ DELETE localhost:8080/api/content/86c3d82d-da86-11e6-9d4c-0242ac120004
 ```
 
 ### Receipt
-* `POST /api/receipt/send`
+#### `POST /api/receipt/send` creates queues a message based on the given receipt data.
 
 Example:
 
 *Request:*
 ```
-
+POST localhost:8080/api/receipt/send
+{
+	"values": {
+		"greeting": "Whaddup",
+		"first_name": "garret"
+	},
+	"contentId": "dd82cc65-d79d-11e6-9d4c-0242ac120004",
+	"userId": "afee47b7-4eff-4826-a12c-86affd91a2d9"
+}
 ```
 
 *Response:*
 ```
-
+{
+  "data": {
+    "id": "78b0444c-da8c-11e6-bc32-0021ccdc3511",
+    "ts": "2017-01-14T13:05:53.647317899-06:00",
+    "values": {
+      "first_name": "garret",
+      "greeting": "Whaddup"
+    },
+    "sendState": "READY",
+    "contentId": "dd82cc65-d79d-11e6-9d4c-0242ac120004",
+    "userId": "afee47b7-4eff-4826-a12c-86affd91a2d9"
+  }
+}
 ```
 
-* `GET /api/receipt`
+#### `GET /api/receipt` returns an array of up to `limit` receipt records starting at the `offset` record when ordered by receiptID
 
 Example:
 
 *Request:*
 ```
-
+GET localhost:8008/api/receipt?offset=0&limit=1
 ```
 
 *Response:*
 ```
-
+{
+  "data": [
+    {
+      "id": "7890031d-da8b-11e6-86c2-0021ccdc3511",
+      "ts": "2017-01-14T18:58:43Z",
+      "values": {
+        "first_name": "garret",
+        "greeting": "Whaddup"
+      },
+      "sendState": "FAILURE",
+      "contentId": "dd82cc65-d79d-11e6-9d4c-0242ac120004",
+      "userId": "afee47b7-4eff-4826-a12c-86affd91a2d9"
+    }
+  ]
+}
 ```
 
-* `GET /api/receipt/:receiptId`
+#### `GET /api/receipt/:receiptId` returns the receipt record with the given receiptID
 
 Example:
 
 *Request:*
 ```
-
+GET localhost:8080/api/receipt/
 ```
 
 *Response:*
 ```
-
+{
+  "data": {
+    "id": "7890031d-da8b-11e6-86c2-0021ccdc3511",
+    "ts": "2017-01-14T18:58:43Z",
+    "values": {
+      "first_name": "garret",
+      "greeting": "Whaddup"
+    },
+    "sendState": "FAILURE",
+    "contentId": "dd82cc65-d79d-11e6-9d4c-0242ac120004",
+    "userId": "afee47b7-4eff-4826-a12c-86affd91a2d9"
+  }
+}
 ```
 
 ### Job
-* `GET /api/job`
-
-Example:
-
-*Request:*
-```
-
-```
-
-*Response:*
-```
-
-```
-
-* `POST /api/job`
-
-Example:
-
-*Request:*
-```
-
-```
-
-*Response:*
-```
-
-```
-
-* `GET /api/job/:jobId`
-
-Example:
-
-*Request:*
-```
-
-```
-
-*Response:*
-```
-
-```
-
-* `PUT /api/job/:jobId`
-
-Example:
-
-*Request:*
-```
-
-```
-
-*Response:*
-```
-
-```
-
-* `DELETE /api/job/:jobId`
-
-Example:
-
-*Request:*
-```
-
-```
-
-*Response:*
-```
-
-```
+*NOT IMPLEMENTED*
 
 ### Trigger
-* `POST /api/trigger`
+#### `POST /api/trigger` creates a new trigger with the given data.
 
 Example:
 
 *Request:*
 ```
-
+POST localhost:8080/api/trigger
+{
+  "values": {
+    "greeting": "Whaddup"
+  },
+  "tkey": "welcome",
+  "contentId": "dd82cc65-d79d-11e6-9d4c-0242ac120004"
+}
 ```
 
 *Response:*
 ```
-
+{
+  "data": {{
+  "data": {
+    "id": "ca6044a6-da8d-11e6-bc32-0021ccdc3511",
+    "contentId": "dd82cc65-d79d-11e6-9d4c-0242ac120004",
+    "tkey": "welcome",
+    "values": {
+      "greeting": "Whaddup"
+    }
+  }
+}
+    "id": "ca6044a6-da8d-11e6-bc32-0021ccdc3511",
+    "contentId": "dd82cc65-d79d-11e6-9d4c-0242ac120004",
+    "tkey": "welcome",
+    "values": {
+      "greeting": "Whaddup"
+    }
+  }
 ```
 
-* `GET /api/trigger`
+#### `GET /api/trigger` returns a list of `limit` trigger records starting at the `offset` record when they're ordered by triggerID
 
 Example:
 
 *Request:*
 ```
-
+GET localhost:8080/api/trigger?limit=1&offset=0
 ```
 
 *Response:*
 ```
-
+{
+  "data": [
+    {
+      "id": "ca6044a6-da8d-11e6-bc32-0021ccdc3511",
+      "contentId": "dd82cc65-d79d-11e6-9d4c-0242ac120004",
+      "tkey": "welcome",
+      "values": {
+        "greeting": "Whaddup"
+      }
+    }
+  ]
+}
 ```
 
-* `GET /api/trigger/:triggerKey`
+#### `GET /api/trigger/:triggerKey` returns the record for the trigger with the given triggerKey
 
 Example:
 
 *Request:*
 ```
-
+GET localhost:8080/api/trigger/welcome
 ```
 
 *Response:*
 ```
-
+{
+  "data": {
+    "id": "ca6044a6-da8d-11e6-bc32-0021ccdc3511",
+    "contentId": "dd82cc65-d79d-11e6-9d4c-0242ac120004",
+    "tkey": "welcome",
+    "values": {
+      "greeting": "Whaddup"
+    }
+  }
+}
 ```
 
-* `PUT /api/trigger/:triggerKey`
+#### `PUT /api/trigger/:triggerKey` updates the trigger record with new data. All properties will be overwritten.
 
 Example:
 
 *Request:*
 ```
-
+PUT localhost:8080/api/trigger/welcome
+{
+  "values": {
+    "greeting": "Hello there"
+  },
+  "tkey": "welcome",
+  "contentId": "dd82cc65-d79d-11e6-9d4c-0242ac120004"
+}
 ```
 
 *Response:*
 ```
-
+{
+  "data": {
+    "id": "",
+    "contentId": "dd82cc65-d79d-11e6-9d4c-0242ac120004",
+    "tkey": "welcome",
+    "values": {
+      "greeting": "Hello there"
+    }
+  }
+}
 ```
 
-* `DELETE /api/trigger/:triggerKey`
+#### `DELETE /api/trigger/:triggerKey` removes the trigger record
 
 Example:
 
 *Request:*
 ```
-
+DELETE localhost:8080/api/trigger/welcome
 ```
 
 *Response:*
 ```
-
+{
+  "success": true
+}
 ```
 
-* `POST /api/trigger/:triggerKey/activate`
+#### `POST /api/trigger/:triggerKey/activate` activates a trigger, creating a new receipt, and sending content to the user provided. Items in the 'values' property will take precedence over the defaults stored in the trigger.
 
 Example:
 
 *Request:*
 ```
-
+POST localhost:8080/api/trigger/welcome/activate
+{
+  "values": {
+    "first_name": "garret"
+  },
+  "userId": "afee47b7-4eff-4826-a12c-86affd91a2d9"
+}
 ```
 
 *Response:*
 ```
-
+{
+  "data": {
+    "receiptId": "ce678bf3-da8e-11e6-bc32-0021ccdc3511",
+    "contentId": "dd82cc65-d79d-11e6-9d4c-0242ac120004"
+  }
+}
 ```
 
 ### Preference
