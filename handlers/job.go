@@ -35,7 +35,7 @@ func (j *Job) New(ctx *gin.Context) {
 	var json models.Job
 	err := ctx.BindJSON(&json)
 	if err != nil {
-		ctx.JSON(400, errResponse("invalid job input"))
+		UserError(ctx, "Error: Unable to parse json", err)
 		return
 	}
 
@@ -45,22 +45,23 @@ func (j *Job) New(ctx *gin.Context) {
 	job := models.NewJob(json.Receipts, json.SendTime)
 	err = j.Helper.Insert(job)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, json)
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data": job})
+	Success(ctx, job)
 }
 
 /*ViewAll returns a list of jobs from offset and limit params (default 0,20)*/
 func (j *Job) ViewAll(ctx *gin.Context) {
-	offset, limit := getPaging(ctx)
+	offset, limit := GetPaging(ctx)
 	jobs, err := j.Helper.GetAll(offset, limit)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, jobs)
 		return
 	}
-	ctx.JSON(200, gin.H{"data": jobs})
+
+	Success(ctx, jobs)
 }
 
 /*View returns one job with the given id*/
@@ -69,15 +70,15 @@ func (j *Job) View(ctx *gin.Context) {
 
 	job, err := j.Helper.GetByID(id)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, id)
 		return
 	}
-	ctx.JSON(200, gin.H{"data": job})
+	Success(ctx, job)
 }
 
 /*Update is not implemented*/
 func (j *Job) Update(ctx *gin.Context) {
-	ctx.JSON(200, empty())
+	Success(ctx, nil)
 }
 
 /*Stop sets a job's status to Failure. Only used if the job hasn't started*/
@@ -86,9 +87,9 @@ func (j *Job) Stop(ctx *gin.Context) {
 
 	err := j.Helper.SetStatus(uuid.Parse(id), models.FAILURE)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, id)
 		return
 	}
 
-	ctx.JSON(200, empty())
+	Success(ctx, nil)
 }

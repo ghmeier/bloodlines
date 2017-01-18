@@ -31,34 +31,34 @@ func NewContent(sql gateways.SQL) ContentI {
 /*New adds the given content entry to the database*/
 func (c *Content) New(ctx *gin.Context) {
 	var json models.Content
-	err := ctx.BindJSON(&json)
 
+	err := ctx.BindJSON(&json)
 	if err != nil {
-		ctx.JSON(400, errResponse("Invalid Content Object"))
+		UserError(ctx, "Error: Unable to parse json", err)
 		return
 	}
 
 	content := models.NewContent("EMAIL", json.Text, json.Subject, json.Params)
 	err = c.Helper.Insert(content)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, json)
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data": content})
+	Success(ctx, content)
 }
 
 /*ViewAll returns a list of content with limit and offset
   determining the entries and amount (default 0,20)*/
 func (c *Content) ViewAll(ctx *gin.Context) {
-	offset, limit := getPaging(ctx)
+	offset, limit := GetPaging(ctx)
 	content, err := c.Helper.GetAll(offset, limit)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, content)
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data": content})
+	Success(ctx, content)
 }
 
 /*View returns a content described by the given id*/
@@ -67,11 +67,11 @@ func (c *Content) View(ctx *gin.Context) {
 
 	content, err := c.Helper.GetByID(id)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, content)
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data": content})
+	Success(ctx, content)
 }
 
 /*Update overwrites content data for the content with the given id*/
@@ -81,18 +81,18 @@ func (c *Content) Update(ctx *gin.Context) {
 	var json models.Content
 	err := ctx.BindJSON(&json)
 	if err != nil {
-		ctx.JSON(400, errResponse(err.Error()))
+		UserError(ctx, "Error: Unable to parse json", err)
 		return
 	}
 	json.ID = uuid.Parse(id)
 
 	err = c.Helper.Update(&json)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, json)
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data": json})
+	Success(ctx, json)
 }
 
 /*Deactivate sets a content's status to INACTIVE*/
@@ -101,9 +101,9 @@ func (c *Content) Deactivate(ctx *gin.Context) {
 
 	err := c.Helper.SetStatus(id, models.INACTIVE)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, nil)
 		return
 	}
 
-	ctx.JSON(200, empty())
+	Success(ctx, id)
 }

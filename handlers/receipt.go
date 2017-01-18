@@ -34,7 +34,7 @@ func (r *Receipt) Send(ctx *gin.Context) {
 	var json models.Receipt
 	err := ctx.BindJSON(&json)
 	if err != nil {
-		ctx.JSON(400, errResponse(err.Error()))
+		UserError(ctx, "Error: unable to parse json", err)
 		return
 	}
 
@@ -42,38 +42,39 @@ func (r *Receipt) Send(ctx *gin.Context) {
 
 	err = r.Helper.Insert(receipt)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, json)
 		return
 	}
 
 	content, err := r.CHelper.GetByID(receipt.ContentID.String())
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, receipt)
 		return
 	}
 
-	err = r.Helper.Send(&models.SendRequest{
+	request := &models.SendRequest{
 		ReceiptID: receipt.ID,
 		ContentID: content.ID,
-	})
+	}
+	err = r.Helper.Send(request)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, request)
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data": receipt})
+	Success(ctx, receipt)
 }
 
 /*ViewAll returns a list of Receipt entities starting at offset up to limit*/
 func (r *Receipt) ViewAll(ctx *gin.Context) {
-	offset, limit := getPaging(ctx)
+	offset, limit := GetPaging(ctx)
 	receipts, err := r.Helper.GetAll(offset, limit)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, nil)
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data": receipts})
+	Success(ctx, receipts)
 }
 
 /*View returns the receipt with the given id*/
@@ -82,9 +83,9 @@ func (r *Receipt) View(ctx *gin.Context) {
 
 	receipt, err := r.Helper.GetByID(id)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, nil)
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data": receipt})
+	Success(ctx, receipt)
 }

@@ -40,30 +40,30 @@ func (t *Trigger) New(ctx *gin.Context) {
 	err := ctx.BindJSON(&json)
 
 	if err != nil {
-		ctx.JSON(400, errResponse("Invalid Trigger Object"))
+		UserError(ctx, "Error: unable to parse json", err)
 		return
 	}
 
 	trigger := models.NewTrigger(json.ContentID, json.Key, json.Values)
 	err = t.Helper.Insert(trigger)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, json)
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data": trigger})
+	Success(ctx, trigger)
 }
 
 /*ViewAll returns a list of trigger entites based on the offset and limit (default 0, 20)*/
 func (t *Trigger) ViewAll(ctx *gin.Context) {
-	offset, limit := getPaging(ctx)
+	offset, limit := GetPaging(ctx)
 	triggers, err := t.Helper.GetAll(offset, limit)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, nil)
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data": triggers})
+	Success(ctx, triggers)
 }
 
 /*View returns a trigger with id provided*/
@@ -72,11 +72,11 @@ func (t *Trigger) View(ctx *gin.Context) {
 
 	trigger, err := t.Helper.GetByKey(key)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, nil)
 		return
 	}
 
-	ctx.JSON(200, gin.H{"data": trigger})
+	Success(ctx, trigger)
 }
 
 /*Update overwrites the trigger entity with new values provided*/
@@ -86,18 +86,18 @@ func (t *Trigger) Update(ctx *gin.Context) {
 	var json models.Trigger
 	err := ctx.BindJSON(&json)
 	if err != nil {
-		ctx.JSON(400, errResponse(err.Error()))
+		UserError(ctx, "Error: unable to parse json", err)
 		return
 	}
 
 	err = t.Helper.Update(key, json.ContentID, json.Values)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, json)
 		return
 	}
 
 	json.Key = key
-	ctx.JSON(200, gin.H{"data": json})
+	Success(ctx, json)
 }
 
 /*Remove sets a trigger to inactive*/
@@ -106,11 +106,11 @@ func (t *Trigger) Remove(ctx *gin.Context) {
 
 	err := t.Helper.Delete(key)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, nil)
 		return
 	}
 
-	ctx.JSON(200, empty())
+	Success(ctx, nil)
 }
 
 /*Activate starts a trigger's action*/
@@ -120,24 +120,24 @@ func (t *Trigger) Activate(ctx *gin.Context) {
 	var json models.Receipt
 	err := ctx.BindJSON(&json)
 	if err != nil {
-		ctx.JSON(400, errResponse(err.Error()))
+		UserError(ctx, "Error: unable to parse json", err)
 		return
 	}
 
 	trigger, err := t.Helper.GetByKey(key)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, json)
 		return
 	}
 
 	if trigger == nil {
-		ctx.JSON(400, errResponse("no trigger found"))
+		UserError(ctx, "Error: no trigger found", nil)
 		return
 	}
 
 	content, err := t.CHelper.GetByID(trigger.ContentID.String())
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, trigger)
 		return
 	}
 
@@ -148,7 +148,7 @@ func (t *Trigger) Activate(ctx *gin.Context) {
 	receipt := models.NewReceipt(json.Values, trigger.ContentID, json.UserID)
 	err = t.RHelper.Insert(receipt)
 	if err != nil {
-		ctx.JSON(500, errResponse(err.Error()))
+		ServerError(ctx, err, content)
 		return
 	}
 
@@ -158,5 +158,5 @@ func (t *Trigger) Activate(ctx *gin.Context) {
 	}
 	t.RHelper.Send(request)
 
-	ctx.JSON(200, gin.H{"data": request})
+	Success(ctx, request)
 }
