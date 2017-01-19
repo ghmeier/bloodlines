@@ -1,9 +1,9 @@
 package handlers
 
 import (
+	"gopkg.in/alexcesaro/statsd.v2"
 	"gopkg.in/gin-gonic/gin.v1"
 
-	"github.com/ghmeier/bloodlines/gateways"
 	"github.com/ghmeier/bloodlines/helpers"
 	"github.com/ghmeier/bloodlines/models"
 )
@@ -17,15 +17,18 @@ type ReceiptI interface {
 
 /*Receipt implements ReceiptI for the receipt router*/
 type Receipt struct {
+	*BaseHandler
 	Helper  helpers.ReceiptI
 	CHelper helpers.ContentI
 }
 
 /*NewReceipt constructs and returns a new receipt handler*/
-func NewReceipt(sql gateways.SQL, sendgrid gateways.SendgridI, towncenter gateways.TownCenterI, rabbit gateways.RabbitI) *Receipt {
+func NewReceipt(ctx *GatewayContext) *Receipt {
+	stats := ctx.Stats.Clone(statsd.Prefix("api.receipt"))
 	return &Receipt{
-		Helper:  helpers.NewReceipt(sql, sendgrid, towncenter, rabbit),
-		CHelper: helpers.NewContent(sql),
+		Helper:      helpers.NewReceipt(ctx.Sql, ctx.Sendgrid, ctx.TownCenter, ctx.Rabbit),
+		CHelper:     helpers.NewContent(ctx.Sql),
+		BaseHandler: NewBaseHandler(stats),
 	}
 }
 
@@ -34,7 +37,7 @@ func (r *Receipt) Send(ctx *gin.Context) {
 	var json models.Receipt
 	err := ctx.BindJSON(&json)
 	if err != nil {
-		UserError(ctx, "Error: unable to parse json", err)
+		r.UserError(ctx, "Error: unable to parse json", err)
 		return
 	}
 
@@ -42,13 +45,13 @@ func (r *Receipt) Send(ctx *gin.Context) {
 
 	err = r.Helper.Insert(receipt)
 	if err != nil {
-		ServerError(ctx, err, json)
+		r.ServerError(ctx, err, json)
 		return
 	}
 
 	content, err := r.CHelper.GetByID(receipt.ContentID.String())
 	if err != nil {
-		ServerError(ctx, err, receipt)
+		r.ServerError(ctx, err, receipt)
 		return
 	}
 
@@ -58,23 +61,23 @@ func (r *Receipt) Send(ctx *gin.Context) {
 	}
 	err = r.Helper.Send(request)
 	if err != nil {
-		ServerError(ctx, err, request)
+		r.ServerError(ctx, err, request)
 		return
 	}
 
-	Success(ctx, receipt)
+	r.Success(ctx, receipt)
 }
 
 /*ViewAll returns a list of Receipt entities starting at offset up to limit*/
 func (r *Receipt) ViewAll(ctx *gin.Context) {
-	offset, limit := GetPaging(ctx)
+	offset, limit := r.GetPaging(ctx)
 	receipts, err := r.Helper.GetAll(offset, limit)
 	if err != nil {
-		ServerError(ctx, err, nil)
+		r.ServerError(ctx, err, nil)
 		return
 	}
 
-	Success(ctx, receipts)
+	r.Success(ctx, receipts)
 }
 
 /*View returns the receipt with the given id*/
@@ -83,9 +86,9 @@ func (r *Receipt) View(ctx *gin.Context) {
 
 	receipt, err := r.Helper.GetByID(id)
 	if err != nil {
-		ServerError(ctx, err, nil)
+		r.ServerError(ctx, err, nil)
 		return
 	}
 
-	Success(ctx, receipt)
+	r.Success(ctx, receipt)
 }

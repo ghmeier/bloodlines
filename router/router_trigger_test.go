@@ -250,9 +250,10 @@ func TestTriggerActivateSuccess(t *testing.T) {
 	mockReceipt := &mocks.ReceiptI{}
 	b := getMockBloodlines()
 	b.trigger = &handlers.Trigger{
-		Helper:  mockTrigger,
-		RHelper: mockReceipt,
-		CHelper: mockContent,
+		Helper:      mockTrigger,
+		RHelper:     mockReceipt,
+		CHelper:     mockContent,
+		BaseHandler: &handlers.BaseHandler{Stats: nil},
 	}
 	InitRouter(b)
 
@@ -306,9 +307,10 @@ func TestTriggerActivateInsertFail(t *testing.T) {
 	mockReceipt := &mocks.ReceiptI{}
 	b := getMockBloodlines()
 	b.trigger = &handlers.Trigger{
-		Helper:  mockTrigger,
-		RHelper: mockReceipt,
-		CHelper: mockContent,
+		Helper:      mockTrigger,
+		RHelper:     mockReceipt,
+		CHelper:     mockContent,
+		BaseHandler: &handlers.BaseHandler{Stats: nil},
 	}
 	InitRouter(b)
 
@@ -358,7 +360,8 @@ func TestTriggerActivateTriggerFail(t *testing.T) {
 	mockTrigger := &mocks.TriggerI{}
 	b := getMockBloodlines()
 	b.trigger = &handlers.Trigger{
-		Helper: mockTrigger,
+		Helper:      mockTrigger,
+		BaseHandler: &handlers.BaseHandler{Stats: nil},
 	}
 	InitRouter(b)
 
@@ -388,7 +391,8 @@ func TestTriggerActivateTriggerNil(t *testing.T) {
 	mockTrigger := &mocks.TriggerI{}
 	b := getMockBloodlines()
 	b.trigger = &handlers.Trigger{
-		Helper: mockTrigger,
+		Helper:      mockTrigger,
+		BaseHandler: &handlers.BaseHandler{Stats: nil},
 	}
 	InitRouter(b)
 
@@ -419,8 +423,9 @@ func TestTriggerActivateContentFail(t *testing.T) {
 	mockContent := &mocks.ContentI{}
 	b := getMockBloodlines()
 	b.trigger = &handlers.Trigger{
-		Helper:  mockTrigger,
-		CHelper: mockContent,
+		Helper:      mockTrigger,
+		CHelper:     mockContent,
+		BaseHandler: &handlers.BaseHandler{Stats: nil},
 	}
 	InitRouter(b)
 
@@ -459,7 +464,9 @@ func TestTriggerActivateInvalid(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	b := getMockBloodlines()
-	b.trigger = &handlers.Trigger{}
+	b.trigger = &handlers.Trigger{
+		BaseHandler: &handlers.BaseHandler{Stats: nil},
+	}
 	InitRouter(b)
 
 	s := []byte("{\"userId\":\"invalid-id\"}")

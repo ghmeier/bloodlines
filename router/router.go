@@ -3,7 +3,7 @@ package router
 import (
 	"fmt"
 
-	//"gopkg.in/alexcesaro/statsd.v2"
+	"gopkg.in/alexcesaro/statsd.v2"
 	"gopkg.in/gin-gonic/gin.v1"
 
 	"github.com/ghmeier/bloodlines/config"
@@ -32,13 +32,11 @@ func New(config *config.Root) (*Bloodlines, error) {
 		return nil, err
 	}
 
-	/*
-		stats, err := statsd.New(statsd.Address("192.168.99.100:8125"), statsd.Prefix("bloodlines"))
-		if err != nil {
-			fmt.Println(err.Error())
-			return nil, err
-		}
-	*/
+	stats, err := statsd.New(statsd.Address("192.168.99.100:8125"), statsd.Prefix("bloodlines"))
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil, err
+	}
 
 	sendgrid := gateways.NewSendgrid(config.Sendgrid)
 	towncenter := gateways.NewTownCenter(config.TownCenter)
@@ -49,13 +47,21 @@ func New(config *config.Root) (*Bloodlines, error) {
 		fmt.Println(err.Error())
 	}
 
+	ctx := &handlers.GatewayContext{
+		Sql:        sql,
+		Sendgrid:   sendgrid,
+		TownCenter: towncenter,
+		Rabbit:     rabbit,
+		Stats:      stats,
+	}
+
 	b := &Bloodlines{
-		content:    handlers.NewContent(sql),
-		receipt:    handlers.NewReceipt(sql, sendgrid, towncenter, rabbit),
-		job:        handlers.NewJob(sql),
-		trigger:    handlers.NewTrigger(sql, sendgrid, towncenter, rabbit),
-		preference: handlers.NewPreference(sql),
-		workers:    []workers.Send{workers.NewSend(sql, sendgrid, towncenter, rabbit)},
+		content:    handlers.NewContent(ctx),
+		receipt:    handlers.NewReceipt(ctx),
+		job:        handlers.NewJob(ctx),
+		trigger:    handlers.NewTrigger(ctx),
+		preference: handlers.NewPreference(ctx),
+		workers:    []workers.Send{workers.NewSend(ctx)},
 	}
 
 	InitRouter(b)

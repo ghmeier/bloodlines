@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ghmeier/bloodlines/gateways"
+	"github.com/ghmeier/bloodlines/handlers"
 	"github.com/ghmeier/bloodlines/helpers"
 	"github.com/ghmeier/bloodlines/models"
 )
@@ -22,11 +23,11 @@ type SendRequest struct {
 }
 
 /*NewSend creates and returns a new SendRequest*/
-func NewSend(sql gateways.SQL, sendgrid gateways.SendgridI, towncenter gateways.TownCenterI, rabbit gateways.RabbitI) Send {
+func NewSend(ctx *handlers.GatewayContext) Send {
 	return &SendRequest{
-		RHelper: helpers.NewReceipt(sql, sendgrid, towncenter, rabbit),
-		CHelper: helpers.NewContent(sql),
-		RB:      rabbit,
+		RHelper: helpers.NewReceipt(ctx.Sql, ctx.Sendgrid, ctx.TownCenter, ctx.Rabbit),
+		CHelper: helpers.NewContent(ctx.Sql),
+		RB:      ctx.Rabbit,
 	}
 }
 
