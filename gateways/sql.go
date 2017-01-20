@@ -82,19 +82,19 @@ func (s *MySQL) Destroy() {
 	s.DB = nil
 }
 
-func (r *MySQL) connect() error {
-	if r.DB != nil {
+func (s *MySQL) connect() error {
+	if s.DB != nil {
 		return nil
 	}
 
 	db, err := sql.Open(
 		"mysql",
-		r.config.User+":"+r.config.Password+"@tcp("+r.config.Host+":"+string(r.config.Port)+")/"+r.config.Database+"?parseTime=true",
+		s.config.User+":"+s.config.Password+"@tcp("+s.config.Host+":"+string(s.config.Port)+")/"+s.config.Database+"?parseTime=true",
 	)
 	if err != nil {
 		return err
 	}
 
-	r.DB = db
+	s.DB = db
 	return nil
 }
