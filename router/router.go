@@ -32,7 +32,10 @@ func New(config *config.Root) (*Bloodlines, error) {
 		return nil, err
 	}
 
-	stats, err := statsd.New(statsd.Address("192.168.99.100:8125"), statsd.Prefix("bloodlines"))
+	stats, err := statsd.New(
+		statsd.Address(config.Statsd.Host+":"+config.Statsd.Port),
+		statsd.Prefix(config.Statsd.Prefix),
+	)
 	if err != nil {
 		fmt.Println(err.Error())
 		return nil, err

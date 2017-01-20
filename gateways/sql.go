@@ -19,24 +19,28 @@ type SQL interface {
 
 /*MySQL implements SQL with the mysql driver */
 type MySQL struct {
-	DB *sql.DB
+	DB     *sql.DB
+	config *config.MySQL
 }
 
 /*NewSQL returns an instance of MySQL with the given connection configuration */
 func NewSQL(config config.MySQL) (*MySQL, error) {
-	db, err := sql.Open(
-		"mysql",
-		config.User+":"+config.Password+"@tcp("+config.Host+":"+string(config.Port)+")/"+config.Database+"?parseTime=true",
-	)
-
-	return &MySQL{DB: db}, err
+	sql := &MySQL{config: &config}
+	err := sql.connect()
+	return sql, err
 }
 
 /*Modify executes any query which changes the db and doesn't return result rows */
 func (s *MySQL) Modify(query string, values ...interface{}) error {
+	err := s.connect()
+	if err != nil {
+		return err
+	}
+
 	stmt, err := s.DB.Prepare(query)
 	if err != nil {
 		fmt.Printf("ERROR: unable to prepare query %s\n", query)
+		s.Destroy()
 		return err
 	}
 	defer stmt.Close()
@@ -44,6 +48,7 @@ func (s *MySQL) Modify(query string, values ...interface{}) error {
 	_, err = stmt.Exec(values...)
 	if err != nil {
 		fmt.Printf("ERROR: unable to execute query %s\n", query)
+		s.Destroy()
 		return err
 	}
 
@@ -53,12 +58,18 @@ func (s *MySQL) Modify(query string, values ...interface{}) error {
 
 /*Select gets rows from a select query*/
 func (s *MySQL) Select(query string, values ...interface{}) (*sql.Rows, error) {
+	err := s.connect()
+	if err != nil {
+		return nil, err
+	}
+
 	if values == nil {
 		values = make([]interface{}, 0)
 	}
 	rows, err := s.DB.Query(query, values...)
 	if err != nil {
 		fmt.Printf("ERROR: unable to run select query %s\n", query)
+		s.Destroy()
 		return nil, err
 	}
 
@@ -68,4 +79,22 @@ func (s *MySQL) Select(query string, values ...interface{}) (*sql.Rows, error) {
 /*Destroy cleans up the MySQL instance*/
 func (s *MySQL) Destroy() {
 	s.DB.Close()
+	s.DB = nil
+}
+
+func (r *MySQL) connect() error {
+	if r.DB != nil {
+		return nil
+	}
+
+	db, err := sql.Open(
+		"mysql",
+		r.config.User+":"+r.config.Password+"@tcp("+r.config.Host+":"+string(r.config.Port)+")/"+r.config.Database+"?parseTime=true",
+	)
+	if err != nil {
+		return err
+	}
+
+	r.DB = db
+	return nil
 }

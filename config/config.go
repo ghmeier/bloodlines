@@ -11,6 +11,7 @@ type Root struct {
 	Sendgrid   Sendgrid   `json:"sendgrid"`
 	TownCenter TownCenter `json:"towncenter"`
 	Rabbit     Rabbit     `json:"rabbit"`
+	Statsd     Statsd     `json:"statsd"`
 	Port       string     `json:"port"`
 }
 
@@ -40,6 +41,13 @@ type Rabbit struct {
 	Host string `json:"host"`
 	Port string `json:"port"`
 	PubQ string `json:"pubq"`
+}
+
+/*Statsd contains connection information for graphite stats*/
+type Statsd struct {
+	Host   string `json:"host"`
+	Port   string `json:"port"`
+	Prefix string `json:"prefix"`
 }
 
 /*Init returns a populated Root struct from config.json */
