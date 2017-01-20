@@ -38,7 +38,6 @@ func New(config *config.Root) (*Bloodlines, error) {
 	)
 	if err != nil {
 		fmt.Println(err.Error())
-		return nil, err
 	}
 
 	sendgrid := gateways.NewSendgrid(config.Sendgrid)
