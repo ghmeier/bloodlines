@@ -43,7 +43,7 @@ func (b *BaseHandler) UserError(ctx *gin.Context, msg string, obj interface{}) {
 	if b.Stats != nil {
 		b.Stats.Increment("400")
 	}
-	ctx.JSON(400, &gin.H{"success": false, "message": msg, "error": obj})
+	b.send(ctx, 400, &gin.H{"success": false, "message": msg, "error": obj})
 }
 
 /*ServerError sends a 500 response with the given error and object*/
@@ -51,7 +51,7 @@ func (b *BaseHandler) ServerError(ctx *gin.Context, err error, obj interface{}) 
 	if b.Stats != nil {
 		b.Stats.Increment("500")
 	}
-	ctx.JSON(500, &gin.H{"success": false, "message": err.Error(), "error": err, "data": obj})
+	b.send(ctx, 500, &gin.H{"success": false, "message": err.Error(), "error": err, "data": obj})
 }
 
 /*Success sends a 200 response with the given object*/
@@ -59,5 +59,11 @@ func (b *BaseHandler) Success(ctx *gin.Context, obj interface{}) {
 	if b.Stats != nil {
 		b.Stats.Increment("200")
 	}
-	ctx.JSON(200, gin.H{"success": true, "data": obj})
+	b.send(ctx, 200, &gin.H{"success": true, "data": obj})
+}
+
+func (b *BaseHandler) send(ctx *gin.Context, status int, json *gin.H) {
+	ctx.Header("Access-Control-Allow-Origin", "*")
+	ctx.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers")
+	ctx.JSON(status, json)
 }
