@@ -10,8 +10,8 @@ before_install:
   - go get github.com/stretchr/testify
   - go get github.com/mattn/goveralls
 after_success:
-	- docker build -t ghmeier/bloodlines .
-	- docker push ghmeier/bloodlines
+  - docker build -t ghmeier/bloodlines .
+  - docker push ghmeier/bloodlines
 install:
   - godep restore
 script:
