@@ -24,33 +24,65 @@ type ServiceResponse struct {
 	Success bool   `json:"success"`
 }
 
-/*ServiceGet makes a request using c to the given url, returning the 'data' field */
-func ServiceGet(c *http.Client, url string) ([]byte, error) {
-	resp, err := c.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	data, err := handleResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
+type BaseService struct {
+	Client *http.Client
 }
 
-/*ServicePost makes a POST request using c to the given url, with data as a json
-  payload returning the 'data' field */
-func ServicePost(c *http.Client, url string, data []byte) ([]byte, error) {
-	r := bytes.NewBuffer(data)
-	resp, err := c.Post(url, "application/json", r)
+func NewBaseService() *BaseService {
+	return &BaseService{
+		Client: &http.Client{},
+	}
+}
+
+func (b *BaseService) ServiceSend(method string, url string, data interface{}, i interface{}) error {
+	var r *bytes.Buffer
+	var err error
+	if data != nil {
+		b, err := json.Marshal(data)
+		if err != nil {
+			return err
+		}
+		r = bytes.NewBuffer(b)
+	} else {
+		r = nil
+	}
+
+	var req *http.Request
+	if r != nil {
+		req, err = http.NewRequest(method, url, r)
+	} else {
+		req, err = http.NewRequest(method, url, nil)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	raw, err := b.doRequest(req)
+	if err != nil {
+		return err
+	}
+
+	if i == nil {
+		return nil
+	}
+
+	err = json.Unmarshal(raw, i)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (b *BaseService) doRequest(req *http.Request) ([]byte, error) {
+	resp, err := b.Client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	rData, err := handleResponse(resp)
+	rData, err := b.handleResponse(resp)
 	if err != nil {
 		return nil, err
 	}
@@ -58,53 +90,7 @@ func ServicePost(c *http.Client, url string, data []byte) ([]byte, error) {
 	return rData, nil
 }
 
-/*ServicePut makes a PUT request using c to the given url, with data as a json
-  payload returning the 'data' field */
-func ServicePut(c *http.Client, url string, data []byte) ([]byte, error) {
-	r := bytes.NewBuffer(data)
-	req, err := http.NewRequest("PUT", url, r)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	rData, err := handleResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	return rData, nil
-}
-
-/*ServiceDelete makes a DELETE request using c to the given url, with data as a json
-  payload returning the 'data' field */
-func ServiceDelete(c *http.Client, url string, data []byte) ([]byte, error) {
-	r := bytes.NewBuffer(data)
-	req, err := http.NewRequest("DELETE", url, r)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	rData, err := handleResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	return rData, nil
-}
-
-func handleResponse(resp *http.Response) ([]byte, error) {
+func (b *BaseService) handleResponse(resp *http.Response) ([]byte, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err

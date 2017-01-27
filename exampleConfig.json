@@ -13,6 +13,10 @@
 		"host": ""
 	},
 	"towncenter": {},
+	"bloodlines": {
+		"host":"",
+		"port":"8080"
+	},
 	"rabbit": {
 		"host": "",
 		"port": "5672",
