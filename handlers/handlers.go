@@ -63,6 +63,7 @@ func (b *BaseHandler) Success(ctx *gin.Context, obj interface{}) {
 }
 
 func (b *BaseHandler) send(ctx *gin.Context, status int, json *gin.H) {
+	ctx.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 	ctx.Header("Access-Control-Allow-Origin", "*")
 	ctx.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers")
 	ctx.JSON(status, json)

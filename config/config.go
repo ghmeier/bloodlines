@@ -10,9 +10,18 @@ type Root struct {
 	SQL        MySQL      `json:"mysql"`
 	Sendgrid   Sendgrid   `json:"sendgrid"`
 	TownCenter TownCenter `json:"towncenter"`
+	Bloodlines Bloodlines `json:"bloodlines"`
 	Rabbit     Rabbit     `json:"rabbit"`
 	Statsd     Statsd     `json:"statsd"`
 	Port       string     `json:"port"`
+	TLS        TLS        `json:"tls"`
+}
+
+/*TLS contains the information for tls cert and key if enabled*/
+type TLS struct {
+	Enabled bool   `json:"enabled"`
+	Cert    string `json:"cert"`
+	Key     string `json:"key"`
 }
 
 /*MySQL contains information for connecting to a MySQL instance */
@@ -34,6 +43,12 @@ type Sendgrid struct {
 
 /*TownCenter has connection information for the town center service */
 type TownCenter struct {
+}
+
+/*Bloodlines has connection information for the bloodlines service */
+type Bloodlines struct {
+	Host string `json:"host"`
+	Port string `json:"port"`
 }
 
 /*Rabbit has connection info for RabbitMQ*/

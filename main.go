@@ -24,5 +24,5 @@ func main() {
 	}
 
 	fmt.Printf("Bloodlines running on %s\n", config.Port)
-	b.Start(":" + config.Port)
+	b.Start(":"+config.Port, config.TLS)
 }
