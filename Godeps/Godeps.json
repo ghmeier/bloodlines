@@ -1,15 +1,7 @@
 {
 	"ImportPath": "github.com/ghmeier/bloodlines",
 	"GoVersion": "go1.6.3",
-	"Packages": [
-		"./..."
-	],
 	"Deps": [
-		{
-			"ImportPath": "github.com/DATA-DOG/go-sqlmock",
-			"Comment": "v1.1.4-14-g947ce30",
-			"Rev": "947ce303a7986ba00a8c29f5835c5c58f649f856"
-		},
 		{
 			"ImportPath": "github.com/gin-gonic/gin/binding",
 			"Comment": "v1.0-2-g3900df0",
@@ -53,31 +45,6 @@
 			"Rev": "4da4cfa085c174b489ec35cf1e29ffb147d45298"
 		},
 		{
-			"ImportPath": "github.com/stretchr/testify/assert",
-			"Comment": "v1.1.4-6-g18a02ba",
-			"Rev": "18a02ba4a312f95da08ff4cfc0055750ce50ae9e"
-		},
-		{
-			"ImportPath": "github.com/stretchr/testify/mock",
-			"Comment": "v1.1.4-6-g18a02ba",
-			"Rev": "18a02ba4a312f95da08ff4cfc0055750ce50ae9e"
-		},
-		{
-			"ImportPath": "github.com/stretchr/testify/vendor/github.com/davecgh/go-spew/spew",
-			"Comment": "v1.1.4-6-g18a02ba",
-			"Rev": "18a02ba4a312f95da08ff4cfc0055750ce50ae9e"
-		},
-		{
-			"ImportPath": "github.com/stretchr/testify/vendor/github.com/pmezard/go-difflib/difflib",
-			"Comment": "v1.1.4-6-g18a02ba",
-			"Rev": "18a02ba4a312f95da08ff4cfc0055750ce50ae9e"
-		},
-		{
-			"ImportPath": "github.com/stretchr/testify/vendor/github.com/stretchr/objx",
-			"Comment": "v1.1.4-6-g18a02ba",
-			"Rev": "18a02ba4a312f95da08ff4cfc0055750ce50ae9e"
-		},
-		{
 			"ImportPath": "golang.org/x/net/context",
 			"Rev": "65dfc08770ce66f74becfdff5f8ab01caef4e946"
 		},
@@ -85,6 +52,11 @@
 			"ImportPath": "gopkg.in/alexcesaro/statsd.v2",
 			"Comment": "v2.0.0",
 			"Rev": "7fea3f0d2fab1ad973e641e51dba45443a311a90"
+		},
+		{
+			"ImportPath": "gopkg.in/gin-contrib/cors.v1",
+			"Comment": "v1.1",
+			"Rev": "fb918bcd825b9e20f0c3c365981baf9454029b6c"
 		},
 		{
 			"ImportPath": "gopkg.in/gin-gonic/gin.v1",
