@@ -10,6 +10,7 @@ import (
 	"github.com/ghmeier/bloodlines/models"
 )
 
+/*Bloodlines wraps all the methods of the bloodlines API */
 type Bloodlines interface {
 	GetAllContent(offset int, limit int) ([]*models.Content, error)
 	NewContent(newContent *models.Content) (*models.Content, error)
@@ -33,6 +34,7 @@ type bloodlines struct {
 	client *http.Client
 }
 
+/*NewBloodlines creates and returns a Bloodlines struct pointed at the service denoted in config*/
 func NewBloodlines(config config.Bloodlines) Bloodlines {
 	return &bloodlines{
 		BaseService: NewBaseService(),
@@ -160,7 +162,7 @@ func (b *bloodlines) NewTrigger(t *models.Trigger) (*models.Trigger, error) {
 }
 
 func (b *bloodlines) GetTriggerByKey(key string) (*models.Trigger, error) {
-	url := fmt.Sprintf("%trigger/%s", b.url, key)
+	url := fmt.Sprintf("%strigger/%s", b.url, key)
 
 	var trigger *models.Trigger
 	err := b.ServiceSend(http.MethodGet, url, nil, trigger)
@@ -172,7 +174,7 @@ func (b *bloodlines) GetTriggerByKey(key string) (*models.Trigger, error) {
 }
 
 func (b *bloodlines) UpdateTrigger(update *models.Trigger) (*models.Trigger, error) {
-	url := fmt.Sprintf("%trigger/%s", b.url, update.Key)
+	url := fmt.Sprintf("%strigger/%s", b.url, update.Key)
 
 	var trigger *models.Trigger
 	err := b.ServiceSend(http.MethodPut, url, update, trigger)

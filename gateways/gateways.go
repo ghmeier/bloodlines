@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-/* ServiceResponse is used to unmarshal data from expresso services.
+/*ServiceResponse is used to unmarshal data from expresso services.
 It can be used in conjunction with the following methods like this:
 
 data, _ := ServiceGet(url)
@@ -24,16 +24,21 @@ type ServiceResponse struct {
 	Success bool   `json:"success"`
 }
 
+/*BaseService has generic methods for sending and parsing expresso service
+  responses */
 type BaseService struct {
 	Client *http.Client
 }
 
+/*NewBaseService returns a BaseService with the defualt http Client*/
 func NewBaseService() *BaseService {
 	return &BaseService{
 		Client: &http.Client{},
 	}
 }
 
+/*ServiceSend sends a request of type METHOD to the url with data as the
+  JSON payload and puts the response into i*/
 func (b *BaseService) ServiceSend(method string, url string, data interface{}, i interface{}) error {
 	var r *bytes.Buffer
 	var err error
