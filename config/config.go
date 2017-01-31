@@ -43,6 +43,8 @@ type Sendgrid struct {
 
 /*TownCenter has connection information for the town center service */
 type TownCenter struct {
+	Host string `json:"host"`
+	Port string `json:"port"`
 }
 
 /*Bloodlines has connection information for the bloodlines service */

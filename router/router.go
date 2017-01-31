@@ -6,6 +6,7 @@ import (
 	"gopkg.in/alexcesaro/statsd.v2"
 	"gopkg.in/gin-gonic/gin.v1"
 
+	tcg "github.com/jakelong95/TownCenter/gateways"
 	"github.com/ghmeier/bloodlines/config"
 	"github.com/ghmeier/bloodlines/gateways"
 	"github.com/ghmeier/bloodlines/handlers"
@@ -41,7 +42,7 @@ func New(config *config.Root) (*Bloodlines, error) {
 	}
 
 	sendgrid := gateways.NewSendgrid(config.Sendgrid)
-	towncenter := gateways.NewTownCenter(config.TownCenter)
+	towncenter := tcg.NewTownCenter(config.TownCenter)
 
 	rabbit, err := gateways.NewRabbit(config.Rabbit)
 	if err != nil {

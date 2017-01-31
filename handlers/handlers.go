@@ -6,6 +6,7 @@ import (
 	"gopkg.in/alexcesaro/statsd.v2"
 	"gopkg.in/gin-gonic/gin.v1"
 
+	tcg "github.com/jakelong95/TownCenter/gateways"
 	"github.com/ghmeier/bloodlines/gateways"
 )
 
@@ -20,7 +21,7 @@ type BaseHandler struct {
 type GatewayContext struct {
 	Sql        gateways.SQL
 	Sendgrid   gateways.SendgridI
-	TownCenter gateways.TownCenterI
+	TownCenter tcg.TownCenterI
 	Rabbit     gateways.RabbitI
 	Stats      *statsd.Client
 }
