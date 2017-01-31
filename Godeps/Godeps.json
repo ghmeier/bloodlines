@@ -87,6 +87,11 @@
 			"Rev": "7fea3f0d2fab1ad973e641e51dba45443a311a90"
 		},
 		{
+			"ImportPath": "gopkg.in/gin-contrib/cors.v1",
+			"Comment": "v1.1",
+			"Rev": "fb918bcd825b9e20f0c3c365981baf9454029b6c"
+		},
+		{
 			"ImportPath": "gopkg.in/gin-gonic/gin.v1",
 			"Comment": "v1.0",
 			"Rev": "2dae550eb5392006a4582ce9c90016a9b5a74e8b"

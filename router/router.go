@@ -74,6 +74,7 @@ func New(config *config.Root) (*Bloodlines, error) {
 /*InitRouter connects the handlers to endpoints with gin*/
 func InitRouter(b *Bloodlines) {
 	b.router = gin.Default()
+	b.router.Use(handlers.GetCors())
 
 	content := b.router.Group("/api/content")
 	{

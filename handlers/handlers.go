@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"gopkg.in/alexcesaro/statsd.v2"
+	"gopkg.in/gin-contrib/cors.v1"
 	"gopkg.in/gin-gonic/gin.v1"
 
 	tcg "github.com/jakelong95/TownCenter/gateways"
@@ -64,8 +65,13 @@ func (b *BaseHandler) Success(ctx *gin.Context, obj interface{}) {
 }
 
 func (b *BaseHandler) send(ctx *gin.Context, status int, json *gin.H) {
-	ctx.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-	ctx.Header("Access-Control-Allow-Origin", "*")
-	ctx.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers")
 	ctx.JSON(status, json)
+}
+
+/* GetCors returns a gin handlerFunc for CORS reuquests in expresso services */
+func GetCors() gin.HandlerFunc {
+	config := cors.DefaultConfig()
+	config.AddAllowMethods("DELETE")
+	config.AllowAllOrigins = true
+	return cors.New(config)
 }
