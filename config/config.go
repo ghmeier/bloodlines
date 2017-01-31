@@ -13,15 +13,8 @@ type Root struct {
 	Bloodlines Bloodlines `json:"bloodlines"`
 	Rabbit     Rabbit     `json:"rabbit"`
 	Statsd     Statsd     `json:"statsd"`
+	Stripe     Stripe     `json:"stripe"`
 	Port       string     `json:"port"`
-	TLS        TLS        `json:"tls"`
-}
-
-/*TLS contains the information for tls cert and key if enabled*/
-type TLS struct {
-	Enabled bool   `json:"enabled"`
-	Cert    string `json:"cert"`
-	Key     string `json:"key"`
 }
 
 /*MySQL contains information for connecting to a MySQL instance */
@@ -39,6 +32,11 @@ type Sendgrid struct {
 	FromEmail string `json:"from_email"`
 	FromName  string `json:"from_name"`
 	Host      string `json:"host"`
+}
+
+type Stripe struct {
+	Secret string `json:"secret"`
+	Public string `json:"public"`
 }
 
 /*TownCenter has connection information for the town center service */
