@@ -30,12 +30,16 @@
 			"Rev": "98fa357170587e470c5f27d3c3ea0947b71eb455"
 		},
 		{
+			"ImportPath": "github.com/jakelong95/TownCenter/_mocks",
+			"Rev": "3dde6f8e3e1dc40a7c36e5cfba2018d95ea2c2ae"
+		},
+		{
 			"ImportPath": "github.com/jakelong95/TownCenter/gateways",
-			"Rev": "c7456c8421e5f8a44e59303ee2c36cee1723c5af"
+			"Rev": "3dde6f8e3e1dc40a7c36e5cfba2018d95ea2c2ae"
 		},
 		{
 			"ImportPath": "github.com/jakelong95/TownCenter/models",
-			"Rev": "c7456c8421e5f8a44e59303ee2c36cee1723c5af"
+			"Rev": "3dde6f8e3e1dc40a7c36e5cfba2018d95ea2c2ae"
 		},
 		{
 			"ImportPath": "github.com/jonnykry/coinage/gateways",
