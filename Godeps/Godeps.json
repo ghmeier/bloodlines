@@ -39,7 +39,11 @@
 		},
 		{
 			"ImportPath": "github.com/jonnykry/coinage/gateways",
-			"Rev": "8c20fe911b41d567fbb3ff91afe64c3135604953"
+			"Rev": "ca6d90e5ef36781b458521ece533a4061c4df5e5"
+		},
+		{
+			"ImportPath": "github.com/jonnykry/coinage/models",
+			"Rev": "ca6d90e5ef36781b458521ece533a4061c4df5e5"
 		},
 		{
 			"ImportPath": "github.com/manucorporat/sse",

@@ -1,4 +1,5 @@
 bloodlines
 config.json
+config-dev.json
 Godeps/_workspace/
 *.sublime-project
