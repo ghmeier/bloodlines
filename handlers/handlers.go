@@ -68,7 +68,7 @@ func (b *BaseHandler) send(ctx *gin.Context, status int, json *gin.H) {
 	ctx.JSON(status, json)
 }
 
-/* GetCors returns a gin handlerFunc for CORS reuquests in expresso services */
+/*GetCors returns a gin handlerFunc for CORS reuquests in expresso services */
 func GetCors() gin.HandlerFunc {
 	config := cors.DefaultConfig()
 	config.AddAllowMethods("DELETE")

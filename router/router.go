@@ -121,10 +121,6 @@ func InitRouter(b *Bloodlines) {
 }
 
 /*Start begins the Bloodlines server*/
-func (b *Bloodlines) Start(port string, tls config.TLS) {
-	if tls.Enabled {
-		b.router.RunTLS(port, tls.Cert, tls.Key)
-	} else {
-		b.router.Run(port)
-	}
+func (b *Bloodlines) Start(port string) {
+	b.router.Run(port)
 }
