@@ -3,6 +3,7 @@ package helpers
 import (
 	"github.com/pborman/uuid"
 
+	tcg "github.com/jakelong95/TownCenter/gateways"
 	"github.com/ghmeier/bloodlines/gateways"
 	"github.com/ghmeier/bloodlines/models"
 )
@@ -22,12 +23,12 @@ type ReceiptI interface {
 type Receipt struct {
 	*baseHelper
 	SG gateways.SendgridI
-	TC gateways.TownCenterI
+	TC tcg.TownCenterI
 	RB gateways.RabbitI
 }
 
 /*NewReceipt constructs and returns a receipt helper*/
-func NewReceipt(sql gateways.SQL, sendgrid gateways.SendgridI, townCenter gateways.TownCenterI, rabbit gateways.RabbitI) ReceiptI {
+func NewReceipt(sql gateways.SQL, sendgrid gateways.SendgridI, townCenter tcg.TownCenterI, rabbit gateways.RabbitI) ReceiptI {
 	helper := &Receipt{
 		baseHelper: &baseHelper{sql: sql},
 		SG:         sendgrid,
@@ -118,7 +119,7 @@ func (r *Receipt) deliverEmail(receipt *models.Receipt, content *models.Content)
 		return err
 	}
 
-	err = r.SG.SendEmail(target, content.Subject, text)
+	err = r.SG.SendEmail(target.Email, content.Subject, text)
 	return err
 }
 
