@@ -30,6 +30,18 @@
 			"Rev": "98fa357170587e470c5f27d3c3ea0947b71eb455"
 		},
 		{
+			"ImportPath": "github.com/jakelong95/TownCenter/gateways",
+			"Rev": "c7456c8421e5f8a44e59303ee2c36cee1723c5af"
+		},
+		{
+			"ImportPath": "github.com/jakelong95/TownCenter/models",
+			"Rev": "c7456c8421e5f8a44e59303ee2c36cee1723c5af"
+		},
+		{
+			"ImportPath": "github.com/jonnykry/coinage/gateways",
+			"Rev": "8c20fe911b41d567fbb3ff91afe64c3135604953"
+		},
+		{
 			"ImportPath": "github.com/manucorporat/sse",
 			"Rev": "ee05b128a739a0fb76c7ebd3ae4810c1de808d6d"
 		},
@@ -76,6 +88,11 @@
 			"ImportPath": "github.com/stretchr/testify/vendor/github.com/stretchr/objx",
 			"Comment": "v1.1.4-6-g18a02ba",
 			"Rev": "18a02ba4a312f95da08ff4cfc0055750ce50ae9e"
+		},
+		{
+			"ImportPath": "github.com/stripe/stripe-go",
+			"Comment": "v19.2.0",
+			"Rev": "3f2707ab5115e7c54c70a77aabcb386d6f405810"
 		},
 		{
 			"ImportPath": "golang.org/x/net/context",
