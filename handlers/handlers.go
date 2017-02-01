@@ -8,6 +8,7 @@ import (
 	"gopkg.in/gin-gonic/gin.v1"
 
 	"github.com/ghmeier/bloodlines/gateways"
+	jg "github.com/jonnykry/coinage/gateways"
 )
 
 /*BaseHandler contains wrapper methods that all handlers need and should use
@@ -24,6 +25,7 @@ type GatewayContext struct {
 	TownCenter gateways.TownCenterI
 	Rabbit     gateways.RabbitI
 	Stats      *statsd.Client
+	Stripe     jg.Stripe
 }
 
 /*NewBaseHandler returns a new BaseHandler instance from a given stats*/
