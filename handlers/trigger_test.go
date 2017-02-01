@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	mocks "github.com/ghmeier/bloodlines/_mocks/gateways"
+	tmocks "github.com/jakelong95/TownCenter/_mocks"
 
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/alexcesaro/statsd.v2"
@@ -21,7 +22,7 @@ func GetTestContext() *GatewayContext {
 	return &GatewayContext{
 		Sql:        new(mocks.SQL),
 		Sendgrid:   &mocks.SendgridI{},
-		TownCenter: &mocks.TownCenterI{},
+		TownCenter: &tmocks.TownCenterI{},
 		Rabbit:     &mocks.RabbitI{},
 		Stats:      stats,
 	}

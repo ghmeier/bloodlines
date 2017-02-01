@@ -8,6 +8,8 @@ import (
 	mocks "github.com/ghmeier/bloodlines/_mocks/gateways"
 	"github.com/ghmeier/bloodlines/gateways"
 	"github.com/ghmeier/bloodlines/models"
+	tmocks "github.com/jakelong95/TownCenter/_mocks"
+	tmodels "github.com/jakelong95/TownCenter/models"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/pborman/uuid"
@@ -227,7 +229,7 @@ func TestReceiptSendSuccess(t *testing.T) {
 
 	s, mock, _ := sqlmock.New()
 	rabbitMock := &mocks.RabbitI{}
-	r := NewReceipt(&gateways.MySQL{DB: s}, &mocks.SendgridI{}, &mocks.TownCenterI{}, rabbitMock)
+	r := NewReceipt(&gateways.MySQL{DB: s}, &mocks.SendgridI{}, &tmocks.TownCenterI{}, rabbitMock)
 	rabbitMock.On("Produce", request).Return(nil)
 	mock.ExpectPrepare("UPDATE receipt").
 		ExpectExec().
@@ -247,9 +249,9 @@ func TestReceiptDeliverContentSuccess(t *testing.T) {
 	s, _, _ := sqlmock.New()
 	rabbitMock := &mocks.RabbitI{}
 	sgMock := &mocks.SendgridI{}
-	tcMock := &mocks.TownCenterI{}
+	tcMock := &tmocks.TownCenterI{}
 	r := NewReceipt(&gateways.MySQL{DB: s}, sgMock, tcMock, rabbitMock)
-	tcMock.On("GetUser", receipt.UserID).Return("test", nil)
+	tcMock.On("GetUser", receipt.UserID).Return(&tmodels.User{Email: "test"}, nil)
 	sgMock.On("SendEmail", "test", "test", "Hello").Return(nil)
 
 	err := r.DeliverContent(receipt, content)
@@ -266,7 +268,7 @@ func TestReceiptDeliverContentNoopSuccess(t *testing.T) {
 	s, _, _ := sqlmock.New()
 	rabbitMock := &mocks.RabbitI{}
 	sgMock := &mocks.SendgridI{}
-	tcMock := &mocks.TownCenterI{}
+	tcMock := &tmocks.TownCenterI{}
 	r := NewReceipt(&gateways.MySQL{DB: s}, sgMock, tcMock, rabbitMock)
 	tcMock.On("GetUser", receipt.UserID).Return("test", nil)
 	sgMock.On("SendEmail", "test", "test", "Hello").Return(nil)
@@ -286,7 +288,7 @@ func getReceiptRows() sqlmock.Rows {
 
 func getMockReceipt(s *sql.DB) ReceiptI {
 	rabbitMock := &mocks.RabbitI{}
-	r := NewReceipt(&gateways.MySQL{DB: s}, &mocks.SendgridI{}, &mocks.TownCenterI{}, rabbitMock)
+	r := NewReceipt(&gateways.MySQL{DB: s}, &mocks.SendgridI{}, &tmocks.TownCenterI{}, rabbitMock)
 
 	return r
 }

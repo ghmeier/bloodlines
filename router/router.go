@@ -6,11 +6,11 @@ import (
 	"gopkg.in/alexcesaro/statsd.v2"
 	"gopkg.in/gin-gonic/gin.v1"
 
-	tcg "github.com/jakelong95/TownCenter/gateways"
 	"github.com/ghmeier/bloodlines/config"
 	"github.com/ghmeier/bloodlines/gateways"
 	"github.com/ghmeier/bloodlines/handlers"
 	"github.com/ghmeier/bloodlines/workers"
+	tcg "github.com/jakelong95/TownCenter/gateways"
 )
 
 /*Bloodlines is the main server object which routes requests*/
@@ -121,6 +121,6 @@ func InitRouter(b *Bloodlines) {
 }
 
 /*Start begins the Bloodlines server*/
-func (b *Bloodlines) Start(port string, tls config.TLS) {
+func (b *Bloodlines) Start(port string) {
 	b.router.Run(port)
 }

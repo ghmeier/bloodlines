@@ -7,6 +7,7 @@ import (
 	mockg "github.com/ghmeier/bloodlines/_mocks/gateways"
 	"github.com/ghmeier/bloodlines/config"
 	"github.com/ghmeier/bloodlines/handlers"
+	tmocks "github.com/jakelong95/TownCenter/_mocks"
 
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/alexcesaro/statsd.v2"
@@ -23,7 +24,7 @@ func TestNewSuccess(t *testing.T) {
 
 func getMockBloodlines() *Bloodlines {
 	sql := new(mockg.SQL)
-	towncenter := new(mockg.TownCenterI)
+	towncenter := new(tmocks.TownCenterI)
 	sendgrid := new(mockg.SendgridI)
 	rabbit := new(mockg.RabbitI)
 	rabbit.On("Consume").Return(nil, nil)

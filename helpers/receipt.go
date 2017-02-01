@@ -3,9 +3,9 @@ package helpers
 import (
 	"github.com/pborman/uuid"
 
-	tcg "github.com/jakelong95/TownCenter/gateways"
 	"github.com/ghmeier/bloodlines/gateways"
 	"github.com/ghmeier/bloodlines/models"
+	tg "github.com/jakelong95/TownCenter/gateways"
 )
 
 /*ReceiptI describes methods for the Receipt Helper*/
@@ -23,12 +23,12 @@ type ReceiptI interface {
 type Receipt struct {
 	*baseHelper
 	SG gateways.SendgridI
-	TC tcg.TownCenterI
+	TC tg.TownCenterI
 	RB gateways.RabbitI
 }
 
 /*NewReceipt constructs and returns a receipt helper*/
-func NewReceipt(sql gateways.SQL, sendgrid gateways.SendgridI, townCenter tcg.TownCenterI, rabbit gateways.RabbitI) ReceiptI {
+func NewReceipt(sql gateways.SQL, sendgrid gateways.SendgridI, townCenter tg.TownCenterI, rabbit gateways.RabbitI) ReceiptI {
 	helper := &Receipt{
 		baseHelper: &baseHelper{sql: sql},
 		SG:         sendgrid,
