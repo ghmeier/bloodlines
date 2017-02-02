@@ -45,7 +45,7 @@ func NewBloodlines(config config.Bloodlines) Bloodlines {
 func (b *bloodlines) GetAllContent(offset int, limit int) ([]*models.Content, error) {
 	url := fmt.Sprintf("%scontent?offset=%d&limit=%d", b.url, offset, limit)
 
-	var content []*models.Content
+	content := make([]*models.Content, 0)
 	err := b.ServiceSend(http.MethodGet, url, nil, &content)
 	if err != nil {
 		return nil, err

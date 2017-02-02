@@ -3,6 +3,7 @@ package gateways
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -18,10 +19,10 @@ Since ServiceGet returns data as a []byte, we can unmarshal it
 to whatever is needed in the calling method. Here, its []*models.Content
 */
 type ServiceResponse struct {
-	Msg     string `json:"message"`
-	Data    []byte `json:"data"`
-	Err     error  `json:"error"`
-	Success bool   `json:"success"`
+	Msg     string `json:"message,omitempty"`
+	Data    []byte `json:"data,omitempty"`
+	Err     error  `json:"error,omitempty"`
+	Success bool   `json:"success,omitempty"`
 }
 
 /*BaseService has generic methods for sending and parsing expresso service
@@ -65,6 +66,7 @@ func (b *BaseService) ServiceSend(method string, url string, data interface{}, i
 
 	raw, err := b.doRequest(req)
 	if err != nil {
+		fmt.Print(err.Error())
 		return err
 	}
 
@@ -74,6 +76,9 @@ func (b *BaseService) ServiceSend(method string, url string, data interface{}, i
 
 	err = json.Unmarshal(raw, i)
 	if err != nil {
+		fmt.Println(raw)
+		fmt.Println(i)
+		fmt.Printf("%s\n", err.Error())
 		return err
 	}
 
@@ -108,7 +113,13 @@ func (b *BaseService) handleResponse(resp *http.Response) ([]byte, error) {
 	}
 
 	if !response.Success {
-		return nil, response.Err
+		if response.Err != nil {
+			return nil, response.Err
+		} else if response.Msg != "" {
+			return nil, fmt.Errorf("%s", response.Msg)
+		} else {
+			return nil, fmt.Errorf("ERROR: unknown error")
+		}
 	}
 
 	return response.Data, nil
