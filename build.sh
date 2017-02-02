@@ -1,2 +1,3 @@
-docker build -t ghmeier/bloodlines ./
-docker push ghmeier/bloodlines
+go build
+sudo docker build -t ghmeier/bloodlines ./
+sudo docker push ghmeier/bloodlines
