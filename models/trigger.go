@@ -18,6 +18,9 @@ type Trigger struct {
 
 /*NewTrigger creates and returns a new trigger entity with id*/
 func NewTrigger(contentID uuid.UUID, key string, values map[string]string) *Trigger {
+	if values == nil {
+		values = make(map[string]string, 0)
+	}
 	return &Trigger{
 		ID:        uuid.NewUUID(),
 		ContentID: contentID,

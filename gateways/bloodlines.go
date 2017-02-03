@@ -57,37 +57,37 @@ func (b *bloodlines) GetAllContent(offset int, limit int) ([]*models.Content, er
 func (b *bloodlines) NewContent(newContent *models.Content) (*models.Content, error) {
 	url := fmt.Sprintf("%scontent", b.url)
 
-	var content *models.Content
-	err := b.ServiceSend(http.MethodPost, url, newContent, content)
+	var content models.Content
+	err := b.ServiceSend(http.MethodPost, url, newContent, &content)
 	if err != nil {
 		return nil, err
 	}
 
-	return content, nil
+	return &content, nil
 }
 
 func (b *bloodlines) GetContentByID(id uuid.UUID) (*models.Content, error) {
 	url := fmt.Sprintf("%scontent/%s", b.url, id.String())
 
-	var content *models.Content
-	err := b.ServiceSend(http.MethodGet, url, nil, content)
+	var content models.Content
+	err := b.ServiceSend(http.MethodGet, url, nil, &content)
 	if err != nil {
 		return nil, err
 	}
 
-	return content, nil
+	return &content, nil
 }
 
 func (b *bloodlines) UpdateContent(update *models.Content) (*models.Content, error) {
 	url := fmt.Sprintf("%scontent/%s", b.url, update.ID.String())
 
-	var content *models.Content
-	err := b.ServiceSend(http.MethodPut, url, update, content)
+	var content models.Content
+	err := b.ServiceSend(http.MethodPut, url, update, &content)
 	if err != nil {
 		return nil, err
 	}
 
-	return content, nil
+	return &content, nil
 }
 
 func (b *bloodlines) DeleteContent(id uuid.UUID) error {
@@ -116,25 +116,25 @@ func (b *bloodlines) GetAllReceipts(offset int, limit int) ([]*models.Receipt, e
 func (b *bloodlines) SendReceipt(receipt *models.Receipt) (*models.Receipt, error) {
 	url := fmt.Sprintf("%sreceipt/send", b.url)
 
-	var sent *models.Receipt
-	err := b.ServiceSend(http.MethodPost, url, receipt, sent)
+	var sent models.Receipt
+	err := b.ServiceSend(http.MethodPost, url, receipt, &sent)
 	if err != nil {
 		return nil, err
 	}
 
-	return sent, nil
+	return &sent, nil
 }
 
 func (b *bloodlines) GetReceiptByID(id uuid.UUID) (*models.Receipt, error) {
 	url := fmt.Sprintf("%sreceipt/%s", b.url, id.String())
 
-	var receipt *models.Receipt
-	err := b.ServiceSend(http.MethodGet, url, nil, receipt)
+	var receipt models.Receipt
+	err := b.ServiceSend(http.MethodGet, url, nil, &receipt)
 	if err != nil {
 		return nil, err
 	}
 
-	return receipt, nil
+	return &receipt, nil
 }
 
 func (b *bloodlines) GetAllTriggers(offset int, limit int) ([]*models.Trigger, error) {
@@ -152,37 +152,37 @@ func (b *bloodlines) GetAllTriggers(offset int, limit int) ([]*models.Trigger, e
 func (b *bloodlines) NewTrigger(t *models.Trigger) (*models.Trigger, error) {
 	url := fmt.Sprintf("%strigger", b.url)
 
-	var trigger *models.Trigger
-	err := b.ServiceSend(http.MethodPost, url, t, trigger)
+	var trigger models.Trigger
+	err := b.ServiceSend(http.MethodPost, url, t, &trigger)
 	if err != nil {
 		return nil, err
 	}
 
-	return trigger, nil
+	return &trigger, nil
 }
 
 func (b *bloodlines) GetTriggerByKey(key string) (*models.Trigger, error) {
 	url := fmt.Sprintf("%strigger/%s", b.url, key)
 
-	var trigger *models.Trigger
-	err := b.ServiceSend(http.MethodGet, url, nil, trigger)
+	var trigger models.Trigger
+	err := b.ServiceSend(http.MethodGet, url, nil, &trigger)
 	if err != nil {
 		return nil, err
 	}
 
-	return trigger, nil
+	return &trigger, nil
 }
 
 func (b *bloodlines) UpdateTrigger(update *models.Trigger) (*models.Trigger, error) {
 	url := fmt.Sprintf("%strigger/%s", b.url, update.Key)
 
-	var trigger *models.Trigger
-	err := b.ServiceSend(http.MethodPut, url, update, trigger)
+	var trigger models.Trigger
+	err := b.ServiceSend(http.MethodPut, url, update, &trigger)
 	if err != nil {
 		return nil, err
 	}
 
-	return trigger, nil
+	return &trigger, nil
 }
 
 func (b *bloodlines) DeleteTrigger(key string) error {
@@ -199,11 +199,11 @@ func (b *bloodlines) DeleteTrigger(key string) error {
 func (b *bloodlines) ActivateTrigger(key string, receipt *models.Receipt) (*models.SendRequest, error) {
 	url := fmt.Sprintf("%strigger/%s/activate", b.url, key)
 
-	var request *models.SendRequest
-	err := b.ServiceSend(http.MethodPost, url, receipt, request)
+	var request models.SendRequest
+	err := b.ServiceSend(http.MethodPost, url, receipt, &request)
 	if err != nil {
 		return nil, err
 	}
 
-	return request, nil
+	return &request, nil
 }

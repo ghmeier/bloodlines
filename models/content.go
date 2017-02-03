@@ -21,6 +21,9 @@ type Content struct {
 
 /*NewContent constructs and returns a new content entity with a new uuid*/
 func NewContent(contentType ContentType, text string, subject string, params []string) *Content {
+	if params == nil {
+		params = make([]string, 0)
+	}
 	return &Content{
 		ID:      uuid.NewUUID(),
 		Type:    contentType,

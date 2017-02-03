@@ -27,6 +27,9 @@ type SendRequest struct {
 
 /*NewReceipt creates and returns a new receipt with a new id*/
 func NewReceipt(values map[string]string, contentID uuid.UUID, userID uuid.UUID) *Receipt {
+	if values == nil {
+		values = make(map[string]string, 0)
+	}
 	return &Receipt{
 		ID:        uuid.NewUUID(),
 		Values:    values,

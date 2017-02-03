@@ -66,7 +66,6 @@ func (b *BaseService) ServiceSend(method string, url string, data interface{}, i
 
 	raw, err := b.doRequest(req)
 	if err != nil {
-		fmt.Print(err.Error())
 		return err
 	}
 
@@ -76,9 +75,6 @@ func (b *BaseService) ServiceSend(method string, url string, data interface{}, i
 
 	err = json.Unmarshal(raw, i)
 	if err != nil {
-		fmt.Println(raw)
-		fmt.Println(i)
-		fmt.Printf("%s\n", err.Error())
 		return err
 	}
 
