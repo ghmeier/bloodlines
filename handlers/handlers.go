@@ -8,8 +8,9 @@ import (
 	"gopkg.in/gin-gonic/gin.v1"
 
 	"github.com/ghmeier/bloodlines/gateways"
-	tg "github.com/jakelong95/TownCenter/gateways"
-	jg "github.com/jonnykry/coinage/gateways"
+	t "github.com/jakelong95/TownCenter/gateways"
+	coi "github.com/jonnykry/coinage/gateways"
+	cov "github.com/yuderekyu/covenant/gateways"
 )
 
 /*BaseHandler contains wrapper methods that all handlers need and should use
@@ -23,10 +24,12 @@ type BaseHandler struct {
 type GatewayContext struct {
 	Sql        gateways.SQL
 	Sendgrid   gateways.SendgridI
-	TownCenter tg.TownCenterI
+	TownCenter t.TownCenterI
+	Covenant   cov.Covenant
+	Bloodlines gateways.Bloodlines
 	Rabbit     gateways.RabbitI
 	Stats      *statsd.Client
-	Stripe     jg.Stripe
+	Stripe     coi.Stripe
 }
 
 /*NewBaseHandler returns a new BaseHandler instance from a given stats*/

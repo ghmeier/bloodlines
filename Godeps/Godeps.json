@@ -31,15 +31,19 @@
 		},
 		{
 			"ImportPath": "github.com/jakelong95/TownCenter/_mocks",
-			"Rev": "3dde6f8e3e1dc40a7c36e5cfba2018d95ea2c2ae"
+			"Rev": "feb18a0f2357ad969839a31ad4eb333597809f45"
 		},
 		{
 			"ImportPath": "github.com/jakelong95/TownCenter/gateways",
-			"Rev": "3dde6f8e3e1dc40a7c36e5cfba2018d95ea2c2ae"
+			"Rev": "feb18a0f2357ad969839a31ad4eb333597809f45"
+		},
+		{
+			"ImportPath": "github.com/jakelong95/TownCenter/helpers",
+			"Rev": "feb18a0f2357ad969839a31ad4eb333597809f45"
 		},
 		{
 			"ImportPath": "github.com/jakelong95/TownCenter/models",
-			"Rev": "3dde6f8e3e1dc40a7c36e5cfba2018d95ea2c2ae"
+			"Rev": "feb18a0f2357ad969839a31ad4eb333597809f45"
 		},
 		{
 			"ImportPath": "github.com/jarcoal/httpmock",
@@ -47,11 +51,15 @@
 		},
 		{
 			"ImportPath": "github.com/jonnykry/coinage/gateways",
-			"Rev": "ca6d90e5ef36781b458521ece533a4061c4df5e5"
+			"Rev": "ef21c4e1df850149f6a1d77e317d7d5440455682"
 		},
 		{
 			"ImportPath": "github.com/jonnykry/coinage/models",
-			"Rev": "ca6d90e5ef36781b458521ece533a4061c4df5e5"
+			"Rev": "ef21c4e1df850149f6a1d77e317d7d5440455682"
+		},
+		{
+			"ImportPath": "github.com/lcollin/warehouse/models",
+			"Rev": "b20ee27ba75276ff81c07662b5e88439a083b0ad"
 		},
 		{
 			"ImportPath": "github.com/manucorporat/sse",
@@ -115,6 +123,18 @@
 			"ImportPath": "github.com/stripe/stripe-go",
 			"Comment": "v19.2.0",
 			"Rev": "3f2707ab5115e7c54c70a77aabcb386d6f405810"
+		},
+		{
+			"ImportPath": "github.com/yuderekyu/covenant/config",
+			"Rev": "75173378c1320c4ac8fb070963583109188894ed"
+		},
+		{
+			"ImportPath": "github.com/yuderekyu/covenant/gateways",
+			"Rev": "75173378c1320c4ac8fb070963583109188894ed"
+		},
+		{
+			"ImportPath": "github.com/yuderekyu/covenant/models",
+			"Rev": "75173378c1320c4ac8fb070963583109188894ed"
 		},
 		{
 			"ImportPath": "golang.org/x/net/context",
