@@ -12,6 +12,7 @@ type Root struct {
 	TownCenter TownCenter `json:"towncenter"`
 	Bloodlines Bloodlines `json:"bloodlines"`
 	Covenant   Covenant   `json:"covenant"`
+	Warehouse  Warehouse  `json:"warehouse"`
 	Rabbit     Rabbit     `json:"rabbit"`
 	Statsd     Statsd     `json:"statsd"`
 	Stripe     Stripe     `json:"stripe"`
@@ -54,6 +55,12 @@ type Bloodlines struct {
 
 /*Covenant has connection information for the covenant service */
 type Covenant struct {
+	Host string `json:"host"`
+	Port string `json:"port"`
+}
+
+/*Warehouse has connection information for the inventory service*/
+type Warehouse struct {
 	Host string `json:"host"`
 	Port string `json:"port"`
 }
