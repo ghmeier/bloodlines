@@ -11,6 +11,7 @@ type Root struct {
 	Sendgrid   Sendgrid   `json:"sendgrid"`
 	TownCenter TownCenter `json:"towncenter"`
 	Bloodlines Bloodlines `json:"bloodlines"`
+	Covenant   Covenant   `json:"covenant"`
 	Rabbit     Rabbit     `json:"rabbit"`
 	Statsd     Statsd     `json:"statsd"`
 	Stripe     Stripe     `json:"stripe"`
@@ -47,6 +48,12 @@ type TownCenter struct {
 
 /*Bloodlines has connection information for the bloodlines service */
 type Bloodlines struct {
+	Host string `json:"host"`
+	Port string `json:"port"`
+}
+
+/*Covenant has connection information for the covenant service */
+type Covenant struct {
 	Host string `json:"host"`
 	Port string `json:"port"`
 }
