@@ -8,8 +8,8 @@ import (
 	"gopkg.in/gin-gonic/gin.v1"
 
 	"github.com/ghmeier/bloodlines/gateways"
+	coi "github.com/ghmeier/coinage/gateways"
 	t "github.com/jakelong95/TownCenter/gateways"
-	coi "github.com/jonnykry/coinage/gateways"
 	cov "github.com/yuderekyu/covenant/gateways"
 )
 
