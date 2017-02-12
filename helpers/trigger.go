@@ -10,7 +10,7 @@ import (
 /*TriggerI describes methods of the Trigger Helper*/
 type TriggerI interface {
 	GetAll(int, int) ([]*models.Trigger, error)
-	GetByKey(string) (*models.Trigger, error)
+	Get(string) (*models.Trigger, error)
 	Update(string, uuid.UUID, map[string]string) error
 	Insert(*models.Trigger) error
 	Delete(string) error
@@ -53,8 +53,8 @@ func (t *Trigger) GetAll(offset int, limit int) ([]*models.Trigger, error) {
 	return triggers, nil
 }
 
-/*GetByKey given a string key, returns the trigger associated with it*/
-func (t *Trigger) GetByKey(key string) (*models.Trigger, error) {
+/*Get given a string key, returns the trigger associated with it*/
+func (t *Trigger) Get(key string) (*models.Trigger, error) {
 	rows, err := t.sql.Select("SELECT id, contentId, tkey, vals FROM b_trigger WHERE tkey=?", key)
 	if err != nil {
 		return nil, err
@@ -64,6 +64,11 @@ func (t *Trigger) GetByKey(key string) (*models.Trigger, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	if len(triggers) < 1 {
+		return nil, nil
+	}
+
 	return triggers[0], nil
 }
 

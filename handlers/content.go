@@ -21,14 +21,14 @@ type ContentI interface {
 /*Content is the handler for all content api calls*/
 type Content struct {
 	*BaseHandler
-	Helper helpers.ContentI
+	Content helpers.ContentI
 }
 
 /*NewContent returns a content handler*/
 func NewContent(ctx *GatewayContext) ContentI {
 	stats := ctx.Stats.Clone(statsd.Prefix("api.content"))
 	return &Content{
-		Helper:      helpers.NewContent(ctx.Sql),
+		Content:     helpers.NewContent(ctx.Sql),
 		BaseHandler: NewBaseHandler(stats),
 	}
 }
@@ -44,7 +44,7 @@ func (c *Content) New(ctx *gin.Context) {
 	}
 
 	content := models.NewContent("EMAIL", json.Text, json.Subject, json.Params)
-	err = c.Helper.Insert(content)
+	err = c.Content.Insert(content)
 	if err != nil {
 		c.ServerError(ctx, err, json)
 		return
@@ -57,7 +57,7 @@ func (c *Content) New(ctx *gin.Context) {
   determining the entries and amount (default 0,20)*/
 func (c *Content) ViewAll(ctx *gin.Context) {
 	offset, limit := c.GetPaging(ctx)
-	content, err := c.Helper.GetAll(offset, limit)
+	content, err := c.Content.GetAll(offset, limit)
 	if err != nil {
 		c.ServerError(ctx, err, content)
 		return
@@ -70,10 +70,12 @@ func (c *Content) ViewAll(ctx *gin.Context) {
 func (c *Content) View(ctx *gin.Context) {
 	id := ctx.Param("contentId")
 
-	content, err := c.Helper.Get(id)
+	content, err := c.Content.Get(id)
 	if err != nil {
 		c.ServerError(ctx, err, content)
 		return
+	} else if content == nil {
+		c.UserError(ctx, "ERROR: no content with id", id)
 	}
 
 	c.Success(ctx, content)
@@ -91,7 +93,7 @@ func (c *Content) Update(ctx *gin.Context) {
 	}
 	json.ID = uuid.Parse(id)
 
-	err = c.Helper.Update(&json)
+	err = c.Content.Update(&json)
 	if err != nil {
 		c.ServerError(ctx, err, json)
 		return
@@ -104,7 +106,7 @@ func (c *Content) Update(ctx *gin.Context) {
 func (c *Content) Deactivate(ctx *gin.Context) {
 	id := ctx.Param("contentId")
 
-	err := c.Helper.SetStatus(id, models.INACTIVE)
+	err := c.Content.SetStatus(id, models.INACTIVE)
 	if err != nil {
 		c.ServerError(ctx, err, nil)
 		return

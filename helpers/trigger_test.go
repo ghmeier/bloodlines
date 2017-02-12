@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTriggerGetByKeySuccess(t *testing.T) {
+func TestTriggerGetSuccess(t *testing.T) {
 	assert := assert.New(t)
 
 	trigger := getDefaultTrigger()
@@ -24,7 +24,7 @@ func TestTriggerGetByKeySuccess(t *testing.T) {
 		WithArgs(trigger.Key).
 		WillReturnRows(getTriggerRows().AddRow(trigger.ID.String(), trigger.ContentID.String(), trigger.Key, "{}"))
 
-	res, err := h.GetByKey(trigger.Key)
+	res, err := h.Get(trigger.Key)
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.NoError(err)
@@ -34,7 +34,7 @@ func TestTriggerGetByKeySuccess(t *testing.T) {
 	assert.Equal(0, len(trigger.Values))
 }
 
-func TestTriggerGetByKeyFail(t *testing.T) {
+func TestTriggerGetFail(t *testing.T) {
 	assert := assert.New(t)
 
 	trigger := getDefaultTrigger()
@@ -45,13 +45,13 @@ func TestTriggerGetByKeyFail(t *testing.T) {
 		WithArgs(trigger.Key).
 		WillReturnError(fmt.Errorf("some error"))
 
-	_, err := h.GetByKey(trigger.Key)
+	_, err := h.Get(trigger.Key)
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)
 }
 
-func TestTriggerGetByKeyMapFail(t *testing.T) {
+func TestTriggerGetMapFail(t *testing.T) {
 	assert := assert.New(t)
 
 	trigger := getDefaultTrigger()
@@ -62,7 +62,7 @@ func TestTriggerGetByKeyMapFail(t *testing.T) {
 		WithArgs(trigger.Key).
 		WillReturnRows(getTriggerRows().AddRow(trigger.ID.String(), trigger.ContentID.String(), trigger.Key, "[]"))
 
-	_, err := h.GetByKey(trigger.Key)
+	_, err := h.Get(trigger.Key)
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)

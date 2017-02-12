@@ -21,18 +21,18 @@ type TriggerI interface {
 /*Trigger implements TriggerI and uses a trigger helper*/
 type Trigger struct {
 	*BaseHandler
-	Helper  helpers.TriggerI
-	RHelper helpers.ReceiptI
-	CHelper helpers.ContentI
+	Trigger helpers.TriggerI
+	Receipt helpers.ReceiptI
+	Content helpers.ContentI
 }
 
 /*NewTrigger constructs and returns reference to a Trigger handler*/
 func NewTrigger(ctx *GatewayContext) *Trigger {
 	stats := ctx.Stats.Clone(statsd.Prefix("api.trigger"))
 	return &Trigger{
-		Helper:      helpers.NewTrigger(ctx.Sql),
-		RHelper:     helpers.NewReceipt(ctx.Sql, ctx.Sendgrid, ctx.TownCenter, ctx.Rabbit),
-		CHelper:     helpers.NewContent(ctx.Sql),
+		Trigger:     helpers.NewTrigger(ctx.Sql),
+		Receipt:     helpers.NewReceipt(ctx.Sql, ctx.Sendgrid, ctx.TownCenter, ctx.Rabbit),
+		Content:     helpers.NewContent(ctx.Sql),
 		BaseHandler: NewBaseHandler(stats),
 	}
 }
@@ -47,8 +47,17 @@ func (t *Trigger) New(ctx *gin.Context) {
 		return
 	}
 
-	trigger := models.NewTrigger(json.ContentID, json.Key, json.Values)
-	err = t.Helper.Insert(trigger)
+	trigger, err := t.Trigger.Get(json.Key)
+	if err != nil {
+		t.ServerError(ctx, err, json)
+		return
+	} else if trigger != nil {
+		t.UserError(ctx, "ERROR: trigger already exists with that key", json)
+		return
+	}
+
+	trigger = models.NewTrigger(json.ContentID, json.Key, json.Values)
+	err = t.Trigger.Insert(trigger)
 	if err != nil {
 		t.ServerError(ctx, err, json)
 		return
@@ -60,7 +69,7 @@ func (t *Trigger) New(ctx *gin.Context) {
 /*ViewAll returns a list of trigger entites based on the offset and limit (default 0, 20)*/
 func (t *Trigger) ViewAll(ctx *gin.Context) {
 	offset, limit := t.GetPaging(ctx)
-	triggers, err := t.Helper.GetAll(offset, limit)
+	triggers, err := t.Trigger.GetAll(offset, limit)
 	if err != nil {
 		t.ServerError(ctx, err, nil)
 		return
@@ -73,7 +82,7 @@ func (t *Trigger) ViewAll(ctx *gin.Context) {
 func (t *Trigger) View(ctx *gin.Context) {
 	key := ctx.Param("key")
 
-	trigger, err := t.Helper.GetByKey(key)
+	trigger, err := t.Trigger.Get(key)
 	if err != nil {
 		t.ServerError(ctx, err, nil)
 		return
@@ -93,7 +102,7 @@ func (t *Trigger) Update(ctx *gin.Context) {
 		return
 	}
 
-	err = t.Helper.Update(key, json.ContentID, json.Values)
+	err = t.Trigger.Update(key, json.ContentID, json.Values)
 	if err != nil {
 		t.ServerError(ctx, err, json)
 		return
@@ -107,7 +116,7 @@ func (t *Trigger) Update(ctx *gin.Context) {
 func (t *Trigger) Remove(ctx *gin.Context) {
 	key := ctx.Param("key")
 
-	err := t.Helper.Delete(key)
+	err := t.Trigger.Delete(key)
 	if err != nil {
 		t.ServerError(ctx, err, nil)
 		return
@@ -127,7 +136,7 @@ func (t *Trigger) Activate(ctx *gin.Context) {
 		return
 	}
 
-	trigger, err := t.Helper.GetByKey(key)
+	trigger, err := t.Trigger.Get(key)
 	if err != nil {
 		t.ServerError(ctx, err, json)
 		return
@@ -138,7 +147,7 @@ func (t *Trigger) Activate(ctx *gin.Context) {
 		return
 	}
 
-	content, err := t.CHelper.Get(trigger.ContentID.String())
+	content, err := t.Content.Get(trigger.ContentID.String())
 	if err != nil {
 		t.ServerError(ctx, err, trigger)
 		return
@@ -149,7 +158,7 @@ func (t *Trigger) Activate(ctx *gin.Context) {
 	}
 
 	receipt := models.NewReceipt(json.Values, trigger.ContentID, json.UserID)
-	err = t.RHelper.Insert(receipt)
+	err = t.Receipt.Insert(receipt)
 	if err != nil {
 		t.ServerError(ctx, err, content)
 		return
@@ -159,7 +168,7 @@ func (t *Trigger) Activate(ctx *gin.Context) {
 		ReceiptID: receipt.ID,
 		ContentID: content.ID,
 	}
-	t.RHelper.Send(request)
+	t.Receipt.Send(request)
 
 	t.Success(ctx, request)
 }

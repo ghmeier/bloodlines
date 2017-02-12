@@ -24,6 +24,29 @@ func (_m *TriggerI) Delete(_a0 string) error {
 	return r0
 }
 
+// Get provides a mock function with given fields: _a0
+func (_m *TriggerI) Get(_a0 string) (*models.Trigger, error) {
+	ret := _m.Called(_a0)
+
+	var r0 *models.Trigger
+	if rf, ok := ret.Get(0).(func(string) *models.Trigger); ok {
+		r0 = rf(_a0)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Trigger)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(_a0)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetAll provides a mock function with given fields: _a0, _a1
 func (_m *TriggerI) GetAll(_a0 int, _a1 int) ([]*models.Trigger, error) {
 	ret := _m.Called(_a0, _a1)
@@ -40,29 +63,6 @@ func (_m *TriggerI) GetAll(_a0 int, _a1 int) ([]*models.Trigger, error) {
 	var r1 error
 	if rf, ok := ret.Get(1).(func(int, int) error); ok {
 		r1 = rf(_a0, _a1)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// GetByKey provides a mock function with given fields: _a0
-func (_m *TriggerI) GetByKey(_a0 string) (*models.Trigger, error) {
-	ret := _m.Called(_a0)
-
-	var r0 *models.Trigger
-	if rf, ok := ret.Get(0).(func(string) *models.Trigger); ok {
-		r0 = rf(_a0)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.Trigger)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(_a0)
 	} else {
 		r1 = ret.Error(1)
 	}

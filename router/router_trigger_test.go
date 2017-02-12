@@ -74,6 +74,7 @@ func TestTriggerNewSuccess(t *testing.T) {
 	}
 
 	b, tMock := mockTrigger()
+	tMock.On("Get", "test_key").Return(nil, nil)
 	tMock.On("Insert", mock.AnythingOfType("*models.Trigger")).Return(nil)
 
 	s, _ := json.Marshal(trigger)
@@ -95,6 +96,7 @@ func TestTriggerNewFail(t *testing.T) {
 	}
 
 	b, tMock := mockTrigger()
+	tMock.On("Get", "test_key").Return(nil, nil)
 	tMock.On("Insert", mock.AnythingOfType("*models.Trigger")).Return(fmt.Errorf("some error"))
 
 	s, _ := json.Marshal(trigger)
@@ -103,6 +105,27 @@ func TestTriggerNewFail(t *testing.T) {
 	b.router.ServeHTTP(w, r)
 
 	assert.Equal(500, w.Code)
+}
+
+func TestTriggerNewDuplicate(t *testing.T) {
+	assert := assert.New(t)
+
+	gin.SetMode(gin.TestMode)
+	trigger := models.Trigger{
+		ContentID: uuid.NewUUID(),
+		Key:       "test_key",
+		Values:    make(map[string]string),
+	}
+
+	b, tMock := mockTrigger()
+	tMock.On("Get", "test_key").Return(&models.Trigger{}, nil)
+
+	s, _ := json.Marshal(trigger)
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("POST", "/api/trigger", bytes.NewReader(s))
+	b.router.ServeHTTP(w, r)
+
+	assert.Equal(400, w.Code)
 }
 
 func TestTriggerNewInvalid(t *testing.T) {
@@ -125,7 +148,7 @@ func TestTriggerViewSuccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	b, mock := mockTrigger()
-	mock.On("GetByKey", "test_key").Return(&models.Trigger{}, nil)
+	mock.On("Get", "test_key").Return(&models.Trigger{}, nil)
 
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("GET", "/api/trigger/test_key", nil)
@@ -140,7 +163,7 @@ func TestTriggerViewFail(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	b, mock := mockTrigger()
-	mock.On("GetByKey", "test_key").Return(nil, fmt.Errorf("some error"))
+	mock.On("Get", "test_key").Return(nil, fmt.Errorf("some error"))
 
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("GET", "/api/trigger/test_key", nil)
@@ -250,9 +273,9 @@ func TestTriggerActivateSuccess(t *testing.T) {
 	mockReceipt := &mocks.ReceiptI{}
 	b := getMockBloodlines()
 	b.trigger = &handlers.Trigger{
-		Helper:      mockTrigger,
-		RHelper:     mockReceipt,
-		CHelper:     mockContent,
+		Trigger:     mockTrigger,
+		Receipt:     mockReceipt,
+		Content:     mockContent,
 		BaseHandler: &handlers.BaseHandler{Stats: nil},
 	}
 	InitRouter(b)
@@ -285,7 +308,7 @@ func TestTriggerActivateSuccess(t *testing.T) {
 	}
 	s, _ := json.Marshal(receipt)
 
-	mockTrigger.On("GetByKey", key).Return(trigger, nil)
+	mockTrigger.On("Get", key).Return(trigger, nil)
 	mockContent.On("Get", trigger.ContentID.String()).Return(content, nil)
 	mockReceipt.On("Insert", mock.AnythingOfType("*models.Receipt")).Return(nil)
 	mockReceipt.On("Send", mock.AnythingOfType("*models.SendRequest")).Return(nil)
@@ -307,9 +330,9 @@ func TestTriggerActivateInsertFail(t *testing.T) {
 	mockReceipt := &mocks.ReceiptI{}
 	b := getMockBloodlines()
 	b.trigger = &handlers.Trigger{
-		Helper:      mockTrigger,
-		RHelper:     mockReceipt,
-		CHelper:     mockContent,
+		Trigger:     mockTrigger,
+		Receipt:     mockReceipt,
+		Content:     mockContent,
 		BaseHandler: &handlers.BaseHandler{Stats: nil},
 	}
 	InitRouter(b)
@@ -341,7 +364,7 @@ func TestTriggerActivateInsertFail(t *testing.T) {
 	}
 	s, _ := json.Marshal(receipt)
 
-	mockTrigger.On("GetByKey", key).Return(trigger, nil)
+	mockTrigger.On("Get", key).Return(trigger, nil)
 	mockContent.On("Get", trigger.ContentID.String()).Return(content, nil)
 	mockReceipt.On("Insert", mock.AnythingOfType("*models.Receipt")).Return(fmt.Errorf("some error"))
 
@@ -360,7 +383,7 @@ func TestTriggerActivateTriggerFail(t *testing.T) {
 	mockTrigger := &mocks.TriggerI{}
 	b := getMockBloodlines()
 	b.trigger = &handlers.Trigger{
-		Helper:      mockTrigger,
+		Trigger:     mockTrigger,
 		BaseHandler: &handlers.BaseHandler{Stats: nil},
 	}
 	InitRouter(b)
@@ -375,7 +398,7 @@ func TestTriggerActivateTriggerFail(t *testing.T) {
 	}
 	s, _ := json.Marshal(receipt)
 
-	mockTrigger.On("GetByKey", key).Return(nil, fmt.Errorf("some error"))
+	mockTrigger.On("Get", key).Return(nil, fmt.Errorf("some error"))
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("POST", "/api/trigger/test_key/activate", bytes.NewReader(s))
 	b.router.ServeHTTP(w, r)
@@ -391,7 +414,7 @@ func TestTriggerActivateTriggerNil(t *testing.T) {
 	mockTrigger := &mocks.TriggerI{}
 	b := getMockBloodlines()
 	b.trigger = &handlers.Trigger{
-		Helper:      mockTrigger,
+		Trigger:     mockTrigger,
 		BaseHandler: &handlers.BaseHandler{Stats: nil},
 	}
 	InitRouter(b)
@@ -406,7 +429,7 @@ func TestTriggerActivateTriggerNil(t *testing.T) {
 	}
 	s, _ := json.Marshal(receipt)
 
-	mockTrigger.On("GetByKey", key).Return(nil, nil)
+	mockTrigger.On("Get", key).Return(nil, nil)
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("POST", "/api/trigger/test_key/activate", bytes.NewReader(s))
 	b.router.ServeHTTP(w, r)
@@ -423,8 +446,8 @@ func TestTriggerActivateContentFail(t *testing.T) {
 	mockContent := &mocks.ContentI{}
 	b := getMockBloodlines()
 	b.trigger = &handlers.Trigger{
-		Helper:      mockTrigger,
-		CHelper:     mockContent,
+		Trigger:     mockTrigger,
+		Content:     mockContent,
 		BaseHandler: &handlers.BaseHandler{Stats: nil},
 	}
 	InitRouter(b)
@@ -448,7 +471,7 @@ func TestTriggerActivateContentFail(t *testing.T) {
 	}
 	s, _ := json.Marshal(receipt)
 
-	mockTrigger.On("GetByKey", key).Return(trigger, nil)
+	mockTrigger.On("Get", key).Return(trigger, nil)
 	mockContent.On("Get", trigger.ContentID.String()).Return(nil, fmt.Errorf("some error"))
 
 	w := httptest.NewRecorder()
