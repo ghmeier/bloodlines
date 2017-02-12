@@ -16,7 +16,7 @@ type baseHelper struct {
 
 /*ContentI describes the functions for manipulating content models*/
 type ContentI interface {
-	GetByID(string) (*models.Content, error)
+	Get(string) (*models.Content, error)
 	GetAll(int, int) ([]*models.Content, error)
 	Insert(*models.Content) error
 	Update(*models.Content) error
@@ -34,7 +34,7 @@ func NewContent(sql gateways.SQL) *Content {
 }
 
 /*GetByID returns the content referenced by the provided id, otherwise nil*/
-func (c *Content) GetByID(id string) (*models.Content, error) {
+func (c *Content) Get(id string) (*models.Content, error) {
 	rows, err := c.sql.Select("SELECT id, contentType, text, parameters, status, subject FROM content WHERE id=?", id)
 	if err != nil {
 		return nil, err
@@ -44,6 +44,11 @@ func (c *Content) GetByID(id string) (*models.Content, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	if len(content) < 1 {
+		return nil, nil
+	}
+
 	return content[0], err
 }
 

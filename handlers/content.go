@@ -70,7 +70,7 @@ func (c *Content) ViewAll(ctx *gin.Context) {
 func (c *Content) View(ctx *gin.Context) {
 	id := ctx.Param("contentId")
 
-	content, err := c.Helper.GetByID(id)
+	content, err := c.Helper.Get(id)
 	if err != nil {
 		c.ServerError(ctx, err, content)
 		return

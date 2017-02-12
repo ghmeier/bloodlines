@@ -286,7 +286,7 @@ func TestTriggerActivateSuccess(t *testing.T) {
 	s, _ := json.Marshal(receipt)
 
 	mockTrigger.On("GetByKey", key).Return(trigger, nil)
-	mockContent.On("GetByID", trigger.ContentID.String()).Return(content, nil)
+	mockContent.On("Get", trigger.ContentID.String()).Return(content, nil)
 	mockReceipt.On("Insert", mock.AnythingOfType("*models.Receipt")).Return(nil)
 	mockReceipt.On("Send", mock.AnythingOfType("*models.SendRequest")).Return(nil)
 
@@ -342,7 +342,7 @@ func TestTriggerActivateInsertFail(t *testing.T) {
 	s, _ := json.Marshal(receipt)
 
 	mockTrigger.On("GetByKey", key).Return(trigger, nil)
-	mockContent.On("GetByID", trigger.ContentID.String()).Return(content, nil)
+	mockContent.On("Get", trigger.ContentID.String()).Return(content, nil)
 	mockReceipt.On("Insert", mock.AnythingOfType("*models.Receipt")).Return(fmt.Errorf("some error"))
 
 	w := httptest.NewRecorder()
@@ -449,7 +449,7 @@ func TestTriggerActivateContentFail(t *testing.T) {
 	s, _ := json.Marshal(receipt)
 
 	mockTrigger.On("GetByKey", key).Return(trigger, nil)
-	mockContent.On("GetByID", trigger.ContentID.String()).Return(nil, fmt.Errorf("some error"))
+	mockContent.On("Get", trigger.ContentID.String()).Return(nil, fmt.Errorf("some error"))
 
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("POST", "/api/trigger/test_key/activate", bytes.NewReader(s))

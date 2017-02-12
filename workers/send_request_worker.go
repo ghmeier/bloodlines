@@ -17,45 +17,45 @@ type Send interface {
 
 /*SendRequest has acces to receipt and content helpers as well as rabbitmq for publishing*/
 type SendRequest struct {
-	RHelper helpers.ReceiptI
-	CHelper helpers.ContentI
+	Receipt helpers.ReceiptI
+	Content helpers.ContentI
 	RB      gateways.RabbitI
 }
 
 /*NewSend creates and returns a new SendRequest*/
 func NewSend(ctx *handlers.GatewayContext) Send {
 	return &SendRequest{
-		RHelper: helpers.NewReceipt(ctx.Sql, ctx.Sendgrid, ctx.TownCenter, ctx.Rabbit),
-		CHelper: helpers.NewContent(ctx.Sql),
+		Receipt: helpers.NewReceipt(ctx.Sql, ctx.Sendgrid, ctx.TownCenter, ctx.Rabbit),
+		Content: helpers.NewContent(ctx.Sql),
 		RB:      ctx.Rabbit,
 	}
 }
 
 func (s *SendRequest) handleRequest(request *models.SendRequest) {
-	receipt, err := s.RHelper.GetByID(request.ReceiptID.String())
+	receipt, err := s.Receipt.GetByID(request.ReceiptID.String())
 	if err != nil {
 		fmt.Printf("ERROR: unable to get receipt: %s\n", request.ReceiptID.String())
 		fmt.Println(err.Error())
 		return
 	}
 
-	content, err := s.CHelper.GetByID(request.ContentID.String())
+	content, err := s.Content.Get(request.ContentID.String())
 	if err != nil {
 		fmt.Printf("ERROR: unable to get content %s\n", request.ContentID.String())
 		fmt.Println(err.Error())
-		s.RHelper.SetStatus(receipt.ID, models.FAILURE)
+		s.Receipt.SetStatus(receipt.ID, models.FAILURE)
 		return
 	}
 
-	err = s.RHelper.DeliverContent(receipt, content)
+	err = s.Receipt.DeliverContent(receipt, content)
 	if err != nil {
 		//TODO: resend?
 		fmt.Println("ERROR: unable to complete request")
 		fmt.Println(err.Error())
-		s.RHelper.SetStatus(receipt.ID, models.FAILURE)
+		s.Receipt.SetStatus(receipt.ID, models.FAILURE)
 		return
 	}
-	s.RHelper.SetStatus(receipt.ID, models.SUCCESS)
+	s.Receipt.SetStatus(receipt.ID, models.SUCCESS)
 }
 
 /*Consume starts a channel that consumes messages from the front of the queue*/

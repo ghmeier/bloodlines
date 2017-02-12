@@ -9,6 +9,29 @@ type ContentI struct {
 	mock.Mock
 }
 
+// Get provides a mock function with given fields: _a0
+func (_m *ContentI) Get(_a0 string) (*models.Content, error) {
+	ret := _m.Called(_a0)
+
+	var r0 *models.Content
+	if rf, ok := ret.Get(0).(func(string) *models.Content); ok {
+		r0 = rf(_a0)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Content)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(_a0)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetAll provides a mock function with given fields: _a0, _a1
 func (_m *ContentI) GetAll(_a0 int, _a1 int) ([]*models.Content, error) {
 	ret := _m.Called(_a0, _a1)
@@ -25,29 +48,6 @@ func (_m *ContentI) GetAll(_a0 int, _a1 int) ([]*models.Content, error) {
 	var r1 error
 	if rf, ok := ret.Get(1).(func(int, int) error); ok {
 		r1 = rf(_a0, _a1)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// GetByID provides a mock function with given fields: _a0
-func (_m *ContentI) GetByID(_a0 string) (*models.Content, error) {
-	ret := _m.Called(_a0)
-
-	var r0 *models.Content
-	if rf, ok := ret.Get(0).(func(string) *models.Content); ok {
-		r0 = rf(_a0)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.Content)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(_a0)
 	} else {
 		r1 = ret.Error(1)
 	}

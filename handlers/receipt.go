@@ -49,7 +49,7 @@ func (r *Receipt) Send(ctx *gin.Context) {
 		return
 	}
 
-	content, err := r.CHelper.GetByID(receipt.ContentID.String())
+	content, err := r.CHelper.Get(receipt.ContentID.String())
 	if err != nil {
 		r.ServerError(ctx, err, receipt)
 		return

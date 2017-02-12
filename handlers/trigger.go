@@ -138,7 +138,7 @@ func (t *Trigger) Activate(ctx *gin.Context) {
 		return
 	}
 
-	content, err := t.CHelper.GetByID(trigger.ContentID.String())
+	content, err := t.CHelper.Get(trigger.ContentID.String())
 	if err != nil {
 		t.ServerError(ctx, err, trigger)
 		return

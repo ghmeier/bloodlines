@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetByIDSuccess(t *testing.T) {
+func TestGetSuccess(t *testing.T) {
 	assert := assert.New(t)
 
 	id := uuid.NewUUID()
@@ -24,7 +24,7 @@ func TestGetByIDSuccess(t *testing.T) {
 		WithArgs(id.String()).
 		WillReturnRows(getMockRows().AddRow(id.String(), "EMAIL", "HelloWorld", "", "ACTIVE", "test"))
 
-	content, err := c.GetByID(id.String())
+	content, err := c.Get(id.String())
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.NoError(err)
@@ -36,7 +36,25 @@ func TestGetByIDSuccess(t *testing.T) {
 	assert.EqualValues(content.Status, models.ACTIVE)
 }
 
-func TestGetByIDQueryFail(t *testing.T) {
+func TestGetNoResults(t *testing.T) {
+	assert := assert.New(t)
+
+	id := uuid.NewUUID()
+	s, mock, _ := sqlmock.New()
+	c := getMockContent(s)
+
+	mock.ExpectQuery("SELECT id, contentType, text, parameters, status, subject FROM content").
+		WithArgs(id.String()).
+		WillReturnRows(getMockRows())
+
+	content, err := c.Get(id.String())
+
+	assert.Equal(mock.ExpectationsWereMet(), nil)
+	assert.NoError(err)
+	assert.Nil(content)
+}
+
+func TestGetQueryFail(t *testing.T) {
 	assert := assert.New(t)
 
 	id := uuid.NewUUID()
@@ -47,13 +65,13 @@ func TestGetByIDQueryFail(t *testing.T) {
 		WithArgs(id.String()).
 		WillReturnError(fmt.Errorf("some error"))
 
-	_, err := c.GetByID(id.String())
+	_, err := c.Get(id.String())
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)
 }
 
-func TestGetByIDMapFail(t *testing.T) {
+func TestGetMapFail(t *testing.T) {
 	assert := assert.New(t)
 
 	id := uuid.NewUUID()
@@ -64,13 +82,13 @@ func TestGetByIDMapFail(t *testing.T) {
 		WithArgs(id.String()).
 		WillReturnRows(getMockRows().AddRow(id.String(), "INVALID", "HelloWorld", "", "ACTIVE", "test"))
 
-	_, err := c.GetByID(id.String())
+	_, err := c.Get(id.String())
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)
 }
 
-func TestGetByIDMapStatusFail(t *testing.T) {
+func TestGetMapStatusFail(t *testing.T) {
 	assert := assert.New(t)
 
 	id := uuid.NewUUID()
@@ -81,7 +99,7 @@ func TestGetByIDMapStatusFail(t *testing.T) {
 		WithArgs(id.String()).
 		WillReturnRows(getMockRows().AddRow(id.String(), "ACTIVE", "HelloWorld", "", "INVALID", "test"))
 
-	_, err := c.GetByID(id.String())
+	_, err := c.Get(id.String())
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.Error(err)

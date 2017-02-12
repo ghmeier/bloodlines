@@ -113,7 +113,7 @@ func TestReceiptSendSuccess(t *testing.T) {
 	b, mock, cmock := mockReceipt()
 	mock.On("Insert", mocks.AnythingOfType("*models.Receipt")).Return(nil)
 	mock.On("Send", mocks.AnythingOfType("*models.SendRequest")).Return(nil)
-	cmock.On("GetByID", content.ID.String()).Return(content, nil)
+	cmock.On("Get", content.ID.String()).Return(content, nil)
 
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("POST", "/api/receipt/send", bytes.NewReader(s))
@@ -152,7 +152,7 @@ func TestReceiptSendGetFail(t *testing.T) {
 
 	b, mock, cmock := mockReceipt()
 	mock.On("Insert", mocks.AnythingOfType("*models.Receipt")).Return(nil)
-	cmock.On("GetByID", receipt.ContentID.String()).Return(nil, fmt.Errorf("some error"))
+	cmock.On("Get", receipt.ContentID.String()).Return(nil, fmt.Errorf("some error"))
 
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("POST", "/api/receipt/send", bytes.NewReader(s))
@@ -181,7 +181,7 @@ func TestReceiptSendFail(t *testing.T) {
 	b, mock, cmock := mockReceipt()
 	mock.On("Insert", mocks.AnythingOfType("*models.Receipt")).Return(nil)
 	mock.On("Send", mocks.AnythingOfType("*models.SendRequest")).Return(fmt.Errorf("some error"))
-	cmock.On("GetByID", content.ID.String()).Return(content, nil)
+	cmock.On("Get", content.ID.String()).Return(content, nil)
 
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("POST", "/api/receipt/send", bytes.NewReader(s))

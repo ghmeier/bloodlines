@@ -117,7 +117,7 @@ func TestContentViewSuccess(t *testing.T) {
 
 	id := uuid.NewUUID()
 	b, cMock := mockContent()
-	cMock.On("GetByID", id.String()).Return(&models.Content{}, nil)
+	cMock.On("Get", id.String()).Return(&models.Content{}, nil)
 
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("GET", "/api/content/"+id.String(), nil)
@@ -133,7 +133,7 @@ func TestContentViewFail(t *testing.T) {
 
 	id := uuid.NewUUID()
 	b, cMock := mockContent()
-	cMock.On("GetByID", id.String()).Return(nil, fmt.Errorf("some error"))
+	cMock.On("Get", id.String()).Return(nil, fmt.Errorf("some error"))
 
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("GET", "/api/content/"+id.String(), nil)
