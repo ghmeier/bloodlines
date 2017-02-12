@@ -26,7 +26,7 @@ func (b *BloodlinesSuite) SetupSuite() {
 		Host: "bloodlines",
 		Port: "8080",
 	})
-	b.url = "https://bloodlines:8080/api/"
+	b.url = "http://bloodlines:8080/api/"
 }
 
 func (b *BloodlinesSuite) BeforeTest() {

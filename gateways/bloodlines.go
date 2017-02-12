@@ -36,9 +36,17 @@ type bloodlines struct {
 
 /*NewBloodlines creates and returns a Bloodlines struct pointed at the service denoted in config*/
 func NewBloodlines(config config.Bloodlines) Bloodlines {
+
+	var url string
+	if config.Port != "" {
+		url = fmt.Sprintf("http://%s:%s/api/", config.Host, config.Port)
+	} else {
+		url = fmt.Sprintf("https://%s/api/", config.Host)
+	}
+
 	return &bloodlines{
 		BaseService: NewBaseService(),
-		url:         fmt.Sprintf("https://%s:%s/api/", config.Host, config.Port),
+		url:         url,
 	}
 }
 
