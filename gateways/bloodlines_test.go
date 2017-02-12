@@ -1,7 +1,7 @@
 package gateways
 
 import (
-	"encoding/json"
+	//"encoding/json"
 	//"fmt"
 	"testing"
 
@@ -50,7 +50,7 @@ func (b *BloodlinesSuite) TestGetAllContentSuccess() {
 	assert := assert.New(b.T())
 
 	data := b.SuccessResponse()
-	data.Data = []byte("[]")
+	data.Data = make([]*models.Content, 0)
 	res, _ := httpmock.NewJsonResponder(200, data)
 
 	httpmock.RegisterResponder("GET", b.url+"content?offset=0&limit=20", res)
@@ -79,20 +79,19 @@ func (b *BloodlinesSuite) TestNewContentSuccess() {
 	assert := assert.New(b.T())
 
 	data := b.SuccessResponse()
-	content := models.NewContent("EMAIL", "text", "subject", nil)
-	raw, _ := json.Marshal(content)
-	data.Data = raw
+	c := models.NewContent("EMAIL", "text", "subject", nil)
+	data.Data = c
 	res, _ := httpmock.NewJsonResponder(200, data)
 
 	httpmock.RegisterResponder("POST", b.url+"content", res)
 
-	contents, err := b.bloodlines.NewContent(content)
+	contents, err := b.bloodlines.NewContent(c)
 
 	assert.NoError(err)
 	assert.NotNil(contents)
-	assert.EqualValues(content.Subject, contents.Subject)
-	assert.EqualValues(content.Text, contents.Text)
-	assert.EqualValues(content.Type, contents.Type)
+	assert.EqualValues(c.Subject, contents.Subject)
+	assert.EqualValues(c.Text, contents.Text)
+	assert.EqualValues(c.Type, contents.Type)
 }
 
 func (b *BloodlinesSuite) TestNewContentFail() {
@@ -114,8 +113,7 @@ func (b *BloodlinesSuite) TestGetContentByIDSuccess() {
 
 	data := b.SuccessResponse()
 	c := models.NewContent("EMAIL", "text", "subject", nil)
-	raw, _ := json.Marshal(c)
-	data.Data = raw
+	data.Data = c
 	res, _ := httpmock.NewJsonResponder(200, data)
 
 	httpmock.RegisterResponder("GET", b.url+"content/"+c.ID.String(), res)
@@ -146,8 +144,7 @@ func (b *BloodlinesSuite) TestUpdateContentSuccess() {
 
 	data := b.SuccessResponse()
 	c := models.NewContent("EMAIL", "text", "subject", nil)
-	raw, _ := json.Marshal(c)
-	data.Data = raw
+	data.Data = c
 	res, _ := httpmock.NewJsonResponder(200, data)
 
 	httpmock.RegisterResponder("PUT", b.url+"content/"+c.ID.String(), res)
@@ -163,8 +160,7 @@ func (b *BloodlinesSuite) TestUpdateContentError() {
 
 	data := b.ErrorResponse("ERROR")
 	c := models.NewContent("EMAIL", "text", "subject", nil)
-	raw, _ := json.Marshal(c)
-	data.Data = raw
+	data.Data = c
 	res, _ := httpmock.NewJsonResponder(500, data)
 
 	httpmock.RegisterResponder("PUT", b.url+"content/"+c.ID.String(), res)
@@ -207,7 +203,7 @@ func (b *BloodlinesSuite) TestGetAllReceiptsSuccess() {
 	assert := assert.New(b.T())
 
 	data := b.SuccessResponse()
-	data.Data = []byte("[]")
+	data.Data = make([]*models.Receipt, 0)
 	res, _ := httpmock.NewJsonResponder(200, data)
 
 	httpmock.RegisterResponder("GET", b.url+"receipt?offset=0&limit=20", res)
@@ -237,8 +233,7 @@ func (b *BloodlinesSuite) TestSendReceiptSuccess() {
 
 	data := b.SuccessResponse()
 	r := models.NewReceipt(nil, uuid.NewUUID(), uuid.NewUUID())
-	raw, _ := json.Marshal(r)
-	data.Data = raw
+	data.Data = r
 	res, _ := httpmock.NewJsonResponder(200, data)
 
 	httpmock.RegisterResponder("POST", b.url+"receipt/send", res)
@@ -271,8 +266,7 @@ func (b *BloodlinesSuite) TestGetReceiptByIDSuccess() {
 
 	data := b.SuccessResponse()
 	r := models.NewReceipt(nil, uuid.NewUUID(), uuid.NewUUID())
-	raw, _ := json.Marshal(r)
-	data.Data = raw
+	data.Data = r
 	res, _ := httpmock.NewJsonResponder(200, data)
 
 	httpmock.RegisterResponder("GET", b.url+"receipt/"+r.ID.String(), res)
@@ -303,7 +297,7 @@ func (b *BloodlinesSuite) TestGetAllTriggersSuccess() {
 	assert := assert.New(b.T())
 
 	data := b.SuccessResponse()
-	data.Data = []byte("[]")
+	data.Data = make([]*models.Trigger, 0)
 	res, _ := httpmock.NewJsonResponder(200, data)
 
 	httpmock.RegisterResponder("GET", b.url+"trigger?offset=0&limit=20", res)
@@ -333,8 +327,7 @@ func (b *BloodlinesSuite) TestNewTriggerSuccess() {
 
 	data := b.SuccessResponse()
 	t := models.NewTrigger(uuid.NewUUID(), "key", nil)
-	raw, _ := json.Marshal(t)
-	data.Data = raw
+	data.Data = t
 	res, _ := httpmock.NewJsonResponder(200, data)
 
 	httpmock.RegisterResponder("POST", b.url+"trigger", res)
@@ -368,8 +361,7 @@ func (b *BloodlinesSuite) TestGetTriggerSuccess() {
 
 	data := b.SuccessResponse()
 	t := models.NewTrigger(uuid.NewUUID(), "key", nil)
-	raw, _ := json.Marshal(t)
-	data.Data = raw
+	data.Data = t
 	res, _ := httpmock.NewJsonResponder(200, data)
 
 	httpmock.RegisterResponder("GET", b.url+"trigger/"+t.Key, res)
@@ -400,8 +392,7 @@ func (b *BloodlinesSuite) TestUpdateTriggerSuccess() {
 
 	data := b.SuccessResponse()
 	t := models.NewTrigger(uuid.NewUUID(), "key", nil)
-	raw, _ := json.Marshal(t)
-	data.Data = raw
+	data.Data = t
 	res, _ := httpmock.NewJsonResponder(200, data)
 
 	httpmock.RegisterResponder("PUT", b.url+"trigger/"+t.Key, res)
@@ -455,9 +446,7 @@ func (b *BloodlinesSuite) TestActivateTriggerSuccess() {
 	assert := assert.New(b.T())
 
 	data := b.SuccessResponse()
-	r := models.NewReceipt(nil, uuid.NewUUID(), uuid.NewUUID())
-	raw, _ := json.Marshal(r)
-	data.Data = raw
+	data.Data = models.NewReceipt(nil, uuid.NewUUID(), uuid.NewUUID())
 	res, _ := httpmock.NewJsonResponder(200, data)
 
 	httpmock.RegisterResponder("POST", b.url+"trigger/key/activate", res)
