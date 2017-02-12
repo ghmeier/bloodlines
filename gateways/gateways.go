@@ -19,10 +19,10 @@ Since ServiceGet returns data as a []byte, we can unmarshal it
 to whatever is needed in the calling method. Here, its []*models.Content
 */
 type ServiceResponse struct {
-	Msg     string `json:"message,omitempty"`
-	Data    []byte `json:"data,omitempty"`
-	Err     error  `json:"error,omitempty"`
-	Success bool   `json:"success,omitempty"`
+	Msg     string      `json:"message,omitempty"`
+	Data    interface{} `json:"data,omitempty"`
+	Err     error       `json:"error,omitempty"`
+	Success bool        `json:"success,omitempty"`
 }
 
 /*BaseService has generic methods for sending and parsing expresso service
@@ -118,5 +118,5 @@ func (b *BaseService) handleResponse(resp *http.Response) ([]byte, error) {
 		}
 	}
 
-	return response.Data, nil
+	return json.Marshal(response.Data)
 }
