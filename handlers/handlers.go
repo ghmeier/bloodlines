@@ -53,6 +53,13 @@ func (b *BaseHandler) UserError(ctx *gin.Context, msg string, obj interface{}) {
 	b.send(ctx, 400, &gin.H{"success": false, "message": msg, "error": obj})
 }
 
+func (b *BaseHandler) NotFoundError(ctx *gin.Context, msg string) {
+	if b.Stats != nil {
+		b.Stats.Increment("404")
+	}
+	b.send(ctx, 404, &gin.H{"success": false, "message": msg})
+}
+
 /*ServerError sends a 500 response with the given error and object*/
 func (b *BaseHandler) ServerError(ctx *gin.Context, err error, obj interface{}) {
 	if b.Stats != nil {
