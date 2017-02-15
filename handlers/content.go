@@ -43,7 +43,7 @@ func (c *Content) New(ctx *gin.Context) {
 		return
 	}
 
-	content := models.NewContent("EMAIL", json.Text, json.Subject, json.Params)
+	content := models.NewContent(json.Type, json.Text, json.Subject, json.Params)
 	err = c.Content.Insert(content)
 	if err != nil {
 		c.ServerError(ctx, err, json)
