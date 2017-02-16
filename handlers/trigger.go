@@ -16,6 +16,7 @@ type TriggerI interface {
 	Update(ctx *gin.Context)
 	Remove(ctx *gin.Context)
 	Activate(ctx *gin.Context)
+	Time() gin.HandlerFunc
 }
 
 /*Trigger implements TriggerI and uses a trigger helper*/

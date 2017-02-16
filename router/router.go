@@ -78,28 +78,35 @@ func InitRouter(b *Bloodlines) {
 
 	content := b.router.Group("/api/content")
 	{
+		content.Use(b.content.Time())
 		content.POST("", b.content.New)
 		content.GET("", b.content.ViewAll)
 		content.GET("/:contentId", b.content.View)
 		content.PUT("/:contentId", b.content.Update)
 		content.DELETE("/:contentId", b.content.Deactivate)
 	}
+
 	receipt := b.router.Group("/api/receipt")
 	{
+		receipt.Use(b.receipt.Time())
 		receipt.GET("", b.receipt.ViewAll)
 		receipt.POST("/send", b.receipt.Send)
 		receipt.GET("/:receiptId", b.receipt.View)
 	}
+
 	job := b.router.Group("/api/job")
 	{
+		job.Use(b.job.Time())
 		job.GET("", b.job.ViewAll)
 		job.POST("", b.job.New)
 		job.GET("/:jobId", b.job.View)
 		job.PUT("/:jobId", b.job.Update)
 		job.DELETE("/:jobId", b.job.Stop)
 	}
+
 	trigger := b.router.Group("/api/trigger")
 	{
+		trigger.Use(b.trigger.Time())
 		trigger.POST("", b.trigger.New)
 		trigger.GET("", b.trigger.ViewAll)
 		trigger.GET("/:key", b.trigger.View)
@@ -107,8 +114,10 @@ func InitRouter(b *Bloodlines) {
 		trigger.DELETE("/:key", b.trigger.Remove)
 		trigger.POST("/:key/activate", b.trigger.Activate)
 	}
+
 	pref := b.router.Group("/api/preference")
 	{
+		pref.Use(b.preference.Time())
 		pref.POST("", b.preference.New)
 		pref.GET("/:userId", b.preference.View)
 		pref.PATCH("/:userId", b.preference.Update)
@@ -117,6 +126,13 @@ func InitRouter(b *Bloodlines) {
 
 	for _, w := range b.workers {
 		w.Consume()
+	}
+}
+
+func Time(s *statsd.Client) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		defer s.NewTiming().Send("duration")
+		c.Next()
 	}
 }
 

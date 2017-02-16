@@ -80,6 +80,14 @@ func (b *BaseHandler) send(ctx *gin.Context, status int, json *gin.H) {
 	ctx.JSON(status, json)
 }
 
+/*Time sets up gin middleware for sending timing stats*/
+func (b *BaseHandler) Time() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		defer b.Stats.NewTiming().Send(c.Request.Method)
+		c.Next()
+	}
+}
+
 /*GetCors returns a gin handlerFunc for CORS reuquests in expresso services */
 func GetCors() gin.HandlerFunc {
 	config := cors.DefaultConfig()

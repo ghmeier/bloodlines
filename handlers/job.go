@@ -18,6 +18,7 @@ type JobI interface {
 	View(ctx *gin.Context)
 	Update(ctx *gin.Context)
 	Stop(ctx *gin.Context)
+	Time() gin.HandlerFunc
 }
 
 /*Job is the implementation with Helper of JobI*/

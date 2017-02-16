@@ -16,6 +16,7 @@ type ContentI interface {
 	View(ctx *gin.Context)
 	Update(ctx *gin.Context)
 	Deactivate(ctx *gin.Context)
+	Time() gin.HandlerFunc
 }
 
 /*Content is the handler for all content api calls*/

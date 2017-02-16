@@ -15,6 +15,7 @@ type PreferenceI interface {
 	View(ctx *gin.Context)
 	Update(ctx *gin.Context)
 	Deactivate(ctx *gin.Context)
+	Time() gin.HandlerFunc
 }
 
 /*Preference implements PreferenceI for handling requests*/

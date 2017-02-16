@@ -13,6 +13,7 @@ type ReceiptI interface {
 	Send(ctx *gin.Context)
 	ViewAll(ctx *gin.Context)
 	View(ctx *gin.Context)
+	Time() gin.HandlerFunc
 }
 
 /*Receipt implements ReceiptI for the receipt router*/
