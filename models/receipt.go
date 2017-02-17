@@ -16,7 +16,7 @@ type Receipt struct {
 	Values    map[string]string `json:"values"`
 	SendState Status            `json:"sendState"`
 	ContentID uuid.UUID         `json:"contentId"`
-	UserID    uuid.UUID         `json:"userId"`
+	UserID    uuid.UUID         `json:"userId" binding:"required"`
 }
 
 /*SendRequest has the info for sending a message through the sendgrid api*/

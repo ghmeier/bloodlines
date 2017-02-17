@@ -11,8 +11,8 @@ import (
 /*Trigger stores trigger entity data*/
 type Trigger struct {
 	ID        uuid.UUID         `json:"id"`
-	ContentID uuid.UUID         `json:"contentId"`
-	Key       string            `json:"tkey"`
+	ContentID uuid.UUID         `json:"contentId" binding:"required"`
+	Key       string            `json:"tkey" binding:"required"`
 	Values    map[string]string `json:"values"`
 }
 

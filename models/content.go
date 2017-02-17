@@ -12,11 +12,11 @@ import (
 /*Content is the representation of content entries in bloodlines*/
 type Content struct {
 	ID      uuid.UUID     `json:"id"`
-	Type    ContentType   `json:"contentType"`
-	Text    string        `json:"text"`
-	Params  []string      `json:"parameters"`
+	Type    ContentType   `json:"contentType" binding:"required"`
+	Text    string        `json:"text" binding:"required"`
+	Params  []string      `json:"parameters" `
 	Status  ContentStatus `json:"status"`
-	Subject string        `json:"subject"`
+	Subject string        `json:"subject" binding:"required"`
 }
 
 /*NewContent constructs and returns a new content entity with a new uuid*/

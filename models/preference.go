@@ -10,8 +10,8 @@ import (
 /*Preference entity data*/
 type Preference struct {
 	ID     uuid.UUID       `json:"id"`
-	UserID uuid.UUID       `json:"userId"`
-	Email  PreferenceState `json:"email"`
+	UserID uuid.UUID       `json:"userId" binding:"required"`
+	Email  PreferenceState `json:"email" binding:"required"`
 }
 
 /*NewPreference contstructs and returns a new preference entity with it's id*/
