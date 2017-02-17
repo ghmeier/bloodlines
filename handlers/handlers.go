@@ -11,6 +11,7 @@ import (
 	coi "github.com/ghmeier/coinage/gateways"
 	t "github.com/jakelong95/TownCenter/gateways"
 	cov "github.com/yuderekyu/covenant/gateways"
+	w "github.com/lcollin/Warehouse/gateways"
 )
 
 /*BaseHandler contains wrapper methods that all handlers need and should use
@@ -26,6 +27,7 @@ type GatewayContext struct {
 	Sendgrid   gateways.SendgridI
 	TownCenter t.TownCenterI
 	Covenant   cov.Covenant
+	Warehouse  w.Warehouse
 	Bloodlines gateways.Bloodlines
 	Rabbit     gateways.RabbitI
 	Stats      *statsd.Client
