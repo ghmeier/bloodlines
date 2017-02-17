@@ -11,7 +11,7 @@ import (
 	coi "github.com/ghmeier/coinage/gateways"
 	t "github.com/jakelong95/TownCenter/gateways"
 	cov "github.com/yuderekyu/covenant/gateways"
-	w "github.com/lcollin/Warehouse/gateways"
+	w "github.com/lcollin/warehouse/gateways"
 )
 
 /*BaseHandler contains wrapper methods that all handlers need and should use
