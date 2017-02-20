@@ -21,7 +21,6 @@ to whatever is needed in the calling method. Here, its []*models.Content
 type ServiceResponse struct {
 	Msg     string      `json:"message,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
-	Err     error       `json:"error,omitempty"`
 	Success bool        `json:"success,omitempty"`
 }
 
@@ -109,9 +108,7 @@ func (b *BaseService) handleResponse(resp *http.Response) ([]byte, error) {
 	}
 
 	if !response.Success {
-		if response.Err != nil {
-			return nil, response.Err
-		} else if response.Msg != "" {
+		if response.Msg != "" {
 			return nil, fmt.Errorf("%s", response.Msg)
 		} else {
 			return nil, fmt.Errorf("ERROR: unknown error")
