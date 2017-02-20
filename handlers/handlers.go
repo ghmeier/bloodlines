@@ -10,8 +10,8 @@ import (
 	"github.com/ghmeier/bloodlines/gateways"
 	coi "github.com/ghmeier/coinage/gateways"
 	t "github.com/jakelong95/TownCenter/gateways"
-	cov "github.com/yuderekyu/covenant/gateways"
 	w "github.com/lcollin/warehouse/gateways"
+	cov "github.com/yuderekyu/covenant/gateways"
 )
 
 /*BaseHandler contains wrapper methods that all handlers need and should use
@@ -52,7 +52,7 @@ func (b *BaseHandler) UserError(ctx *gin.Context, msg string, obj interface{}) {
 	if b.Stats != nil {
 		b.Stats.Increment("400")
 	}
-	b.send(ctx, 400, &gin.H{"success": false, "message": msg, "error": obj})
+	b.send(ctx, 400, &gin.H{"success": false, "message": msg, "data": obj})
 }
 
 func (b *BaseHandler) NotFoundError(ctx *gin.Context, msg string) {
@@ -67,7 +67,7 @@ func (b *BaseHandler) ServerError(ctx *gin.Context, err error, obj interface{}) 
 	if b.Stats != nil {
 		b.Stats.Increment("500")
 	}
-	b.send(ctx, 500, &gin.H{"success": false, "message": err.Error(), "error": err, "data": obj})
+	b.send(ctx, 500, &gin.H{"success": false, "message": err.Error(), "data": obj})
 }
 
 /*Success sends a 200 response with the given object*/
