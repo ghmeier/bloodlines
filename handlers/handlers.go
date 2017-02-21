@@ -29,6 +29,7 @@ type GatewayContext struct {
 	Covenant   cov.Covenant
 	Warehouse  w.Warehouse
 	Bloodlines gateways.Bloodlines
+	Coinage    coi.Coinage
 	Rabbit     gateways.RabbitI
 	Stats      *statsd.Client
 	Stripe     coi.Stripe
