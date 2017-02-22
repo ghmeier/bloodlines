@@ -56,7 +56,7 @@ func (b *BaseHandler) UserError(ctx *gin.Context, msg string, obj interface{}) {
 	b.send(ctx, 400, &gin.H{"success": false, "message": msg, "data": obj})
 }
 
-/*NotFoundErrof sends a 404 response and false success when a resource is not present*/
+/*NotFoundError sends a 404 response and false success when a resource is not present*/
 func (b *BaseHandler) NotFoundError(ctx *gin.Context, msg string) {
 	if b.Stats != nil {
 		b.Stats.Increment("404")
