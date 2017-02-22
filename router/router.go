@@ -129,13 +129,6 @@ func InitRouter(b *Bloodlines) {
 	}
 }
 
-func Time(s *statsd.Client) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		defer s.NewTiming().Send("duration")
-		c.Next()
-	}
-}
-
 /*Start begins the Bloodlines server*/
 func (b *Bloodlines) Start(port string) {
 	b.router.Run(port)

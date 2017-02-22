@@ -33,7 +33,7 @@ func NewContent(sql gateways.SQL) *Content {
 	return &Content{baseHelper: &baseHelper{sql: sql}}
 }
 
-/*GetByID returns the content referenced by the provided id, otherwise nil*/
+/*Get returns the content referenced by the provided id, otherwise nil*/
 func (c *Content) Get(id string) (*models.Content, error) {
 	rows, err := c.sql.Select("SELECT id, contentType, text, parameters, status, subject FROM content WHERE id=?", id)
 	if err != nil {

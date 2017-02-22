@@ -56,11 +56,20 @@ func (b *BaseHandler) UserError(ctx *gin.Context, msg string, obj interface{}) {
 	b.send(ctx, 400, &gin.H{"success": false, "message": msg, "data": obj})
 }
 
+/*NotFoundErrof sends a 404 response and false success when a resource is not present*/
 func (b *BaseHandler) NotFoundError(ctx *gin.Context, msg string) {
 	if b.Stats != nil {
 		b.Stats.Increment("404")
 	}
 	b.send(ctx, 404, &gin.H{"success": false, "message": msg})
+}
+
+/*Unauthorized sends a 401 response along with a message*/
+func (b *BaseHandler) Unauthorized(ctx *gin.Context, msg string) {
+	if b.Stats != nil {
+		b.Stats.Increment("401")
+	}
+	b.send(ctx, 401, &gin.H{"success": false, "message": msg})
 }
 
 /*ServerError sends a 500 response with the given error and object*/

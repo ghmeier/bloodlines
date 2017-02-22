@@ -37,6 +37,7 @@ type Sendgrid struct {
 	Host      string `json:"host"`
 }
 
+/*Stripe has connection information for the stripe gateway */
 type Stripe struct {
 	Secret string `json:"secret"`
 	Public string `json:"public"`

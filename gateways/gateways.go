@@ -30,7 +30,7 @@ type BaseService struct {
 	Client *http.Client
 }
 
-/*NewBaseService returns a BaseService with the defualt http Client*/
+/*NewBaseService returns a BaseService with the default http Client*/
 func NewBaseService() *BaseService {
 	return &BaseService{
 		Client: &http.Client{},
@@ -110,9 +110,9 @@ func (b *BaseService) handleResponse(resp *http.Response) ([]byte, error) {
 	if !response.Success {
 		if response.Msg != "" {
 			return nil, fmt.Errorf("%s", response.Msg)
-		} else {
-			return nil, fmt.Errorf("ERROR: unknown error")
 		}
+
+		return nil, fmt.Errorf("ERROR: unknown error")
 	}
 
 	return json.Marshal(response.Data)
