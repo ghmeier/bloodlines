@@ -26,6 +26,10 @@ type Bloodlines interface {
 	UpdateTrigger(update *models.Trigger) (*models.Trigger, error)
 	DeleteTrigger(key string) error
 	ActivateTrigger(key string, receipt *models.Receipt) (*models.SendRequest, error)
+	NewPreference(id uuid.UUID) (*models.Preference, error)
+	GetPreference(id uuid.UUID) (*models.Preference, error)
+	UpdatePreference(*models.Preference) (*models.Preference, error)
+	DeletePreference(id uuid.UUID) error
 }
 
 type bloodlines struct {
@@ -214,4 +218,55 @@ func (b *bloodlines) ActivateTrigger(key string, receipt *models.Receipt) (*mode
 	}
 
 	return &request, nil
+}
+
+func (b *bloodlines) NewPreference(id uuid.UUID) (*models.Preference, error) {
+	url := fmt.Sprintf("%spreference", b.url)
+	json := &models.Preference{
+		UserID: id,
+	}
+
+	var preference models.Preference
+	err := b.ServiceSend(http.MethodPost, url, json, &preference)
+	if err != nil {
+		return nil, err
+	}
+
+	return &preference, nil
+
+}
+
+func (b *bloodlines) GetPreference(id uuid.UUID) (*models.Preference, error) {
+	url := fmt.Sprintf("%spreference/%s", b.url, id.String())
+
+	var preference models.Preference
+	err := b.ServiceSend(http.MethodGet, url, nil, &preference)
+	if err != nil {
+		return nil, err
+	}
+
+	return &preference, nil
+}
+
+func (b *bloodlines) UpdatePreference(update *models.Preference) (*models.Preference, error) {
+	url := fmt.Sprintf("%spreference/%s", b.url, update.UserID)
+
+	var preference models.Preference
+	err := b.ServiceSend(http.MethodPatch, url, update, &preference)
+	if err != nil {
+		return nil, err
+	}
+
+	return &preference, nil
+}
+
+func (b *bloodlines) DeletePreference(id uuid.UUID) error {
+	url := fmt.Sprintf("%spreference/%s", b.url, id.String())
+
+	err := b.ServiceSend(http.MethodDelete, url, nil, nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

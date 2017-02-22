@@ -471,6 +471,141 @@ func (b *BloodlinesSuite) TestActivateTriggerFail() {
 	assert.Nil(request)
 }
 
+func (b *BloodlinesSuite) TestNewPreferenceSuccess() {
+	assert := assert.New(b.T())
+
+	data := b.SuccessResponse()
+	t := models.NewPreference(uuid.NewUUID())
+	data.Data = t
+	res, _ := httpmock.NewJsonResponder(200, data)
+
+	httpmock.RegisterResponder("POST", b.url+"preference", res)
+
+	preference, err := b.bloodlines.NewPreference(t.UserID)
+
+	assert.NoError(err)
+	assert.NotNil(preference)
+	assert.Equal(t.ID, preference.ID)
+	assert.EqualValues(t.Email, preference.Email)
+	assert.Equal(t.UserID, preference.UserID)
+}
+
+func (b *BloodlinesSuite) TestNewPreferenceFail() {
+	assert := assert.New(b.T())
+
+	data := b.ErrorResponse("ERROR")
+	t := models.NewPreference(uuid.NewUUID())
+	data.Data = t
+	res, _ := httpmock.NewJsonResponder(500, data)
+
+	httpmock.RegisterResponder("POST", b.url+"preference", res)
+
+	preference, err := b.bloodlines.NewPreference(t.UserID)
+
+	assert.Error(err)
+	assert.Nil(preference)
+}
+
+func (b *BloodlinesSuite) TestGetPreferenceSuccess() {
+	assert := assert.New(b.T())
+
+	data := b.SuccessResponse()
+	t := models.NewPreference(uuid.NewUUID())
+	data.Data = t
+	res, _ := httpmock.NewJsonResponder(200, data)
+
+	httpmock.RegisterResponder("GET", b.url+"preference/"+t.UserID.String(), res)
+
+	preference, err := b.bloodlines.GetPreference(t.UserID)
+
+	assert.NoError(err)
+	assert.NotNil(preference)
+	assert.Equal(t.ID, preference.ID)
+	assert.EqualValues(t.Email, preference.Email)
+	assert.Equal(t.UserID, preference.UserID)
+}
+
+func (b *BloodlinesSuite) TestGetPreferenceFail() {
+	assert := assert.New(b.T())
+
+	data := b.ErrorResponse("ERROR")
+	t := models.NewPreference(uuid.NewUUID())
+	data.Data = t
+	res, _ := httpmock.NewJsonResponder(500, data)
+
+	httpmock.RegisterResponder("GET", b.url+"preference/"+t.UserID.String(), res)
+
+	preference, err := b.bloodlines.GetPreference(t.UserID)
+
+	assert.Error(err)
+	assert.Nil(preference)
+}
+
+func (b *BloodlinesSuite) TestUpdatePreferenceSuccess() {
+	assert := assert.New(b.T())
+
+	data := b.SuccessResponse()
+	t := models.NewPreference(uuid.NewUUID())
+	data.Data = t
+	res, _ := httpmock.NewJsonResponder(200, data)
+
+	httpmock.RegisterResponder("PATCH", b.url+"preference/"+t.UserID.String(), res)
+
+	preference, err := b.bloodlines.UpdatePreference(t)
+
+	assert.NoError(err)
+	assert.NotNil(preference)
+	assert.Equal(t.ID, preference.ID)
+	assert.EqualValues(t.Email, preference.Email)
+	assert.Equal(t.UserID, preference.UserID)
+}
+
+func (b *BloodlinesSuite) TestUpdatePreferenceFail() {
+	assert := assert.New(b.T())
+
+	data := b.ErrorResponse("ERROR")
+	t := models.NewPreference(uuid.NewUUID())
+	data.Data = t
+	res, _ := httpmock.NewJsonResponder(500, data)
+
+	httpmock.RegisterResponder("PATCH", b.url+"preference/"+t.UserID.String(), res)
+
+	preference, err := b.bloodlines.UpdatePreference(t)
+
+	assert.Error(err)
+	assert.Nil(preference)
+}
+
+func (b *BloodlinesSuite) TestDeletePreferenceSuccess() {
+	assert := assert.New(b.T())
+
+	data := b.SuccessResponse()
+	t := models.NewPreference(uuid.NewUUID())
+	data.Data = t
+	res, _ := httpmock.NewJsonResponder(200, data)
+
+	httpmock.RegisterResponder("DELETE", b.url+"preference/"+t.UserID.String(), res)
+
+	err := b.bloodlines.DeletePreference(t.UserID)
+
+	assert.NoError(err)
+}
+
+func (b *BloodlinesSuite) TestDeletePreferenceFail() {
+	assert := assert.New(b.T())
+
+	data := b.ErrorResponse("ERROR")
+	t := models.NewPreference(uuid.NewUUID())
+	data.Data = t
+	res, _ := httpmock.NewJsonResponder(500, data)
+
+	httpmock.RegisterResponder("DELETE", b.url+"preference/"+t.UserID.String(), res)
+
+	err := b.bloodlines.DeletePreference(t.UserID)
+
+	assert.Error(err)
+}
+
 func (b *BloodlinesSuite) EmptyResponse() *ServiceResponse {
 	return &ServiceResponse{}
 }
