@@ -82,6 +82,8 @@ func toContentType(s string) (ContentType, bool) {
 	switch s {
 	case EMAIL:
 		return EMAIL, true
+	case NOOP:
+		return NOOP, true
 	default:
 		return NOOP, false
 	}
