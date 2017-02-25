@@ -154,8 +154,16 @@ func (t *Trigger) Activate(ctx *gin.Context) {
 		return
 	}
 
-	for k, v := range trigger.Values {
-		json.Values[k] = v
+	params := make(map[string]string)
+	for _, v := range content.Params {
+		if json.Values[v] != "" {
+			params[v] = json.Values[v]
+		} else if trigger.Values[v] != "" {
+			params[v] = trigger.Values[v]
+		} else {
+			t.UserError(ctx, "Error: no value for parameter "+v, content)
+			return
+		}
 	}
 
 	receipt := models.NewReceipt(json.Values, trigger.ContentID, json.UserID)

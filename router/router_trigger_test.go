@@ -340,6 +340,7 @@ func TestTriggerActivateInsertFail(t *testing.T) {
 	key := "test_key"
 	values := make(map[string]string)
 	values["first_name"] = "Wololo"
+	values["last_name"] = "lololo"
 
 	trigger := &models.Trigger{
 		Key:       key,
@@ -373,6 +374,60 @@ func TestTriggerActivateInsertFail(t *testing.T) {
 	b.router.ServeHTTP(w, r)
 
 	assert.Equal(500, w.Code)
+}
+
+func TestTriggerActivateValueMapError(t *testing.T) {
+	assert := assert.New(t)
+
+	gin.SetMode(gin.TestMode)
+
+	mockTrigger := &mocks.TriggerI{}
+	mockContent := &mocks.ContentI{}
+	mockReceipt := &mocks.ReceiptI{}
+	b := getMockBloodlines()
+	b.trigger = &handlers.Trigger{
+		Trigger:     mockTrigger,
+		Receipt:     mockReceipt,
+		Content:     mockContent,
+		BaseHandler: &handlers.BaseHandler{Stats: nil},
+	}
+	InitRouter(b)
+
+	key := "test_key"
+	values := make(map[string]string)
+	values["first_name"] = "Wololo"
+
+	trigger := &models.Trigger{
+		Key:       key,
+		ID:        uuid.NewUUID(),
+		ContentID: uuid.NewUUID(),
+		Values:    values,
+	}
+
+	content := &models.Content{
+		ID:      trigger.ContentID,
+		Type:    models.EMAIL,
+		Text:    "$first_name$ $last_name$",
+		Params:  []string{"first_name", "last_name"},
+		Status:  models.ACTIVE,
+		Subject: "Welcome",
+	}
+
+	values = make(map[string]string)
+	receipt := &models.Receipt{
+		Values: values,
+		UserID: uuid.NewUUID(),
+	}
+	s, _ := json.Marshal(receipt)
+
+	mockTrigger.On("Get", key).Return(trigger, nil)
+	mockContent.On("Get", trigger.ContentID.String()).Return(content, nil)
+
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("POST", "/api/trigger/test_key/activate", bytes.NewReader(s))
+	b.router.ServeHTTP(w, r)
+
+	assert.Equal(400, w.Code)
 }
 
 func TestTriggerActivateTriggerFail(t *testing.T) {
