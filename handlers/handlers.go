@@ -95,7 +95,9 @@ func (b *BaseHandler) send(ctx *gin.Context, status int, json *gin.H) {
 /*Time sets up gin middleware for sending timing stats*/
 func (b *BaseHandler) Time() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		defer b.Stats.NewTiming().Send(c.Request.Method)
+		if b.Stats != nil {
+			defer b.Stats.NewTiming().Send(c.Request.Method)
+		}
 		c.Next()
 	}
 }
