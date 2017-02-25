@@ -259,6 +259,41 @@ func TestReceiptDeliverContentSuccess(t *testing.T) {
 	assert.NoError(err)
 }
 
+func TestReceiptDeliverContentSGFail(t *testing.T) {
+	assert := assert.New(t)
+
+	receipt := getDefaultReceipt()
+	content := getDefaultContent()
+	s, _, _ := sqlmock.New()
+	rabbitMock := &mocks.RabbitI{}
+	sgMock := &mocks.SendgridI{}
+	tcMock := &tmocks.TownCenterI{}
+	r := NewReceipt(&gateways.MySQL{DB: s}, sgMock, tcMock, rabbitMock)
+	tcMock.On("GetUser", receipt.UserID).Return(&tmodels.User{Email: "test"}, nil)
+	sgMock.On("SendEmail", "test", "test", "Hello").Return(fmt.Errorf("some error"))
+
+	err := r.DeliverContent(receipt, content)
+
+	assert.Error(err)
+}
+
+func TestReceiptDeliverContentTCFail(t *testing.T) {
+	assert := assert.New(t)
+
+	receipt := getDefaultReceipt()
+	content := getDefaultContent()
+	s, _, _ := sqlmock.New()
+	rabbitMock := &mocks.RabbitI{}
+	sgMock := &mocks.SendgridI{}
+	tcMock := &tmocks.TownCenterI{}
+	r := NewReceipt(&gateways.MySQL{DB: s}, sgMock, tcMock, rabbitMock)
+	tcMock.On("GetUser", receipt.UserID).Return(nil, fmt.Errorf("some error"))
+
+	err := r.DeliverContent(receipt, content)
+
+	assert.Error(err)
+}
+
 func TestReceiptDeliverContentNoopSuccess(t *testing.T) {
 	assert := assert.New(t)
 

@@ -112,7 +112,10 @@ func (r *Receipt) DeliverContent(receipt *models.Receipt, content *models.Conten
 }
 
 func (r *Receipt) deliverEmail(receipt *models.Receipt, content *models.Content) error {
-	target, _ := r.TC.GetUser(receipt.UserID)
+	target, err := r.TC.GetUser(receipt.UserID)
+	if err != nil {
+		return err
+	}
 
 	text, err := content.ResolveText(receipt.Values)
 	if err != nil {
