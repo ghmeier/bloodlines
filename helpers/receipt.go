@@ -1,6 +1,8 @@
 package helpers
 
 import (
+	"time"
+
 	"github.com/pborman/uuid"
 
 	"github.com/ghmeier/bloodlines/gateways"
@@ -54,7 +56,7 @@ func (r *Receipt) Insert(receipt *models.Receipt) error {
 
 /*GetAll returns a list of receipts of length <limit> starting at <offset>*/
 func (r *Receipt) GetAll(offset int, limit int) ([]*models.Receipt, error) {
-	rows, err := r.sql.Select("SELECT id, ts, vals, sendState, contentId, userId FROM receipt ORDER BY ts DESC LIMIT ?,? ", offset, limit)
+	rows, err := r.sql.Select("SELECT id, ts, vals, sendState, contentId, userId, finished FROM receipt ORDER BY ts DESC LIMIT ?,? ", offset, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +71,7 @@ func (r *Receipt) GetAll(offset int, limit int) ([]*models.Receipt, error) {
 
 /*GetByID returns the receipt entitiy with the given id*/
 func (r *Receipt) GetByID(id string) (*models.Receipt, error) {
-	rows, err := r.sql.Select("SELECT id, ts, vals, sendState, contentId, userId FROM receipt WHERE id=?", id)
+	rows, err := r.sql.Select("SELECT id, ts, vals, sendState, contentId, userId, finished FROM receipt WHERE id=?", id)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +85,13 @@ func (r *Receipt) GetByID(id string) (*models.Receipt, error) {
 
 /*SetStatus updates the status of the receipt with the given id*/
 func (r *Receipt) SetStatus(id uuid.UUID, state models.Status) error {
-	err := r.sql.Modify("UPDATE receipt SET sendState=? where id=?", string(state), id)
+	var err error
+	if state == models.SUCCESS {
+		err = r.sql.Modify("UPDATE receipt SET sendState=?, finished=? where id=?", string(state), time.Now(), id)
+	} else {
+		err = r.sql.Modify("UPDATE receipt SET sendState=? where id=?", string(state), id)
+	}
+
 	return err
 }
 

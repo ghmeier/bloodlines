@@ -13,6 +13,7 @@ import (
 type Receipt struct {
 	ID        uuid.UUID         `json:"id"`
 	Created   time.Time         `json:"ts"`
+	Finished  time.Time         `json:"finished"`
 	Values    map[string]string `json:"values"`
 	SendState Status            `json:"sendState"`
 	ContentID uuid.UUID         `json:"contentId"`
@@ -47,7 +48,7 @@ func ReceiptFromSQL(rows *sql.Rows) ([]*Receipt, error) {
 	for rows.Next() {
 		r := &Receipt{}
 		var valueList, rState string
-		rows.Scan(&r.ID, &r.Created, &valueList, &rState, &r.ContentID, &r.UserID)
+		rows.Scan(&r.ID, &r.Created, &valueList, &rState, &r.ContentID, &r.UserID, &r.Finished)
 
 		err := json.Unmarshal([]byte(valueList), &r.Values)
 		if err != nil {

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"testing"
+	"time"
 
 	mocks "github.com/ghmeier/bloodlines/_mocks/gateways"
 	"github.com/ghmeier/bloodlines/gateways"
@@ -23,10 +24,10 @@ func TestReceiptGetByIDSuccess(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	c := getMockReceipt(s)
 
-	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId, userId FROM receipt").
+	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId, userId, finished FROM receipt").
 		WithArgs(receipt.ID.String()).
 		WillReturnRows(getReceiptRows().
-			AddRow(receipt.ID.String(), receipt.Created, "{}", string(receipt.SendState), receipt.ContentID.String(), receipt.UserID.String()))
+			AddRow(receipt.ID.String(), receipt.Created, "{}", string(receipt.SendState), receipt.ContentID.String(), receipt.UserID.String(), receipt.Finished))
 
 	res, err := c.GetByID(receipt.ID.String())
 
@@ -47,7 +48,7 @@ func TestReceiptGetByIDQueryFail(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	c := getMockReceipt(s)
 
-	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId, userId FROM receipt").
+	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId, userId, finished FROM receipt").
 		WithArgs(receipt.ID.String()).
 		WillReturnError(fmt.Errorf("some error"))
 
@@ -64,9 +65,9 @@ func TestReceiptGetByIDMapValueFail(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	c := getMockReceipt(s)
 
-	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId, userId FROM receipt").
+	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId, userId, finished FROM receipt").
 		WithArgs(receipt.ID.String()).
-		WillReturnRows(getReceiptRows().AddRow(receipt.ID.String(), receipt.Created, "", "INVALID", receipt.ContentID.String(), receipt.UserID.String()))
+		WillReturnRows(getReceiptRows().AddRow(receipt.ID.String(), receipt.Created, "", "INVALID", receipt.ContentID.String(), receipt.UserID.String(), receipt.Finished))
 
 	_, err := c.GetByID(receipt.ID.String())
 
@@ -81,9 +82,9 @@ func TestReceiptGetByIDMapFail(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	c := getMockReceipt(s)
 
-	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId, userId FROM receipt").
+	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId, userId, finished FROM receipt").
 		WithArgs(receipt.ID.String()).
-		WillReturnRows(getReceiptRows().AddRow(receipt.ID.String(), receipt.Created, "{}", "INVALID", receipt.ContentID.String(), receipt.UserID.String()))
+		WillReturnRows(getReceiptRows().AddRow(receipt.ID.String(), receipt.Created, "{}", "INVALID", receipt.ContentID.String(), receipt.UserID.String(), receipt.Finished))
 
 	_, err := c.GetByID(receipt.ID.String())
 
@@ -99,11 +100,11 @@ func TestReceiptGetReceiptsSuccess(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	c := getMockReceipt(s)
 
-	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId, userId FROM receipt").
+	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId, userId, finished FROM receipt").
 		WithArgs(offset, limit).
 		WillReturnRows(getReceiptRows().
-			AddRow(receipt.ID.String(), receipt.Created, "{}", string(receipt.SendState), receipt.ContentID.String(), receipt.UserID.String()).
-			AddRow(receipt.ID.String(), receipt.Created, "{}", string(receipt.SendState), receipt.ContentID.String(), receipt.UserID.String()))
+			AddRow(receipt.ID.String(), receipt.Created, "{}", string(receipt.SendState), receipt.ContentID.String(), receipt.UserID.String(), receipt.Finished).
+			AddRow(receipt.ID.String(), receipt.Created, "{}", string(receipt.SendState), receipt.ContentID.String(), receipt.UserID.String(), receipt.Finished))
 
 	res, err := c.GetAll(offset, limit)
 
@@ -119,7 +120,7 @@ func TestReceiptGetReceiptsFail(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	c := getMockReceipt(s)
 
-	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId, userId FROM receipt").
+	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId, userId, finished FROM receipt").
 		WithArgs(offset, limit).
 		WillReturnError(fmt.Errorf("some error"))
 
@@ -137,10 +138,10 @@ func TestReceiptGetReceiptsMapFail(t *testing.T) {
 	s, mock, _ := sqlmock.New()
 	c := getMockReceipt(s)
 
-	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId, userId FROM receipt").
+	mock.ExpectQuery("SELECT id, ts, vals, sendState, contentId, userId, finished FROM receipt").
 		WithArgs(offset, limit).
 		WillReturnRows(getReceiptRows().
-			AddRow(receipt.ID.String(), receipt.Created, "{}", "INVALID", receipt.ContentID.String(), receipt.UserID.String()))
+			AddRow(receipt.ID.String(), receipt.Created, "{}", "INVALID", receipt.ContentID.String(), receipt.UserID.String(), receipt.Finished))
 
 	_, err := c.GetAll(offset, limit)
 
@@ -314,11 +315,13 @@ func TestReceiptDeliverContentNoopSuccess(t *testing.T) {
 }
 
 func getDefaultReceipt() *models.Receipt {
-	return models.NewReceipt(make(map[string]string), uuid.NewUUID(), uuid.NewUUID())
+	r := models.NewReceipt(make(map[string]string), uuid.NewUUID(), uuid.NewUUID())
+	r.Finished = time.Now()
+	return r
 }
 
 func getReceiptRows() sqlmock.Rows {
-	return sqlmock.NewRows([]string{"id", "ts", "vals", "sendState", "contentId", "userId"})
+	return sqlmock.NewRows([]string{"id", "ts", "vals", "sendState", "contentId", "userId", "finished"})
 }
 
 func getMockReceipt(s *sql.DB) ReceiptI {
