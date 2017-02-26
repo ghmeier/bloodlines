@@ -86,7 +86,7 @@ func (r *Receipt) GetByID(id string) (*models.Receipt, error) {
 /*SetStatus updates the status of the receipt with the given id*/
 func (r *Receipt) SetStatus(id uuid.UUID, state models.Status) error {
 	var err error
-	if state == models.SUCCESS {
+	if state == models.Status(models.SUCCESS) {
 		err = r.sql.Modify("UPDATE receipt SET sendState=?, finished=? where id=?", string(state), time.Now(), id)
 	} else {
 		err = r.sql.Modify("UPDATE receipt SET sendState=? where id=?", string(state), id)
