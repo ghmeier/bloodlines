@@ -54,7 +54,7 @@ func (r *Receipt) Insert(receipt *models.Receipt) error {
 
 /*GetAll returns a list of receipts of length <limit> starting at <offset>*/
 func (r *Receipt) GetAll(offset int, limit int) ([]*models.Receipt, error) {
-	rows, err := r.sql.Select("SELECT id, ts, vals, sendState, contentId, userId FROM receipt ORDER BY id ASC LIMIT ?,? ", offset, limit)
+	rows, err := r.sql.Select("SELECT id, ts, vals, sendState, contentId, userId FROM receipt ORDER BY ts DESC LIMIT ?,? ", offset, limit)
 	if err != nil {
 		return nil, err
 	}

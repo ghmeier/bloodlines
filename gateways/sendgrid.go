@@ -38,8 +38,6 @@ func (s *Sendgrid) SendEmail(target string, subject string, text string) error {
 		return fmt.Errorf("ERROR: invalid request, %s", response.Body)
 	}
 
-	fmt.Println(response.StatusCode)
-	fmt.Println(response.Body)
 	return nil
 }
 

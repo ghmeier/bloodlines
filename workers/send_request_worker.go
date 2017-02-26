@@ -3,6 +3,7 @@ package workers
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/ghmeier/bloodlines/gateways"
 	"github.com/ghmeier/bloodlines/handlers"
@@ -61,14 +62,16 @@ func (s *SendRequest) handleRequest(request *models.SendRequest) {
 /*Consume starts a channel that consumes messages from the front of the queue*/
 func (s *SendRequest) Consume() error {
 
-	msgs, err := s.RB.Consume()
-	if err != nil {
-		return err
-	}
-
-	//forever := make(chan bool)
-
 	go func() {
+		msgs, err := s.RB.Consume()
+		for err != nil {
+			fmt.Printf("Rabbit ERROR: %s", err.Error())
+			time.Sleep(time.Duration(5) * time.Second)
+			msgs, err = s.RB.Consume()
+		}
+
+		//forever := make(chan bool)
+
 		for d := range msgs {
 			fmt.Printf("Received a message: %s\n", d.Body)
 			var request models.SendRequest
