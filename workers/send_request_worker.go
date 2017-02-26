@@ -65,7 +65,7 @@ func (s *SendRequest) Consume() error {
 	go func() {
 		msgs, err := s.RB.Consume()
 		for err != nil {
-			fmt.Printf("Rabbit ERROR: %s", err.Error())
+			fmt.Printf("Rabbit ERROR: %s\n", err.Error())
 			time.Sleep(time.Duration(5) * time.Second)
 			msgs, err = s.RB.Consume()
 		}
