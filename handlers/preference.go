@@ -16,6 +16,7 @@ type PreferenceI interface {
 	Update(ctx *gin.Context)
 	Deactivate(ctx *gin.Context)
 	Time() gin.HandlerFunc
+	GetJWT() gin.HandlerFunc
 }
 
 /*Preference implements PreferenceI for handling requests*/

@@ -14,6 +14,7 @@ type ReceiptI interface {
 	ViewAll(ctx *gin.Context)
 	View(ctx *gin.Context)
 	Time() gin.HandlerFunc
+	GetJWT() gin.HandlerFunc
 }
 
 /*Receipt implements ReceiptI for the receipt router*/

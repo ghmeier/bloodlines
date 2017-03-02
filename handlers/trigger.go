@@ -17,6 +17,7 @@ type TriggerI interface {
 	Remove(ctx *gin.Context)
 	Activate(ctx *gin.Context)
 	Time() gin.HandlerFunc
+	GetJWT() gin.HandlerFunc
 }
 
 /*Trigger implements TriggerI and uses a trigger helper*/

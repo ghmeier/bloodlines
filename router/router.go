@@ -78,6 +78,7 @@ func InitRouter(b *Bloodlines) {
 
 	content := b.router.Group("/api/content")
 	{
+		content.Use(b.content.GetJWT())
 		content.Use(b.content.Time())
 		content.POST("", b.content.New)
 		content.GET("", b.content.ViewAll)
@@ -88,6 +89,7 @@ func InitRouter(b *Bloodlines) {
 
 	receipt := b.router.Group("/api/receipt")
 	{
+		receipt.Use(b.receipt.GetJWT())
 		receipt.Use(b.receipt.Time())
 		receipt.GET("", b.receipt.ViewAll)
 		receipt.POST("/send", b.receipt.Send)
@@ -96,6 +98,7 @@ func InitRouter(b *Bloodlines) {
 
 	job := b.router.Group("/api/job")
 	{
+		job.Use(b.job.GetJWT())
 		job.Use(b.job.Time())
 		job.GET("", b.job.ViewAll)
 		job.POST("", b.job.New)
@@ -106,6 +109,7 @@ func InitRouter(b *Bloodlines) {
 
 	trigger := b.router.Group("/api/trigger")
 	{
+		trigger.Use(b.trigger.GetJWT())
 		trigger.Use(b.trigger.Time())
 		trigger.POST("", b.trigger.New)
 		trigger.GET("", b.trigger.ViewAll)
@@ -117,6 +121,7 @@ func InitRouter(b *Bloodlines) {
 
 	pref := b.router.Group("/api/preference")
 	{
+		pref.Use(b.preference.GetJWT())
 		pref.Use(b.preference.Time())
 		pref.POST("", b.preference.New)
 		pref.GET("/:userId", b.preference.View)

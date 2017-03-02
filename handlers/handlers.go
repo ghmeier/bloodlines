@@ -3,6 +3,7 @@ package handlers
 import (
 	"strconv"
 	"os"
+	"regexp"
 
 	"gopkg.in/alexcesaro/statsd.v2"
 	"gopkg.in/gin-contrib/cors.v1"
@@ -110,7 +111,15 @@ func GetCors() gin.HandlerFunc {
 	config := cors.DefaultConfig()
 	config.AddAllowMethods("DELETE")
 	config.AddAllowHeaders("Auth")
-	config.AllowAllOrigins = true
+	config.AllowAllOrigins = false
+	config.AllowOriginFunc = func(origin string) bool {
+		if origin == "127.0.0.1" || origin == "localhost" {
+			return true
+		}
+
+		r, _ := regexp.Compile("[a-z]*[.]expresso[.store]")
+		return r.MatchString(origin)
+	}
 	return cors.New(config)
 }
 
