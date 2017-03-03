@@ -1,6 +1,6 @@
 package gateways
 
-/*import (
+import (
 	"testing"
 
 	"github.com/ghmeier/bloodlines/config"
@@ -14,4 +14,4 @@ func TestNewRabbit(t *testing.T) {
 	_, err := NewRabbit(config.Rabbit{})
 
 	assert.Error(err)
-}*/
+}
