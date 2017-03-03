@@ -57,7 +57,8 @@ func mockTrigger() (*Bloodlines, *mocks.TriggerI) {
 func mockContent() (*Bloodlines, *mocks.ContentI) {
 	b := getMockBloodlines()
 	mock := new(mocks.ContentI)
-	b.content = &handlers.Content{Content: mock, BaseHandler: &handlers.BaseHandler{Stats: nil}}
+	s, _ := statsd.New()
+	b.content = &handlers.Content{Content: mock, BaseHandler: &handlers.BaseHandler{Stats: s}}
 	InitRouter(b)
 
 	return b, mock
