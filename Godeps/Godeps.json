@@ -3,6 +3,11 @@
 	"GoVersion": "go1.6",
 	"GodepVersion": "v77",
 	"Deps": [
+{
+			"ImportPath": "github.com/DATA-DOG/go-sqlmock",
+			"Comment": "v1.1.4-14-g947ce30",
+			"Rev": "947ce303a7986ba00a8c29f5835c5c58f649f856"
+		},
 		{
 			"ImportPath": "github.com/dgrijalva/jwt-go",
 			"Comment": "v3.0.0-17-g2268707",
@@ -37,11 +42,11 @@
 		},
 		{
 			"ImportPath": "github.com/jakelong95/TownCenter/gateways",
-			"Rev": "d2b0e71ebd09d9ee8e052cb4275bd7f5a681b147"
+			"Rev": "5f48740463195bf677eb2b07cd5f532f272573b3"
 		},
 		{
 			"ImportPath": "github.com/jakelong95/TownCenter/models",
-			"Rev": "d2b0e71ebd09d9ee8e052cb4275bd7f5a681b147"
+			"Rev": "5f48740463195bf677eb2b07cd5f532f272573b3"
 		},
 		{
 			"ImportPath": "github.com/lcollin/warehouse/gateways",
