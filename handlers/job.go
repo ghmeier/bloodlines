@@ -19,6 +19,7 @@ type JobI interface {
 	Update(ctx *gin.Context)
 	Stop(ctx *gin.Context)
 	Time() gin.HandlerFunc
+	GetJWT() gin.HandlerFunc
 }
 
 /*Job is the implementation with Helper of JobI*/

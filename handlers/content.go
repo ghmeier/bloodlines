@@ -17,6 +17,7 @@ type ContentI interface {
 	Update(ctx *gin.Context)
 	Deactivate(ctx *gin.Context)
 	Time() gin.HandlerFunc
+	GetJWT() gin.HandlerFunc
 }
 
 /*Content is the handler for all content api calls*/

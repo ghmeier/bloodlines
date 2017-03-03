@@ -2,10 +2,14 @@ package handlers
 
 import (
 	"strconv"
+	"os"
+	"regexp"
 
 	"gopkg.in/alexcesaro/statsd.v2"
 	"gopkg.in/gin-contrib/cors.v1"
 	"gopkg.in/gin-gonic/gin.v1"
+
+	"github.com/dgrijalva/jwt-go"
 
 	"github.com/ghmeier/bloodlines/gateways"
 	coi "github.com/ghmeier/coinage/gateways"
@@ -107,6 +111,42 @@ func GetCors() gin.HandlerFunc {
 	config := cors.DefaultConfig()
 	config.AddAllowMethods("DELETE")
 	config.AddAllowHeaders("Auth")
-	config.AllowAllOrigins = true
+	config.AllowAllOrigins = false
+	config.AllowOriginFunc = func(origin string) bool {
+		if gin.Mode() == gin.TestMode || origin == "localhost" {
+			return true
+		}
+
+		r, _ := regexp.Compile("[a-z]*[.]expresso[.store]")
+		return r.MatchString(origin)
+	}
 	return cors.New(config)
+}
+
+/*GetJWT returns a gin handlerfunc for authenticating JWTs in expresso services*/
+func (b *BaseHandler) GetJWT() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		if gin.Mode() != gin.TestMode {
+			authHeader := ctx.Request.Header.Get("Auth")
+
+			token, err := jwt.ParseWithClaims(authHeader, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+				return []byte(os.Getenv("JWT")), nil
+			})
+
+			if err != nil {
+				b.Unauthorized(ctx, "Unable to parse token")
+				ctx.Abort()
+				return
+			}
+
+			claims := token.Claims
+			if err != nil || !token.Valid || claims.Valid() != nil {
+				b.Unauthorized(ctx, "Invalid token")
+				ctx.Abort()
+				return
+			}
+		}
+
+		ctx.Next()
+	}
 }
