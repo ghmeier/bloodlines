@@ -1,6 +1,6 @@
 package gateways
 
-import (
+/*import (
 	"testing"
 
 	"github.com/ghmeier/bloodlines/config"
@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-/*func TestNewRabbit(t *testing.T) {
+func TestNewRabbit(t *testing.T) {
 	assert := assert.New(t)
 
 	_, err := NewRabbit(config.Rabbit{})
