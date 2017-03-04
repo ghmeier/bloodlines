@@ -111,15 +111,7 @@ func GetCors() gin.HandlerFunc {
 	config := cors.DefaultConfig()
 	config.AddAllowMethods("DELETE")
 	config.AddAllowHeaders("Auth")
-	config.AllowAllOrigins = false
-	config.AllowOriginFunc = func(origin string) bool {
-		if gin.Mode() == gin.TestMode || origin == "localhost" {
-			return true
-		}
-
-		r, _ := regexp.Compile("[a-z]*[.]expresso[.store]")
-		return r.MatchString(origin)
-	}
+	config.AllowAllOrigins = true
 	return cors.New(config)
 }
 
@@ -127,6 +119,13 @@ func GetCors() gin.HandlerFunc {
 func (b *BaseHandler) GetJWT() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		if gin.Mode() != gin.TestMode {
+			r, _ := regexp.Compile("(^[a-z]+.?|^)expresso.store$")
+			origin := ctx.Request.Header.Get("Origin")
+			if r.MatchString(origin) {
+				ctx.Next()
+				return
+			}
+
 			authHeader := ctx.Request.Header.Get("Auth")
 
 			token, err := jwt.ParseWithClaims(authHeader, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
