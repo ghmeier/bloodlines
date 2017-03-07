@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"strconv"
 	"os"
 	"regexp"
+	"strconv"
 
 	"gopkg.in/alexcesaro/statsd.v2"
 	"gopkg.in/gin-contrib/cors.v1"
@@ -110,7 +110,8 @@ func (b *BaseHandler) Time() gin.HandlerFunc {
 func GetCors() gin.HandlerFunc {
 	config := cors.DefaultConfig()
 	config.AddAllowMethods("DELETE")
-	config.AddAllowHeaders("Auth")
+	config.AddAllowHeaders("X-Auth")
+	config.AddExposeHeaders("X-Auth")
 	config.AllowAllOrigins = true
 	return cors.New(config)
 }
@@ -126,7 +127,7 @@ func (b *BaseHandler) GetJWT() gin.HandlerFunc {
 				return
 			}
 
-			authHeader := ctx.Request.Header.Get("Auth")
+			authHeader := ctx.Request.Header.Get("X-Auth")
 
 			token, err := jwt.ParseWithClaims(authHeader, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
 				return []byte(os.Getenv("JWT")), nil
