@@ -17,6 +17,7 @@ type Root struct {
 	Rabbit     Rabbit     `json:"rabbit"`
 	Statsd     Statsd     `json:"statsd"`
 	Stripe     Stripe     `json:"stripe"`
+	S3         S3         `json:"s3"`
 	Port       string     `json:"port"`
 }
 
@@ -27,6 +28,14 @@ type MySQL struct {
 	User     string `json:"user"`
 	Password string `json:"password"`
 	Database string `json:"database"`
+}
+
+/*S3 conatains information for connecting to amazon s3*/
+type S3 struct {
+	Region    string `json:"region"`
+	AccessKey string `json:"accessKey"`
+	Secret    string `json:"secret"`
+	Bucket    string `json:"bucket"`
 }
 
 /*Sendgrid has connection information for the sendgrid gateway */

@@ -37,6 +37,7 @@ type GatewayContext struct {
 	Rabbit     gateways.RabbitI
 	Stats      *statsd.Client
 	Stripe     coi.Stripe
+	S3         gateways.S3
 }
 
 /*NewBaseHandler returns a new BaseHandler instance from a given stats*/
@@ -119,34 +120,34 @@ func GetCors() gin.HandlerFunc {
 /*GetJWT returns a gin handlerfunc for authenticating JWTs in expresso services*/
 func (b *BaseHandler) GetJWT() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if gin.Mode() != gin.TestMode {
-			r, _ := regexp.Compile("(^[a-z]+.?|^)expresso.store$")
-			origin := ctx.Request.Header.Get("Origin")
-			if r.MatchString(origin) {
-				ctx.Next()
-				return
-			}
-
-			authHeader := ctx.Request.Header.Get("X-Auth")
-
-			token, err := jwt.ParseWithClaims(authHeader, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-				return []byte(os.Getenv("JWT")), nil
-			})
-
-			if err != nil {
-				b.Unauthorized(ctx, "Unable to parse token")
-				ctx.Abort()
-				return
-			}
-
-			claims := token.Claims
-			if err != nil || !token.Valid || claims.Valid() != nil {
-				b.Unauthorized(ctx, "Invalid token")
-				ctx.Abort()
-				return
-			}
+		if gin.Mode() == gin.TestMode || gin.Mode() == gin.DebugMode {
+			ctx.Next()
+			return
 		}
 
-		ctx.Next()
+		r, _ := regexp.Compile("(^[a-z]+.?|^)expresso.store$")
+		origin := ctx.Request.Header.Get("Origin")
+		if r.MatchString(origin) {
+			ctx.Next()
+			return
+		}
+
+		authHeader := ctx.Request.Header.Get("X-Auth")
+		token, err := jwt.ParseWithClaims(authHeader, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+			return []byte(os.Getenv("JWT")), nil
+		})
+
+		if err != nil {
+			b.Unauthorized(ctx, "Unable to parse token")
+			ctx.Abort()
+			return
+		}
+
+		claims := token.Claims
+		if err != nil || !token.Valid || claims.Valid() != nil {
+			b.Unauthorized(ctx, "Invalid token")
+			ctx.Abort()
+			return
+		}
 	}
 }
