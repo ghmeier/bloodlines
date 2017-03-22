@@ -121,9 +121,9 @@ func InitRouter(b *Bloodlines) {
 
 	pref := b.router.Group("/api/preference")
 	{
-		pref.Use(b.preference.GetJWT())
 		pref.Use(b.preference.Time())
 		pref.POST("", b.preference.New)
+		pref.Use(b.preference.GetJWT())
 		pref.GET("/:userId", b.preference.View)
 		pref.PATCH("/:userId", b.preference.Update)
 		pref.DELETE("/:userId", b.preference.Deactivate)

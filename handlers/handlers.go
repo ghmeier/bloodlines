@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"os"
 	"regexp"
 	"strconv"
@@ -120,6 +121,7 @@ func GetCors() gin.HandlerFunc {
 /*GetJWT returns a gin handlerfunc for authenticating JWTs in expresso services*/
 func (b *BaseHandler) GetJWT() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		fmt.Println("HERE")
 		if gin.Mode() == gin.TestMode || gin.Mode() == gin.DebugMode {
 			ctx.Next()
 			return
