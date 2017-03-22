@@ -1,9 +1,7 @@
 package handlers
 
 import (
-	"fmt"
 	"os"
-	"regexp"
 	"strconv"
 
 	"gopkg.in/alexcesaro/statsd.v2"
@@ -121,15 +119,13 @@ func GetCors() gin.HandlerFunc {
 /*GetJWT returns a gin handlerfunc for authenticating JWTs in expresso services*/
 func (b *BaseHandler) GetJWT() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		fmt.Println("HERE")
 		if gin.Mode() == gin.TestMode || gin.Mode() == gin.DebugMode {
 			ctx.Next()
 			return
 		}
 
-		r, _ := regexp.Compile("(^[a-z]+.?|^)expresso.store$")
-		origin := ctx.Request.Header.Get("Origin")
-		if r.MatchString(origin) {
+		tokenHeader := ctx.Request.Header.Get("X-Token")
+		if tokenHeader != "" && tokenHeader == os.Getenv("JWT") {
 			ctx.Next()
 			return
 		}

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 /*ServiceResponse is used to unmarshal data from expresso services.
@@ -59,6 +60,7 @@ func (b *BaseService) ServiceSend(method string, url string, data interface{}, i
 		req, err = http.NewRequest(method, url, nil)
 	}
 
+	req.Header.Add("X-Token", os.Getenv("JWT"))
 	if err != nil {
 		return err
 	}
