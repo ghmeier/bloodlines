@@ -112,6 +112,8 @@ func GetCors() gin.HandlerFunc {
 	config.AddAllowMethods("DELETE")
 	config.AddAllowHeaders("X-Auth")
 	config.AddExposeHeaders("X-Auth")
+	config.AddAllowHeaders("X-Token")
+	config.AddExposeHeaders("X-Token")
 	config.AllowAllOrigins = true
 	return cors.New(config)
 }
