@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 
@@ -127,14 +128,15 @@ func (b *BaseHandler) GetJWT() gin.HandlerFunc {
 		}
 
 		tokenHeader := ctx.Request.Header.Get("X-Token")
-		if tokenHeader != "" && tokenHeader == os.Getenv("JWT") {
+		fmt.Println(tokenHeader)
+		if tokenHeader != "" && tokenHeader == os.Getenv("JWT_TOKEN") {
 			ctx.Next()
 			return
 		}
 
 		authHeader := ctx.Request.Header.Get("X-Auth")
 		token, err := jwt.ParseWithClaims(authHeader, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-			return []byte(os.Getenv("JWT")), nil
+			return []byte(os.Getenv("JWT_TOKEN")), nil
 		})
 
 		if err != nil {
