@@ -60,7 +60,7 @@ func (b *BaseService) ServiceSend(method string, url string, data interface{}, i
 		req, err = http.NewRequest(method, url, nil)
 	}
 
-	req.Header.Add("X-Token", os.Getenv("JWT"))
+	req.Header.Add("X-Token", os.Getenv("JWT_TOKEN"))
 	if err != nil {
 		return err
 	}
