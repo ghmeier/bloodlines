@@ -19,7 +19,7 @@ type Root struct {
 	Stripe     Stripe     `json:"stripe"`
 	S3         S3         `json:"s3"`
 	Port       string     `json:"port"`
-	JWT        string     //`json:"jwt"`
+	JWT        JWT        //`json:"jwt"`
 }
 
 /*MySQL contains information for connecting to a MySQL instance */

@@ -11,7 +11,6 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 
-	"github.com/ghmeier/bloodlines/config"
 	"github.com/ghmeier/bloodlines/gateways"
 	coi "github.com/ghmeier/coinage/gateways"
 	t "github.com/jakelong95/TownCenter/gateways"
