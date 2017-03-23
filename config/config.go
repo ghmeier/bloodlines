@@ -19,6 +19,7 @@ type Root struct {
 	Stripe     Stripe     `json:"stripe"`
 	S3         S3         `json:"s3"`
 	Port       string     `json:"port"`
+	JWT        string     //`json:"jwt"`
 }
 
 /*MySQL contains information for connecting to a MySQL instance */
@@ -96,6 +97,11 @@ type Statsd struct {
 	Prefix string `json:"prefix"`
 }
 
+/*JWT has the jwt token*/
+type JWT struct {
+	Token string `json:"token"`
+}
+
 /*Init returns a populated Root struct from config.json */
 func Init(filename string) (*Root, error) {
 	file, err := os.Open(filename)
@@ -110,5 +116,7 @@ func Init(filename string) (*Root, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	root.JWT = JWT{Token: os.Getenv("JWT_TOKEN")}
 	return root, nil
 }

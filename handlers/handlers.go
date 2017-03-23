@@ -11,6 +11,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 
+	"github.com/ghmeier/bloodlines/config"
 	"github.com/ghmeier/bloodlines/gateways"
 	coi "github.com/ghmeier/coinage/gateways"
 	t "github.com/jakelong95/TownCenter/gateways"
@@ -127,18 +128,19 @@ func (b *BaseHandler) GetJWT() gin.HandlerFunc {
 			return
 		}
 
+		jwtToken := os.Getenv("JWT_TOKEN")
 		tokenHeader := ctx.Request.Header.Get("X-Token")
-		fmt.Println(tokenHeader)
-		if tokenHeader != "" && tokenHeader == os.Getenv("JWT_TOKEN") {
+		if tokenHeader != "" && tokenHeader == jwtToken {
 			ctx.Next()
 			return
 		}
 
 		authHeader := ctx.Request.Header.Get("X-Auth")
 		token, err := jwt.ParseWithClaims(authHeader, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-			return []byte(os.Getenv("JWT_TOKEN")), nil
+			return []byte(jwtToken), nil
 		})
 
+		fmt.Println(token.Raw)
 		if err != nil {
 			b.Unauthorized(ctx, "Unable to parse token")
 			ctx.Abort()
