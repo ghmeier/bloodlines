@@ -47,18 +47,25 @@ func (*BaseSearch) Where(q string, sort *SortTerm) string {
 	return fmt.Sprintf("%s WHERE %s=%s", q, sort.key, sort.value)
 }
 
+/*Order returns q + "ORDER BY" the sort key and and order based on the int value
+  of sort.order.*/
 func (b *BaseSearch) Order(q string, sort ...*SortTerm) string {
-	s := sort[len(sort)-1]
-	if len(sort) > 1 {
-		prev := b.Order(q, sort[0:len(sort)-1]...)
+	prefix := false
 
+	for _, s := range sort {
 		if s.order < 0 {
-			return prev
+			continue
 		}
-		return fmt.Sprintf("%s, %s %s", prev, s.key, orderString(s.order))
+
+		if !prefix {
+			q = fmt.Sprintf("%s ORDER BY %s %s", q, s.key, orderString(s.order))
+			prefix = true
+		} else {
+			q = fmt.Sprintf("%s, %s %s", q, s.key, orderString(s.order))
+		}
 	}
 
-	return fmt.Sprintf("%s ORDER BY %s %s", q, s.key, orderString(s.order))
+	return q
 }
 
 func orderString(i int) string {
@@ -73,6 +80,10 @@ func orderString(i int) string {
 }
 
 func (*BaseSearch) And(q, s string) string {
+	if s == "" {
+		return q
+	}
+
 	return fmt.Sprintf("%s AND %s", q, s)
 }
 
