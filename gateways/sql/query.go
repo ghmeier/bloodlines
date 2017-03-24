@@ -7,9 +7,8 @@ import (
 /*Search defines an interface for structs that can be used in sql queries*/
 type Search interface {
 	ToQuery() string
-	Where(string, *SortTerm) string
+	Where(string, ...*SortTerm) string
 	Order(string, ...*SortTerm) string
-	And(string, string) string
 	Limit(string) string
 }
 
@@ -35,16 +34,29 @@ func NewSortTerm(key, value string, order int, like bool) *SortTerm {
 	}
 }
 
-func (*BaseSearch) Where(q string, sort *SortTerm) string {
-	if sort.key == "" || sort.value == "" {
-		return q
+func (*BaseSearch) Where(q string, sort ...*SortTerm) string {
+	prefix := false
+
+	for _, s := range sort {
+		if s.key == "" || s.value == "" || s.order < 0 {
+			continue
+		}
+
+		if !prefix {
+			q = fmt.Sprintf("%s WHERE", q)
+			prefix = true
+		} else {
+			q = fmt.Sprintf("%s OR", q)
+		}
+
+		if s.like {
+			q = fmt.Sprintf("%s %s LIKE \"%%%s%%\"", q, s.key, s.value)
+		} else {
+			q = fmt.Sprintf("%s %s=%s", q, s.key, s.value)
+		}
 	}
 
-	if sort.like {
-		return fmt.Sprintf("%s WHERE %s LIKE '%s'", q, sort.key, sort.value)
-	}
-
-	return fmt.Sprintf("%s WHERE %s=%s", q, sort.key, sort.value)
+	return q
 }
 
 /*Order returns q + "ORDER BY" the sort key and and order based on the int value
@@ -77,14 +89,6 @@ func orderString(i int) string {
 	default:
 		return "ASC"
 	}
-}
-
-func (*BaseSearch) And(q, s string) string {
-	if s == "" {
-		return q
-	}
-
-	return fmt.Sprintf("%s AND %s", q, s)
 }
 
 func (*BaseSearch) Limit(q string) string {
