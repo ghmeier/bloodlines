@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 
@@ -139,7 +138,6 @@ func (b *BaseHandler) GetJWT() gin.HandlerFunc {
 			return []byte(jwtToken), nil
 		})
 
-		fmt.Println(token.Raw)
 		if err != nil {
 			b.Unauthorized(ctx, "Unable to parse token")
 			ctx.Abort()
