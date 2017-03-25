@@ -23,6 +23,11 @@ type BaseHandler struct {
 	Stats *statsd.Client
 }
 
+type ExpressoClaims struct {
+	UserID string `json:"userId"`
+	jwt.StandardClaims
+}
+
 /*GatewayContext contains references to each type of gateway used for simple
   use in handler construction*/
 type GatewayContext struct {
@@ -134,7 +139,7 @@ func (b *BaseHandler) GetJWT() gin.HandlerFunc {
 		}
 
 		authHeader := ctx.Request.Header.Get("X-Auth")
-		token, err := jwt.ParseWithClaims(authHeader, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.ParseWithClaims(authHeader, &ExpressoClaims{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(jwtToken), nil
 		})
 
@@ -144,11 +149,13 @@ func (b *BaseHandler) GetJWT() gin.HandlerFunc {
 			return
 		}
 
-		claims := token.Claims
+		claims, _ := token.Claims.(*ExpressoClaims)
 		if err != nil || !token.Valid || claims.Valid() != nil {
 			b.Unauthorized(ctx, "Invalid token")
 			ctx.Abort()
 			return
 		}
+
+		ctx.Request.Header.Add("X-UserId", claims.UserID)
 	}
 }
