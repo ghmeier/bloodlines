@@ -82,8 +82,6 @@ func (b *BaseSearch) Order(q string, sort ...*SortTerm) string {
 
 func orderString(i int) string {
 	switch i {
-	case 0:
-		return "ASC"
 	case 1:
 		return "DESC"
 	default:
