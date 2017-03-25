@@ -37,6 +37,7 @@ func TestPreferenceGetByUserIDMapFail(t *testing.T) {
 	assert := assert.New(t)
 
 	p := getDefaultPreference()
+	p.Email = models.MINIMAL
 	s, mock, _ := sqlmock.New()
 	c := getMockPreference(s)
 
@@ -54,6 +55,7 @@ func TestPreferenceGetByIDQueryFail(t *testing.T) {
 	assert := assert.New(t)
 
 	p := getDefaultPreference()
+	p.Email = models.UNSUBSCRIBED
 	s, mock, _ := sqlmock.New()
 	c := getMockPreference(s)
 

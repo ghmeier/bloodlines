@@ -21,6 +21,7 @@ func TestReceiptGetByIDSuccess(t *testing.T) {
 	assert := assert.New(t)
 
 	receipt := getDefaultReceipt()
+	receipt.SendState = models.FAILURE
 	s, mock, _ := sqlmock.New()
 	c := getMockReceipt(s)
 
@@ -45,6 +46,7 @@ func TestReceiptGetByIDQueryFail(t *testing.T) {
 	assert := assert.New(t)
 
 	receipt := getDefaultReceipt()
+	receipt.SendState = models.QUEUED
 	s, mock, _ := sqlmock.New()
 	c := getMockReceipt(s)
 
@@ -62,6 +64,7 @@ func TestReceiptGetByIDMapValueFail(t *testing.T) {
 	assert := assert.New(t)
 
 	receipt := getDefaultReceipt()
+	receipt.SendState = models.SUCCESS
 	s, mock, _ := sqlmock.New()
 	c := getMockReceipt(s)
 
