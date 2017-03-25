@@ -161,6 +161,26 @@ func TestReceiptSendGetFail(t *testing.T) {
 	assert.Equal(500, w.Code)
 }
 
+func TestReceiptSendNoContent(t *testing.T) {
+	assert := assert.New(t)
+
+	gin.SetMode(gin.TestMode)
+
+	receipt := getDefaultReceipt()
+	receipt.Values["first_name"] = "test"
+	s, _ := json.Marshal(receipt)
+
+	b, mock, cmock := mockReceipt()
+	mock.On("Insert", mocks.AnythingOfType("*models.Receipt")).Return(nil)
+	cmock.On("Get", receipt.ContentID.String()).Return(nil, nil)
+
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("POST", "/api/receipt/send", bytes.NewReader(s))
+	b.router.ServeHTTP(w, r)
+
+	assert.Equal(404, w.Code)
+}
+
 func TestReceiptSendFail(t *testing.T) {
 	assert := assert.New(t)
 

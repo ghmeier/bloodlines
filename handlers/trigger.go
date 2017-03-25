@@ -145,7 +145,7 @@ func (t *Trigger) Activate(ctx *gin.Context) {
 	}
 
 	if trigger == nil {
-		t.UserError(ctx, "Error: no trigger found", nil)
+		t.NotFoundError(ctx, "Error: no trigger found")
 		return
 	}
 

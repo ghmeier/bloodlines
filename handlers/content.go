@@ -77,7 +77,7 @@ func (c *Content) View(ctx *gin.Context) {
 		c.ServerError(ctx, err, content)
 		return
 	} else if content == nil {
-		c.UserError(ctx, "ERROR: no content with id", id)
+		c.NotFoundError(ctx, "ERROR: no content with id")
 	}
 
 	c.Success(ctx, content)

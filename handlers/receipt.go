@@ -57,6 +57,11 @@ func (r *Receipt) Send(ctx *gin.Context) {
 		return
 	}
 
+	if content == nil {
+		r.NotFoundError(ctx, "Error: No content found.")
+		return
+	}
+
 	request := &models.SendRequest{
 		ReceiptID: receipt.ID,
 		ContentID: content.ID,

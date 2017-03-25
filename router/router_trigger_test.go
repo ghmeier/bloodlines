@@ -489,7 +489,7 @@ func TestTriggerActivateTriggerNil(t *testing.T) {
 	r, _ := http.NewRequest("POST", "/api/trigger/test_key/activate", bytes.NewReader(s))
 	b.router.ServeHTTP(w, r)
 
-	assert.Equal(400, w.Code)
+	assert.Equal(404, w.Code)
 }
 
 func TestTriggerActivateContentFail(t *testing.T) {
