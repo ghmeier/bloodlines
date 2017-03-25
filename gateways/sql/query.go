@@ -12,8 +12,11 @@ type Search interface {
 	Limit(string) string
 }
 
+/*BaseSearch implements Where, Order and Limit, generically for searches*/
 type BaseSearch struct{}
 
+/*SortTerm is used to define search terms as well as the ordering for
+  queries using that search*/
 type SortTerm struct {
 	key   string
 	value string
@@ -21,6 +24,8 @@ type SortTerm struct {
 	like  bool
 }
 
+/*NewSortTerm returns a configured SortTerm where any order value other than
+0 or 1 will not be used in any queries*/
 func NewSortTerm(key, value string, order int, like bool) *SortTerm {
 	if order != 0 && order != 1 {
 		order = -1
@@ -34,6 +39,9 @@ func NewSortTerm(key, value string, order int, like bool) *SortTerm {
 	}
 }
 
+/*Where adds WHERE term=value OR ... to the q string for each sort term
+  in the sort slice. If SortTerm.like = true, it will use a `like` clause
+  instead of `=`*/
 func (*BaseSearch) Where(q string, sort ...*SortTerm) string {
 	prefix := false
 
@@ -80,6 +88,11 @@ func (b *BaseSearch) Order(q string, sort ...*SortTerm) string {
 	return q
 }
 
+/*Limit returns q + "LIMIT ?,?" for paging*/
+func (*BaseSearch) Limit(q string) string {
+	return fmt.Sprintf("%s LIMIT ?,?", q)
+}
+
 func orderString(i int) string {
 	switch i {
 	case 1:
@@ -87,8 +100,4 @@ func orderString(i int) string {
 	default:
 		return "ASC"
 	}
-}
-
-func (*BaseSearch) Limit(q string) string {
-	return fmt.Sprintf("%s LIMIT ?,?", q)
 }

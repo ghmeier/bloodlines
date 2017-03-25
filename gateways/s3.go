@@ -13,6 +13,7 @@ import (
 	"github.com/ghmeier/bloodlines/config"
 )
 
+/*S3 defines an interface that will upload an image and return the image's url*/
 type S3 interface {
 	Upload(bucket, name string, body io.Reader) (string, error)
 }
@@ -22,6 +23,8 @@ type s3Client struct {
 	client *s3.S3
 }
 
+/*NewS3 creates and returns an S3 gateway. If config is not empty, it attempts to set
+  the environment variables, otherwise it relies on AWS_* env variables to be set*/
 func NewS3(config config.S3) S3 {
 
 	// Create S3 service client
