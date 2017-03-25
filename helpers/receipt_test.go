@@ -46,7 +46,6 @@ func TestReceiptGetByIDQueryFail(t *testing.T) {
 	assert := assert.New(t)
 
 	receipt := getDefaultReceipt()
-	receipt.SendState = models.QUEUED
 	s, mock, _ := sqlmock.New()
 	c := getMockReceipt(s)
 
@@ -64,7 +63,6 @@ func TestReceiptGetByIDMapValueFail(t *testing.T) {
 	assert := assert.New(t)
 
 	receipt := getDefaultReceipt()
-	receipt.SendState = models.SUCCESS
 	s, mock, _ := sqlmock.New()
 	c := getMockReceipt(s)
 
@@ -107,7 +105,9 @@ func TestReceiptGetReceiptsSuccess(t *testing.T) {
 		WithArgs(offset, limit).
 		WillReturnRows(getReceiptRows().
 			AddRow(receipt.ID.String(), receipt.Created, "{}", string(receipt.SendState), receipt.ContentID.String(), receipt.UserID.String(), receipt.Finished).
-			AddRow(receipt.ID.String(), receipt.Created, "{}", string(receipt.SendState), receipt.ContentID.String(), receipt.UserID.String(), receipt.Finished))
+			AddRow(receipt.ID.String(), receipt.Created, "{}", string(models.FAILURE), receipt.ContentID.String(), receipt.UserID.String(), receipt.Finished).
+			AddRow(receipt.ID.String(), receipt.Created, "{}", string(models.SUCCESS), receipt.ContentID.String(), receipt.UserID.String(), receipt.Finished).
+			AddRow(receipt.ID.String(), receipt.Created, "{}", string(models.QUEUED), receipt.ContentID.String(), receipt.UserID.String(), receipt.Finished))
 
 	res, err := c.GetAll(offset, limit)
 
