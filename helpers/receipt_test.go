@@ -113,7 +113,7 @@ func TestReceiptGetReceiptsSuccess(t *testing.T) {
 
 	assert.Equal(mock.ExpectationsWereMet(), nil)
 	assert.NoError(err)
-	assert.Equal(2, len(res))
+	assert.Equal(4, len(res))
 }
 
 func TestReceiptGetReceiptsFail(t *testing.T) {
