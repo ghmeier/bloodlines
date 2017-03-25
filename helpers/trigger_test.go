@@ -34,6 +34,24 @@ func TestTriggerGetSuccess(t *testing.T) {
 	assert.Equal(0, len(trigger.Values))
 }
 
+func TestTriggerNone(t *testing.T) {
+	assert := assert.New(t)
+
+	trigger := getDefaultTrigger()
+	s, mock, _ := sqlmock.New()
+	h := getMockTrigger(s)
+
+	mock.ExpectQuery("SELECT id, contentId, tkey, vals FROM b_trigger").
+		WithArgs(trigger.Key).
+		WillReturnRows(getTriggerRows())
+
+	res, err := h.Get(trigger.Key)
+
+	assert.Equal(mock.ExpectationsWereMet(), nil)
+	assert.NoError(err)
+	assert.Nil(res)
+}
+
 func TestTriggerGetFail(t *testing.T) {
 	assert := assert.New(t)
 
