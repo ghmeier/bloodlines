@@ -67,12 +67,12 @@ func (s *s3Client) Upload(location, name string, body io.Reader) (string, error)
 		Bucket: aws.String(s.bucket(location)),
 		Key:    aws.String(name),
 		Body:   body,
+		ACL:    aws.String("public-read"),
 	})
 	if err != nil {
 		return "", err
 	}
 
-	fmt.Println(res.Location)
 	return res.Location, nil
 }
 
