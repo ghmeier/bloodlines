@@ -46,7 +46,7 @@ func (*BaseSearch) Where(q string, sort ...*SortTerm) string {
 	prefix := false
 
 	for _, s := range sort {
-		if s.key == "" || s.value == "" || s.order < 0 {
+		if s.key == "" || s.value == "" {
 			continue
 		}
 

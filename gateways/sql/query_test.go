@@ -25,8 +25,8 @@ func TestBasicQuery(t *testing.T) {
 	s2 := q2.ToQuery()
 	s3 := q3.ToQuery()
 	e1 := "init_query WHERE one=1 OR two LIKE \"%two%\" OR three LIKE \"%three%\" ORDER BY one ASC, two DESC, three ASC LIMIT ?,?"
-	e2 := "init_query WHERE two LIKE \"%two%\" OR three LIKE \"%three%\" ORDER BY two ASC, three ASC LIMIT ?,?"
-	e3 := "init_query WHERE one=1 OR two LIKE \"%two%\" ORDER BY one DESC, two DESC LIMIT ?,?"
+	e2 := "init_query WHERE one=1 OR two LIKE \"%two%\" OR three LIKE \"%three%\" ORDER BY two ASC, three ASC LIMIT ?,?"
+	e3 := "init_query WHERE one=1 OR two LIKE \"%two%\" OR three LIKE \"%three%\" ORDER BY one DESC, two DESC LIMIT ?,?"
 
 	assert.EqualValues(e1, s1)
 	assert.EqualValues(e2, s2)
