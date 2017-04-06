@@ -157,5 +157,6 @@ func (b *BaseHandler) GetJWT() gin.HandlerFunc {
 		}
 
 		ctx.Request.Header.Add("X-UserId", claims.UserID)
+		ctx.Next()
 	}
 }
