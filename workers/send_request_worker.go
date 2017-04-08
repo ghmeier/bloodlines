@@ -11,28 +11,50 @@ import (
 	"github.com/ghmeier/bloodlines/models"
 )
 
-/*Send describes the functions a send request uses*/
-type Send interface {
+/*Worker describes the functions a queue worker uses*/
+type Worker interface {
 	Consume() error
+	Handle([]byte)
+}
+
+type HandleFunc func([]byte)
+type BaseWorker struct {
+	RB gateways.RabbitI
+	HandleFunc
 }
 
 /*SendRequest has acces to receipt and content helpers as well as rabbitmq for publishing*/
-type SendRequest struct {
+type sendWorker struct {
 	Receipt helpers.ReceiptI
 	Content helpers.ContentI
-	RB      gateways.RabbitI
 }
 
-/*NewSend creates and returns a new SendRequest*/
-func NewSend(ctx *handlers.GatewayContext) Send {
-	return &SendRequest{
+/*NewSend creates and returns a new SendWorker*/
+func NewSend(ctx *handlers.GatewayContext) Worker {
+	worker := &sendWorker{
 		Receipt: helpers.NewReceipt(ctx.Sql, ctx.Sendgrid, ctx.TownCenter, ctx.Rabbit),
 		Content: helpers.NewContent(ctx.Sql),
-		RB:      ctx.Rabbit,
+	}
+
+	return &BaseWorker{
+		HandleFunc: HandleFunc(worker.handle),
+		RB:         ctx.Rabbit,
 	}
 }
 
-func (s *SendRequest) handleRequest(request *models.SendRequest) {
+func (f HandleFunc) Handle(body []byte) {
+	f(body)
+}
+
+func (s *sendWorker) handle(body []byte) {
+	var request models.SendRequest
+	err := json.Unmarshal(body, &request)
+	if err != nil {
+		fmt.Printf("ERROR: unable to parse body\n")
+		fmt.Println(err.Error())
+		return
+	}
+
 	receipt, err := s.Receipt.GetByID(request.ReceiptID.String())
 	if err != nil {
 		fmt.Printf("ERROR: unable to get receipt: %s\n", request.ReceiptID.String())
@@ -60,28 +82,20 @@ func (s *SendRequest) handleRequest(request *models.SendRequest) {
 }
 
 /*Consume starts a channel that consumes messages from the front of the queue*/
-func (s *SendRequest) Consume() error {
+func (w *BaseWorker) Consume() error {
 
 	go func() {
-		msgs, err := s.RB.Consume()
+		msgs, err := w.RB.Consume()
 		for err != nil {
 			fmt.Printf("Rabbit ERROR: %s\n", err.Error())
 			time.Sleep(time.Duration(5) * time.Second)
-			msgs, err = s.RB.Consume()
+			msgs, err = w.RB.Consume()
 		}
 
 		//forever := make(chan bool)
 
 		for d := range msgs {
-			fmt.Printf("Received a message: %s\n", d.Body)
-			var request models.SendRequest
-			err := json.Unmarshal(d.Body, &request)
-			if err != nil {
-				fmt.Println("ERROR: unable to unmarshal body")
-				// Resend message??
-			}
-
-			s.handleRequest(&request)
+			w.Handle(d.Body)
 		}
 	}()
 

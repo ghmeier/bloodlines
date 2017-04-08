@@ -21,7 +21,7 @@ type Bloodlines struct {
 	job        handlers.JobI
 	trigger    handlers.TriggerI
 	preference handlers.PreferenceI
-	workers    []workers.Send
+	workers    []workers.Worker
 }
 
 /*New returns a ready-to-run Bloodlines struct from the given config*/
@@ -64,7 +64,7 @@ func New(config *config.Root) (*Bloodlines, error) {
 		job:        handlers.NewJob(ctx),
 		trigger:    handlers.NewTrigger(ctx),
 		preference: handlers.NewPreference(ctx),
-		workers:    []workers.Send{workers.NewSend(ctx)},
+		workers:    []workers.Worker{workers.NewSend(ctx)},
 	}
 
 	InitRouter(b)

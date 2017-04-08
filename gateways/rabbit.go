@@ -5,14 +5,14 @@ import (
 	"fmt"
 
 	"github.com/ghmeier/bloodlines/config"
-	"github.com/ghmeier/bloodlines/models"
+	//"github.com/ghmeier/bloodlines/models"
 
 	"github.com/streadway/amqp"
 )
 
 /*RabbitI describes the gateway for interacting with RabbitMQ*/
 type RabbitI interface {
-	Produce(*models.SendRequest) error
+	Produce(interface{}) error
 	Consume() (<-chan amqp.Delivery, error)
 	Destroy()
 }
@@ -34,7 +34,7 @@ func NewRabbit(config config.Rabbit) (*Rabbit, error) {
 }
 
 /*Produce adds a message to the queue based on a send request*/
-func (r *Rabbit) Produce(request *models.SendRequest) error {
+func (r *Rabbit) Produce(request interface{}) error {
 	err := r.connect()
 	if err != nil {
 		return err
