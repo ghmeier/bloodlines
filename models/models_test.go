@@ -11,7 +11,7 @@ func TestToList(t *testing.T) {
 	assert := assert.New(t)
 
 	s := "a,b,c"
-	l := toList(s)
+	l := ToList(s)
 
 	assert.EqualValues("a", l[0])
 	assert.EqualValues("b", l[1])
@@ -19,7 +19,7 @@ func TestToList(t *testing.T) {
 	assert.Equal(3, len(l))
 
 	s = ""
-	l = toList(s)
+	l = ToList(s)
 	assert.Equal(0, len(l))
 }
 
