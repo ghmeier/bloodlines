@@ -44,7 +44,7 @@ func ContentFromSQL(rows *sql.Rows) ([]*Content, error) {
 		var paramList, cType, cStatus string
 		rows.Scan(&c.ID, &cType, &c.Text, &paramList, &cStatus, &c.Subject)
 
-		c.Params = toList(paramList)
+		c.Params = ToList(paramList)
 
 		var ok bool
 		c.Type, ok = toContentType(cType)

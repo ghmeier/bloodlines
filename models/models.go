@@ -13,7 +13,7 @@ func SerializeValues(values map[string]string) string {
 	return string(s)
 }
 
-func toList(s string) []string {
+func ToList(s string) []string {
 	if s == "" {
 		return make([]string, 0)
 	}
