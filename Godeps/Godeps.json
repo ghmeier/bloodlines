@@ -52,11 +52,11 @@
 		},
 		{
 			"ImportPath": "github.com/ghmeier/coinage/gateways",
-			"Rev": "98cebaabc1ba74bcb2a6a107dfc38002cd24407b"
+			"Rev": "eba35aa3e60bf1ac02e12f46a39de7dcfc058e7b"
 		},
 		{
 			"ImportPath": "github.com/ghmeier/coinage/models",
-			"Rev": "98cebaabc1ba74bcb2a6a107dfc38002cd24407b"
+			"Rev": "eba35aa3e60bf1ac02e12f46a39de7dcfc058e7b"
 		},
 		{
 			"ImportPath": "github.com/gin-gonic/gin/binding",
@@ -79,19 +79,15 @@
 		},
 		{
 			"ImportPath": "github.com/jakelong95/TownCenter/_mocks",
-			"Rev": "4a6b1d33cfd0a163f1d040df9d96762294f8ea2c"
+			"Rev": "b835d493c27035649cd1525f747b8651c7f86a6f"
 		},
 		{
 			"ImportPath": "github.com/jakelong95/TownCenter/gateways",
-			"Rev": "4a6b1d33cfd0a163f1d040df9d96762294f8ea2c"
-		},
-		{
-			"ImportPath": "github.com/jakelong95/TownCenter/helpers",
-			"Rev": "4a6b1d33cfd0a163f1d040df9d96762294f8ea2c"
+			"Rev": "b835d493c27035649cd1525f747b8651c7f86a6f"
 		},
 		{
 			"ImportPath": "github.com/jakelong95/TownCenter/models",
-			"Rev": "4a6b1d33cfd0a163f1d040df9d96762294f8ea2c"
+			"Rev": "b835d493c27035649cd1525f747b8651c7f86a6f"
 		},
 		{
 			"ImportPath": "github.com/jarcoal/httpmock",
@@ -99,11 +95,11 @@
 		},
 		{
 			"ImportPath": "github.com/lcollin/warehouse/gateways",
-			"Rev": "9a59689fdb34d23682ab17ceaa968ec16d57e3d8"
+			"Rev": "7a6cbef42a4b358d1be600c65290cf8badc7d4ba"
 		},
 		{
 			"ImportPath": "github.com/lcollin/warehouse/models",
-			"Rev": "9a59689fdb34d23682ab17ceaa968ec16d57e3d8"
+			"Rev": "7a6cbef42a4b358d1be600c65290cf8badc7d4ba"
 		},
 		{
 			"ImportPath": "github.com/manucorporat/sse",
@@ -170,11 +166,11 @@
 		},
 		{
 			"ImportPath": "github.com/yuderekyu/covenant/gateways",
-			"Rev": "3504bd0f1c20ea42f47ae873318f7e635ad700de"
+			"Rev": "63c8506cb5fdd25ccee4cce2274cd5bb41024cef"
 		},
 		{
 			"ImportPath": "github.com/yuderekyu/covenant/models",
-			"Rev": "3504bd0f1c20ea42f47ae873318f7e635ad700de"
+			"Rev": "63c8506cb5fdd25ccee4cce2274cd5bb41024cef"
 		},
 		{
 			"ImportPath": "golang.org/x/net/context",
