@@ -1,6 +1,8 @@
 package helpers
 
 import (
+	"github.com/pborman/uuid"
+
 	"github.com/ghmeier/bloodlines/gateways"
 	"github.com/ghmeier/bloodlines/models"
 )
@@ -60,7 +62,14 @@ func (p *Preference) GetByUserID(id string) (*models.Preference, error) {
 		return nil, err
 	}
 
-	return preferences[0], nil
+	// lazily create preferences
+	if len(preferences) > 0 {
+		return preferences[0], nil
+	}
+
+	pref := models.NewPreference(uuid.Parse(id))
+	err = p.Insert(pref)
+	return pref, err
 }
 
 /*Update sets the preference entry to the given values*/
