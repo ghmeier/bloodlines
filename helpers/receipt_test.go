@@ -250,12 +250,17 @@ func TestReceiptDeliverContentSuccess(t *testing.T) {
 
 	receipt := getDefaultReceipt()
 	content := getDefaultContent()
-	s, _, _ := sqlmock.New()
+	s, mock, _ := sqlmock.New()
 	rabbitMock := &mocks.RabbitI{}
 	sgMock := &mocks.SendgridI{}
 	tcMock := &tmocks.TownCenterI{}
 	r := NewReceipt(&gateways.MySQL{DB: s}, sgMock, tcMock, rabbitMock)
+	mock.ExpectQuery("SELECT id, userId, email FROM preference").
+		WithArgs(receipt.UserID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "userId", "email"}).
+			AddRow(uuid.New(), receipt.UserID.String(), string(models.SUBSCRIBED)))
 	tcMock.On("GetUser", receipt.UserID).Return(&tmodels.User{Email: "test"}, nil)
+
 	sgMock.On("SendEmail", "test", "test", "Hello").Return(nil)
 
 	err := r.DeliverContent(receipt, content)
@@ -268,11 +273,15 @@ func TestReceiptDeliverContentSGFail(t *testing.T) {
 
 	receipt := getDefaultReceipt()
 	content := getDefaultContent()
-	s, _, _ := sqlmock.New()
+	s, mock, _ := sqlmock.New()
 	rabbitMock := &mocks.RabbitI{}
 	sgMock := &mocks.SendgridI{}
 	tcMock := &tmocks.TownCenterI{}
 	r := NewReceipt(&gateways.MySQL{DB: s}, sgMock, tcMock, rabbitMock)
+	mock.ExpectQuery("SELECT id, userId, email FROM preference").
+		WithArgs(receipt.UserID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "userId", "email"}).
+			AddRow(uuid.New(), receipt.UserID.String(), models.SUBSCRIBED))
 	tcMock.On("GetUser", receipt.UserID).Return(&tmodels.User{Email: "test"}, nil)
 	sgMock.On("SendEmail", "test", "test", "Hello").Return(fmt.Errorf("some error"))
 
@@ -304,13 +313,39 @@ func TestReceiptDeliverContentNoopSuccess(t *testing.T) {
 	receipt := getDefaultReceipt()
 	content := getDefaultContent()
 	content.Type = models.NOOP
-	s, _, _ := sqlmock.New()
+	s, mock, _ := sqlmock.New()
 	rabbitMock := &mocks.RabbitI{}
 	sgMock := &mocks.SendgridI{}
 	tcMock := &tmocks.TownCenterI{}
 	r := NewReceipt(&gateways.MySQL{DB: s}, sgMock, tcMock, rabbitMock)
+	mock.ExpectQuery("SELECT id, userId, email FROM preference").
+		WithArgs(receipt.UserID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "userId", "email"}).
+			AddRow(uuid.New(), receipt.UserID.String(), string(models.SUBSCRIBED)))
 	tcMock.On("GetUser", receipt.UserID).Return("test", nil)
 	sgMock.On("SendEmail", "test", "test", "Hello").Return(nil)
+
+	err := r.DeliverContent(receipt, content)
+
+	assert.NoError(err)
+}
+
+func TestReceiptDeliverContentUnsubscribed(t *testing.T) {
+	assert := assert.New(t)
+
+	receipt := getDefaultReceipt()
+	content := getDefaultContent()
+	content.Type = models.NOOP
+	s, mock, _ := sqlmock.New()
+	rabbitMock := &mocks.RabbitI{}
+	sgMock := &mocks.SendgridI{}
+	tcMock := &tmocks.TownCenterI{}
+	r := NewReceipt(&gateways.MySQL{DB: s}, sgMock, tcMock, rabbitMock)
+	mock.ExpectQuery("SELECT id, userId, email FROM preference").
+		WithArgs(receipt.UserID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "userId", "email"}).
+			AddRow(uuid.New(), receipt.UserID.String(), string(models.UNSUBSCRIBED)))
+	tcMock.On("GetUser", receipt.UserID).Return("test", nil)
 
 	err := r.DeliverContent(receipt, content)
 

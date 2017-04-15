@@ -24,9 +24,10 @@ type ReceiptI interface {
 /*Receipt helps with managing receipt entities and fetching them*/
 type Receipt struct {
 	*baseHelper
-	SG gateways.SendgridI
-	TC tg.TownCenterI
-	RB gateways.RabbitI
+	SG         gateways.SendgridI
+	TC         tg.TownCenterI
+	RB         gateways.RabbitI
+	Preference PreferenceI
 }
 
 /*NewReceipt constructs and returns a receipt helper*/
@@ -36,6 +37,7 @@ func NewReceipt(sql gateways.SQL, sendgrid gateways.SendgridI, townCenter tg.Tow
 		SG:         sendgrid,
 		TC:         townCenter,
 		RB:         rabbit,
+		Preference: NewPreference(sql),
 	}
 	return helper
 }
@@ -123,6 +125,15 @@ func (r *Receipt) deliverEmail(receipt *models.Receipt, content *models.Content)
 	target, err := r.TC.GetUser(receipt.UserID)
 	if err != nil {
 		return err
+	}
+
+	preference, err := r.Preference.GetByUserID(receipt.UserID.String())
+	if err != nil {
+		return err
+	}
+
+	if preference.Email == models.UNSUBSCRIBED {
+		return nil
 	}
 
 	text, err := content.ResolveText(receipt.Values)
