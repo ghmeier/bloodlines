@@ -115,6 +115,7 @@ func (b *BaseHandler) Time() gin.HandlerFunc {
 func GetCors() gin.HandlerFunc {
 	config := cors.DefaultConfig()
 	config.AddAllowMethods("DELETE")
+	config.AddAllowMethods("PATCH")
 	config.AddAllowHeaders("X-Auth")
 	config.AddExposeHeaders("X-Auth")
 	config.AddAllowHeaders("X-Token")
