@@ -19,6 +19,7 @@ type Root struct {
 	Stripe     Stripe     `json:"stripe"`
 	S3         S3         `json:"s3"`
 	Port       string     `json:"port"`
+	Shippo     Shippo     `json:"shippo"`
 	JWT        JWT        //`json:"jwt"`
 }
 
@@ -99,6 +100,11 @@ type Statsd struct {
 
 /*JWT has the jwt token*/
 type JWT struct {
+	Token string `json:"token"`
+}
+
+/*Shippo connection information*/
+type Shippo struct {
 	Token string `json:"token"`
 }
 
