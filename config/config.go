@@ -50,9 +50,10 @@ type Sendgrid struct {
 
 /*Stripe has connection information for the stripe gateway */
 type Stripe struct {
-	Secret         string  `json:"secret"`
-	Public         string  `json:"public"`
-	ApplicationFee float64 `json:"applicationFee"`
+	Secret           string  `json:"secret"`
+	Public           string  `json:"public"`
+	ApplicationFee   float64 `json:"applicationFee"`
+	StripeFeePercent float64 `json:"stripeFeePercent"`
 }
 
 /*TownCenter has connection information for the town center service */
