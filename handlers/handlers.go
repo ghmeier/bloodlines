@@ -42,6 +42,7 @@ type GatewayContext struct {
 	Stats      *statsd.Client
 	Stripe     coi.Stripe
 	S3         gateways.S3
+	Shippo     w.Shippo
 }
 
 /*NewBaseHandler returns a new BaseHandler instance from a given stats*/
