@@ -46,27 +46,32 @@
 			"Rev": "0700d99edb91ab11ba748f096cbdcf424e53446b"
 		},
 		{
+			"ImportPath": "github.com/coldbrewcloud/go-shippo",
+			"Comment": "v1.3.0-20-g2b94802",
+			"Rev": "2b94802aab57221e1df82210c2dcc668328efea8"
+		},
+		{
 			"ImportPath": "github.com/dgrijalva/jwt-go",
 			"Comment": "v3.0.0-17-g2268707",
 			"Rev": "2268707a8f0843315e2004ee4f1d021dc08baedf"
 		},
 		{
 			"ImportPath": "github.com/ghmeier/coinage/gateways",
-			"Rev": "eba35aa3e60bf1ac02e12f46a39de7dcfc058e7b"
+			"Rev": "aa999d484c8d34009dbe8528e1ef8712629f5fbf"
 		},
 		{
 			"ImportPath": "github.com/ghmeier/coinage/models",
-			"Rev": "eba35aa3e60bf1ac02e12f46a39de7dcfc058e7b"
+			"Rev": "aa999d484c8d34009dbe8528e1ef8712629f5fbf"
 		},
 		{
 			"ImportPath": "github.com/gin-gonic/gin/binding",
-			"Comment": "v1.0-2-g3900df0",
-			"Rev": "3900df04d2a88e22beaf6a2970c63648b9e1b0e1"
+			"Comment": "v1.1.4",
+			"Rev": "e2212d40c62a98b388a5eb48ecbdcf88534688ba"
 		},
 		{
 			"ImportPath": "github.com/gin-gonic/gin/render",
-			"Comment": "v1.0-2-g3900df0",
-			"Rev": "3900df04d2a88e22beaf6a2970c63648b9e1b0e1"
+			"Comment": "v1.1.4",
+			"Rev": "e2212d40c62a98b388a5eb48ecbdcf88534688ba"
 		},
 		{
 			"ImportPath": "github.com/go-sql-driver/mysql",
@@ -79,15 +84,15 @@
 		},
 		{
 			"ImportPath": "github.com/jakelong95/TownCenter/_mocks",
-			"Rev": "b835d493c27035649cd1525f747b8651c7f86a6f"
+			"Rev": "31aa6b03d3f9f6eb93a66a283050ce1b15db6312"
 		},
 		{
 			"ImportPath": "github.com/jakelong95/TownCenter/gateways",
-			"Rev": "b835d493c27035649cd1525f747b8651c7f86a6f"
+			"Rev": "31aa6b03d3f9f6eb93a66a283050ce1b15db6312"
 		},
 		{
 			"ImportPath": "github.com/jakelong95/TownCenter/models",
-			"Rev": "b835d493c27035649cd1525f747b8651c7f86a6f"
+			"Rev": "31aa6b03d3f9f6eb93a66a283050ce1b15db6312"
 		},
 		{
 			"ImportPath": "github.com/jarcoal/httpmock",
@@ -95,11 +100,11 @@
 		},
 		{
 			"ImportPath": "github.com/lcollin/warehouse/gateways",
-			"Rev": "7a6cbef42a4b358d1be600c65290cf8badc7d4ba"
+			"Rev": "08ee8fc5d50c75b1468f9d169fce4806d21d3302"
 		},
 		{
 			"ImportPath": "github.com/lcollin/warehouse/models",
-			"Rev": "7a6cbef42a4b358d1be600c65290cf8badc7d4ba"
+			"Rev": "08ee8fc5d50c75b1468f9d169fce4806d21d3302"
 		},
 		{
 			"ImportPath": "github.com/manucorporat/sse",
@@ -161,16 +166,16 @@
 		},
 		{
 			"ImportPath": "github.com/stripe/stripe-go",
-			"Comment": "v19.2.0",
-			"Rev": "3f2707ab5115e7c54c70a77aabcb386d6f405810"
+			"Comment": "v21.0.0",
+			"Rev": "c4fbb41e6d772a7571bdc31eea0d4de7c2450ee4"
 		},
 		{
 			"ImportPath": "github.com/yuderekyu/covenant/gateways",
-			"Rev": "63c8506cb5fdd25ccee4cce2274cd5bb41024cef"
+			"Rev": "ab6c0abe37aab1b9a2d09a2699992f71a96e8c5f"
 		},
 		{
 			"ImportPath": "github.com/yuderekyu/covenant/models",
-			"Rev": "63c8506cb5fdd25ccee4cce2274cd5bb41024cef"
+			"Rev": "ab6c0abe37aab1b9a2d09a2699992f71a96e8c5f"
 		},
 		{
 			"ImportPath": "golang.org/x/net/context",
